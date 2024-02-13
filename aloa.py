@@ -6,19 +6,21 @@ import rpy2.robjects as ro
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
 
-logger = logging.getLogger('aloa') 
-fh = logging.FileHandler('aloa.log')
-#fh.setLevel(logging.DEBUG)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
-logging.getLogger().setLevel(logging.INFO)
+logger = logging.getLogger('aloa')
 
 def aloa(args):
+    
+    f=open("config.json")
+    data=json.load(f)
+    output=data["Paths"]["output_folder"]
+    
+    fh = logging.FileHandler(os.path.join(output,'aloa.log'))
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logging.getLogger().setLevel(logging.INFO)
 
     logger.info(f"aloa.py args [merge:{args.merge}, clear:{args.clean},\
                 mapping:{args.maps},distance:{args.distance},\
@@ -27,21 +29,16 @@ def aloa(args):
                 cluster:{args.clustering},\
                 overwrite:{args.overwrite}]")
     
-    f=open("config.json")
-    data=json.load(f)
-    
-    if args.overwrite and os.path.isdir(data["Paths"]["output_folder"]):
-        output=data["Paths"]["output_folder"]
+    if args.overwrite and os.path.isdir(output):
         logger.info(f"{output} folder already exists and will be overwritten")
         
-    if args.merge:
-        #########################################
-        #          DATA REORGANIZATION          #
-        #########################################
+    #########################################
+    #          DATA REORGANIZATION          #
+    #########################################
                     
-        if args.merge:
-            logger.info("Merge step starting now")
-            ro.r.source("./merge.R", encoding="utf-8")
+    if args.merge:
+        logger.info("Merge step starting now")
+        ro.r.source("./merge.R", encoding="utf-8")
         
         if args.clean:
             if args.merge or os.listdir(os.path.join(data["Paths"]["output_folder"],"Merged")>0):
@@ -101,8 +98,8 @@ class MyArgumentParser(argparse.ArgumentParser):
     raise ValueError(message)
 
 def main(): 
-
-    parser = MyArgumentParser(add_help=True, exit_on_error=True, usage=None, description='Argument of Varan script')
+     
+    parser = MyArgumentParser(add_help=True, exit_on_error=True, usage=None, description='Argument of ALOA script')
     
     # MERGE + CLEAN BLOCK
     parser.add_argument('-m', '--merge', required=False, action='store_true', help='merge datasets from ROIs of the same patient')
