@@ -5,7 +5,9 @@ import logging
 import rpy2.robjects as ro
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
+import pathlib
 
+logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger('aloa')
 
 def aloa(args):
@@ -13,14 +15,16 @@ def aloa(args):
     f=open("config.json")
     data=json.load(f)
     output=data["Paths"]["output_folder"]
-    
-    fh = logging.FileHandler(os.path.join(output,'aloa.log'))
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
+    pathlib.Path(output).mkdir(parents=True, exist_ok=True)
+    log_path=os.path.join(output,"Log")
+    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
+    fh = logging.FileHandler(os.path.join(log_path,'aloa.log'))
+    # ch = logging.StreamHandler()
+    # ch.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    logging.getLogger().setLevel(logging.INFO)
+    # fh.setFormatter(formatter)
+    # ch.setFormatter(formatter)
+    # logging.getLogger().setLevel(logging.INFO)
 
     logger.info(f"aloa.py args [merge:{args.merge}, clear:{args.clean},\
                 mapping:{args.maps},distance:{args.distance},\
