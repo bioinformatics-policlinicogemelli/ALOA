@@ -19,8 +19,7 @@ def aloa(args):
     log_path=os.path.join(output,"Log")
     pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
     fh = logging.FileHandler(os.path.join(log_path,'aloa.log'))
-    # ch = logging.StreamHandler()
-    # ch.setLevel(logging.INFO)
+
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     # fh.setFormatter(formatter)
     # ch.setFormatter(formatter)
