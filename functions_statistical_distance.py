@@ -1,5 +1,11 @@
+#import logging
+#logging.basicConfig(format='[%(levelname)s] ALOA - %(asctime)s - %(message)s',level=logging.DEBUG)
 import logging
-logging.basicConfig(format='[%(levelname)s] ALOA - %(asctime)s - %(message)s',level=logging.DEBUG)
+
+log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
+logging.basicConfig(format=log_format)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def standardization_distance_all_image(values,paz):
