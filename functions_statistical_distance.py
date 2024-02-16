@@ -1,11 +1,19 @@
 #import logging
 #logging.basicConfig(format='[%(levelname)s] ALOA - %(asctime)s - %(message)s',level=logging.DEBUG)
 import logging
+from datetime import datetime
 
 log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-logging.basicConfig(format=log_format)
+logging.basicConfig(format=log_format,filename=f"logs/functions_statistical_distance_{datetime.now()}.log",filemode="a")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
 
 
 def standardization_distance_all_image(values,paz):
@@ -20,7 +28,8 @@ def standardization_distance_all_image(values,paz):
     ----
     '''
     if len(values)<2:
-        print(f"only one or less distance for {paz}")
+        logging.info(f"only one or less distance for {paz}")
+        #print(f"only one or less distance for {paz}")
         return [],0,0
 
     import numpy as np
@@ -28,7 +37,8 @@ def standardization_distance_all_image(values,paz):
     std=np.std(values)
 
     if std==0:
-        print(f"for {paz} std = 0")
+        logging.info(f"for {paz} std = 0")
+        #print(f"for {paz} std = 0")
         return [],0,0
                         
     values_standard= list(map(lambda x: (x - mean)/std,values))
@@ -222,7 +232,7 @@ def calculate_median_distribution(dictionary_group,groups):
 
     #if any(value is None for value in dict_meadian.values()):
     if all(value=="NaN"for value in dict_median.values()):
-        print("both grade value is none")
+        print("both group's values are NaN for meadian distance calculation")
         grade_major="NaN"
         return grade_major,dict_median
     else:
@@ -249,7 +259,84 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
                  }})
 
 #*****************************************************************
+def statistical_test(path_output_result,df,pheno_from,pheno_to):
+    import os
+    from scipy import stats
 
+
+    groups=list(df["GROUP"].unique())
+
+    #array contenente i valori delle distanze per le diverse cellulle per i diversi pazienti nei diversi gradi [[valori grado II],[valori grado III]]
+    values_distance=[]
+
+    for g in groups:
+        temp=list(df[df["GROUP"]==g]["DISTANCE"].values)
+        values_distance.append(temp)
+
+    p_value=10
+
+    if len(df["GROUP"].unique())==1:
+        logging.warning("Only One Group - not statistical is possible")
+    
+    #Caso in cui abbiamo 2 GRUPPI---> Test di mannwhitney
+    elif len(df["GROUP"].unique())==2:
+        logging.info("Executive Mann-Whitney test")
+        t_stat, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
+        #dict_p_value[f'{pheno_from}to{pheno_to}']=p_value
+    
+    #Caso in cui i gruppi sono più di due---> Test di Kruskal per più sample
+    elif len(df["GROUP"].unique())>2:
+        t_stat, p_value = stats.kruskal(*[v for v in values_distance])
+        logging.info("Executive Kruskal test")
+        #dict_p_value[f'{pheno_from}to{pheno_to}']=p_value
+    print(p_value)
+    return p_value
+    
+
+
+
+def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
+    import os
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import plotly.figure_factory as ff
+
+    dire =os.path.join(path_output_result,"distance_curve")
+    if not os.path.exists(dire):
+        os.makedirs(dire)
+
+    #lista dei gruppi presenti
+    groups=list(df["GROUP"].unique())
+
+    #array contenente i valori delle distanze per le diverse cellulle per i diversi pazienti nei diversi gradi [[valori grado II],[valori grado III]]
+    values_distance=[]
+
+    for g in groups:
+        temp=list(df[df["GROUP"]==g]["DISTANCE"].values)
+        values_distance.append(temp)
+    
+    #group_labels = df["GROUP"].unique()
+    #fig = ff.create_distplot(values_distance, group_labels,show_hist=False,show_rug=False)
+    fig = ff.create_distplot(values_distance, groups,show_hist=False,show_rug=False)
+    
+    if p_value < 0.05 and p_value >= 0.001:
+        fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.05</span>",
+                        yaxis=dict(tickformat=".4f",title_text=r"$Density$"),xaxis=dict(title_text=r"$Distance_{z}$"),legend_title_text="Group")
+        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+    
+    elif p_value < 0.001:
+        fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.001</span>",
+                        yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
+        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        
+    elif p_value >= 0.05 and p_value<10:
+        fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:red;'>p value > 0.05</span>",
+                        yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
+        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+
+
+
+'''
 def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major,dict_median,f,goups_original,plot_distance=False):
     from scipy import stats
     import seaborn as sns
@@ -275,14 +362,11 @@ def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major
         temp=list(df[df["GROUP"]==g]["DISTANCE"].values)
         values_distance.append(temp)
     
-    
-
     p_value=10
 
     #Caso in cui abbiamo SOLO 1 GRUPPO--> no statistiche
     if len(df["GROUP"].unique())==1:
         logging.warning("Only One Group - not statistical is possible")
-        print("only one group")
         if plot_distance:
             #CREAZIONE DELLA CURVA DELLE DISTANZA
             hist_data=[list(df["DISTANCE"].values)]
@@ -328,7 +412,7 @@ def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major
                             yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
             fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
         
-
+'''
 
 
 
@@ -372,18 +456,24 @@ def main():
             groups.append(group)
     
     #path for summary statistical file
-    path_stats_file=os.path.join(path_output,"summary_statistical.csv")
+    path_stats_file=os.path.join(path_output,"summary_statistical_2.csv")
 
     #delete file if present
+    
     if os.path.exists(path_stats_file):
         os.remove(path_stats_file)
 
     #open and write file in append mode
-    f_stat=open(path_stats_file,"a")
-    f_stat.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+    #if len(groups)!=1:
+       # f_stat=open(path_stats_file,"a")
+        #f_stat.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+
 
     #condition if there is a pheno_from and a pheno_to of interest
     if pheno_from=="" and pheno_from=="":
+
+        dict_statistical_result={}
+
         #permutation of phenotype
         for pheno in itertools.permutations(pheno_interested,2):
             pheno_from=pheno[0]
@@ -400,30 +490,84 @@ def main():
             if len(df_distance)==0:
                 logging.warning(f"No Distance for {pheno_from}--{pheno_to}")
                 continue
+
             ##BUG è NECESSARIO RILEGGERLO????
             #df_distance=pd.read_csv(f"{path_output}/csv/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv",sep="\t")
             
             box_plots_distances(path_output,df_distance,pheno_from,pheno_to)
-            statistical_curve_plot(path_output,df_distance,pheno_from,pheno_to,grade_major,dict_median,f_stat,groups,plot_distance)
+            
+            if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
+                dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
+
+            pvalue=statistical_test(path_output,df_distance,pheno_from,pheno_to)
+
+            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
+            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
+            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
+
+            if plot_distance:
+                plot_distance_curve(path_output,df_distance,pheno_from,pheno_to,pvalue)
+
+
+        with open(path_stats_file,"w") as f:
+            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+            for pheno, stat in dict_statistical_result.items():
+                pheno=pheno.split("to")
+                pheno_from=pheno[0]
+                pheno_to=pheno[1]
+                p_value=stat["p_value"]
+                grade_major=stat['grade_major']
+                f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
+
+            #statistical_curve_plot(path_output,df_distance,pheno_from,pheno_to,grade_major,dict_median,f_stat,groups,plot_distance)
     
+
     #if there are a pheno_from and a pheno-to of interest
     else:
+        dict_statistical_result={}
+
+        if pheno_from not in pheno_interested or pheno_to not in pheno_interested:
+            logging.error(f"Name error inserted in pheno from and/or pheno to ({pheno_from}---{pheno_to})")
+            exit()
+
         dict_distance=prepare_dataframe_distances(root_folder,pheno_from,pheno_to)
         grade_major,dict_median=calculate_median_distribution(dict_distance,groups)
         df_distance=create_df_distances(dict_distance,path_output,pheno_from,pheno_to,save_csv_zetascore)
         if len(df_distance)==0:
             logging.warning(f"No Distance for {pheno_from}--{pheno_to}")
-            exit ##FIXME è GIUSTO?????
+            exit() ##FIXME è GIUSTO?????
             
         #df_distance=pd.read_csv(f"{path_output}/csv/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv",sep="\t")
         box_plots_distances(path_output,df_distance,pheno_from,pheno_to)
-        statistical_curve_plot(path_output,df_distance,pheno_from,pheno_to,grade_major,dict_median,f_stat,groups,plot_distance)
+
+        if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
+                dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
+
+        pvalue=statistical_test(path_output,df_distance,pheno_from,pheno_to)
+
+        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
+        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
+        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
+
+        if plot_distance:
+                plot_distance_curve(path_output,df_distance,pheno_from,pheno_to,pvalue)
+        
+        with open(path_stats_file,"w") as f:
+            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+            for pheno, stat in dict_statistical_result.items():
+                pheno=pheno.split("to")
+                pheno_from=pheno[0]
+                pheno_to=pheno[1]
+                p_value=stat["p_value"]
+                grade_major=stat['grade_major']
+                f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
 
 
-    if not os.listdir(path_output):
-        logging.info("delete empty folder Distance_Statistical")
-        os.rmdir(path_output)
-            
+
+    #if not os.listdir(path_output):
+       # logging.info("delete empty folder Distance_Statistical")
+       # os.rmdir(path_output)
+    logging.info("End statistical analysis!")      
 
 if __name__=="__main__":
     main()
