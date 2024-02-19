@@ -1,10 +1,25 @@
-#import logging
-#logging.basicConfig(format='[%(levelname)s] ALOA - %(asctime)s - %(message)s',level=logging.DEBUG)
 import logging
 from datetime import datetime
+import os
+import json
+import numpy as np
+import polars as pl
+import math
+import pandas as pd
+import tap
+from scipy import stats
+import itertools
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.figure_factory as ff
 
+
+with open("config.json") as f:
+        data=json.load(f)
+
+log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
 log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-logging.basicConfig(format=log_format,filename=f"logs/functions_statistical_distance_{datetime.now()}.log",filemode="a")
+logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{datetime.now()}.log",filemode="a")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -32,7 +47,6 @@ def standardization_distance_all_image(values,paz):
         #print(f"only one or less distance for {paz}")
         return [],0,0
 
-    import numpy as np
     mean=np.mean(values)
     std=np.std(values)
 
@@ -56,10 +70,6 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
     pheno_to:str
     ----
     '''
-    import polars as pl
-    import os
-    import numpy as np
-    import math
 
     DICT_DISTANCES = dict()
 
@@ -71,10 +81,16 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
             continue
         print("Parsing Group:",group)
         DICT_DISTANCES[group] = []
+        if not os.listdir(os.path.join(root_folder,group)):
+            logging.error(f"{os.path.join(root_folder,group)} is an empty folder")
+            exit()
         for directory in os.listdir(os.path.join(root_folder,group)):
             if directory==".DS_Store":
                 continue
             if directory=="csv":
+                if not os.listdir(os.path.join(root_folder, group,directory)):
+                    logging.error(f"{os.path.join(root_folder, group,directory)} is an empty folder")
+                    exit()
                 list_files=os.listdir(os.path.join(root_folder, group,directory))
                 for file in list_files:
                     paz=file.split("_")[0]
@@ -159,9 +175,7 @@ def create_output_dir(path_output_results):
     None
 
     '''
-    import os
-
-    
+ 
     temp_folder=path_output_results
     if not os.path.exists(temp_folder):
         os.makedirs(temp_folder)
@@ -185,8 +199,7 @@ def create_output_dir(path_output_results):
 #*****************************************************************
 def create_df_distances(DICT_DISTANCES,path_output,pheno_from,pheno_to,save_zetascore=False):
     ##FIXME Metterlo come opzione se si vuole salvare il file csv
-    import pandas as pd
-    import os
+   
 
     pre_df = []
     for k, v in DICT_DISTANCES.items():
@@ -212,10 +225,7 @@ def create_df_distances(DICT_DISTANCES,path_output,pheno_from,pheno_to,save_zeta
 
 def calculate_median_distribution(dictionary_group,groups):
     ##FIXME non salvare il file da solo con i valori della mediana
-    import numpy as np
-    import pandas as pd
-    import os
-    import math
+  
     dict_median={}
     
     for g in groups:
@@ -244,8 +254,7 @@ def calculate_median_distribution(dictionary_group,groups):
 #*****************************************************************
 
 def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
-    import tap
-    import os
+   
     #dire=os.path.join(path_ouput_results,"box_plot")
     #if not os.path.exists(dire):
         #os.makedirs(dire)
@@ -260,10 +269,7 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
 
 #*****************************************************************
 def statistical_test(path_output_result,df,pheno_from,pheno_to):
-    import os
-    from scipy import stats
-
-
+  
     groups=list(df["GROUP"].unique())
 
     #array contenente i valori delle distanze per le diverse cellulle per i diversi pazienti nei diversi gradi [[valori grado II],[valori grado III]]
@@ -296,11 +302,6 @@ def statistical_test(path_output_result,df,pheno_from,pheno_to):
 
 
 def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
-    import os
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    import plotly.figure_factory as ff
-
     dire =os.path.join(path_output_result,"distance_curve")
     if not os.path.exists(dire):
         os.makedirs(dire)
@@ -417,16 +418,12 @@ def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major
 
 
 def main():
-    import json
-    import itertools
-    import os
-    import pandas as pd
-
-    with open("config.json") as f:
-        data=json.load(f)
-    
     #path folder with distance
     root_folder=data["statistical_distance"]["root_folder"]
+
+    if not os.listdir(root_folder):
+        logging.error(f"{root_folder} is an empty directory")
+        exit()
     
     #path folder save distance statistical results
     path_output=data["statistical_distance"]["save_folder"]
