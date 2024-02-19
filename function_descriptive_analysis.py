@@ -1,6 +1,15 @@
 import logging
-logging.basicConfig(format='[%(levelname)s] ALOA - %(asctime)s - %(message)s',level=logging.DEBUG)
+from datetime import datetime
 
+log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
+logging.basicConfig(format=log_format,filename=f"logs/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 
 def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
@@ -54,8 +63,8 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             _data_groupped = _data.groupby(["Pheno"])["Pheno"].count()
 
             #eliminating other from pheno column
-            _data_dict = {frozenset(k.replace("other,", "").replace(",other", "").split(",")): v for k, v in _data_groupped.to_dict().items()}
-            #_data_dict = {frozenset(k.replace("OTHER,", "").replace(",OTHER", "").split(",")): v for k, v in _data_groupped.to_dict().items()}
+            #_data_dict = {frozenset(k.replace("other,", "").replace(",other", "").split(",")): v for k, v in _data_groupped.to_dict().items()}
+            _data_dict = {frozenset(k.replace("OTHER,", "").replace(",OTHER", "").split(",")): v for k, v in _data_groupped.to_dict().items()}
             
             #adding phenotype as fourth key of dictionary
             for main_pheno in list_pheno:
@@ -638,7 +647,6 @@ def main():
     f=open("config.json")
     data=json.load(f)
     if data["Clean_data"]["other_rm"]:
-        #path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean_all_roi")
         path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
         logging.info(f"Merge data are in {path_merge_folder}")
     else:
@@ -652,65 +660,51 @@ def main():
     dict_raw_count=raw_count_cells(path_merge_folder,dict_pheno_interested)
     
     groups=list(dict_raw_count.keys())
-    # logging.info(f"Group/s presents {groups}")
-
-    # union_E=data["Descriptive"]["union_E"]
+    logging.info(f"Group/s presents {groups}")
 
 
-    # path_output_results=os.path.join(data["Paths"]["output_folder"],"descriptive")
-    # logging.info(f" The output of descriptive section is {path_output_results}")
-    # create_output_dir(path_output_results,groups)
+    path_output_results=os.path.join(data["Paths"]["output_folder"],"descriptive")
+    logging.info(f" The output of descriptive section is {path_output_results}")
+    create_output_dir(path_output_results,groups)
     
 
-    # type_data_raw=data["Descriptive"]["raw"]
-    # type_data_norm=data["Descriptive"]["normalized"]
+    type_data_raw=data["Descriptive"]["raw"]
+    type_data_norm=data["Descriptive"]["normalized"]
     
     
-    # if type_data_raw:
-    #     create_summury_file(path_output_results,dict_raw_count,"Raw")
-    #     bar_plot(path_output_results,dict_raw_count,"Raw")
-    #     if len(groups)>=2:
-    #         create_output_box_plot_dir(path_output_results)
-    #         df_raw=prepare_data_box_plot(path_merge_folder,dict_raw_count)
-    #         create_comparison_box_plot(path_output_results,df_raw,"Raw")
-    #     else:
-    #         logging.warning("Found only one group-impossible to continue with group comparison")
+    if type_data_raw:
+        create_summury_file(path_output_results,dict_raw_count,"Raw")
+        bar_plot(path_output_results,dict_raw_count,"Raw")
+        if len(groups)>=2:
+            create_output_box_plot_dir(path_output_results)
+            df_raw=prepare_data_box_plot(path_merge_folder,dict_raw_count)
+            create_comparison_box_plot(path_output_results,df_raw,"Raw")
+        else:
+            logging.warning("Found only one group-impossible to continue with group comparison")
             
-    # else:
-    #     logging.info("Raw data is False in configuration file--Descriptive section")
+    else:
+        logging.info("Raw data is False in configuration file--Descriptive section")
 
     
-    # if type_data_norm:
-    #     mean_group=calculate_mean_group_cells(dict_raw_count)
-    #     norm_count=normalized_count_cells(dict_raw_count,mean_group)
-    #     create_summury_file(path_output_results,norm_count,"Norm")
-    #     bar_plot(path_output_results,norm_count,"Normalized")
-    #     if len(groups)>=2:
-    #         mean_group_all = calculate_mean_total_groups(dict_raw_count)
-    #         norm_count_all_groups = normalized_count_on_all_groups(dict_raw_count,mean_group_all)
-    #         create_norm_all_file(path_output_results,norm_count_all_groups)
-    #         create_output_box_plot_dir(path_output_results)
-    #     ##df_norm= create_data_box_plot_new(norm_count_all_groups,"Normalized")
-    #         df_norm=prepare_data_box_plot(path_merge_folder,norm_count_all_groups)
-    #         create_comparison_box_plot(path_output_results,df_norm,"Normalized")
-    #     else:
-    #         logging.warning("Found only one group-impossible to continue with group comparison")
+    if type_data_norm:
+        mean_group=calculate_mean_group_cells(dict_raw_count)
+        norm_count=normalized_count_cells(dict_raw_count,mean_group)
+        create_summury_file(path_output_results,norm_count,"Norm")
+        bar_plot(path_output_results,norm_count,"Normalized")
+        if len(groups)>=2:
+            mean_group_all = calculate_mean_total_groups(dict_raw_count)
+            norm_count_all_groups = normalized_count_on_all_groups(dict_raw_count,mean_group_all)
+            create_norm_all_file(path_output_results,norm_count_all_groups)
+            create_output_box_plot_dir(path_output_results)
+        ##df_norm= create_data_box_plot_new(norm_count_all_groups,"Normalized")
+            df_norm=prepare_data_box_plot(path_merge_folder,norm_count_all_groups)
+            create_comparison_box_plot(path_output_results,df_norm,"Normalized")
+        else:
+             logging.warning("Found only one group-impossible to continue with group comparison")
+    
 
-    if data["Descriptive"]["union_E"]:
-        path_descriptive_f="/Users/chiaraparrillo/Downloads/descriptive_panelF"
-        path_descriptive_e="/Users/chiaraparrillo/Downloads/descriptive_panelE"
-        norm_count_all_groups_e_f=union_panel_E(path_descriptive_e,path_descriptive_f,groups)
-        #print(norm_count_all_groups_e_f)
-        path_output_results="/Users/chiaraparrillo/Downloads/Panel_E_F"
-        create_output_box_plot_dir(path_output_results)
-        df_norm_e_f=prepare_data_box_plot(path_merge_folder,norm_count_all_groups_e_f)
-        create_comparison_box_plot(path_output_results,df_norm_e_f,"Normalized")
-
-
-
-    # else:
-    #     logging.info("Normalized data is False in configuration file--Descriptive section")
-
+    logging.info("End descriptive analysis!")
+   
 
 
 
