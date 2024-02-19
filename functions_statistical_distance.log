@@ -1,0 +1,514 @@
+[INFO] ALOA - 2024-02-16 10:13:40,873 - Folder ./output/Distance_Statistical already exists-deleting its contents for the new analysis
+[INFO] ALOA - 2024-02-16 10:13:40,880 - Analysis for distance from TMEM119+,CD68+,CD163+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:40,940 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:40,944 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:40,952 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:40,958 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:40,966 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:40,969 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:40,970 - No Distance for TMEM119+,CD68+,CD163+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:40,970 - Analysis for distance from TMEM119+,CD68+,CD163+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,000 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,009 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,025 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,045 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,059 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,061 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,062 - No Distance for TMEM119+,CD68+,CD163+--MCP1+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:41,062 - Analysis for distance from TMEM119+,CD68+,CD163+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,073 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,075 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,082 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,090 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,094 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,096 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,097 - No Distance for TMEM119+,CD68+,CD163+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:41,097 - Analysis for distance from TMEM119+,CD68+,CD163+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,108 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,111 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,117 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,123 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,128 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,130 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,130 - No Distance for TMEM119+,CD68+,CD163+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:41,131 - Analysis for distance from TMEM119+,CD68+,CD163+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,156 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,164 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,188 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,213 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,230 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,232 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,233 - No Distance for TMEM119+,CD68+,CD163+--CD44+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:41,233 - Analysis for distance from TMEM119+,CD68+,CD163+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,245 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,248 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,269 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,297 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,311 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,313 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,313 - No Distance for TMEM119+,CD68+,CD163+--CD68+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:41,313 - Analysis for distance from TMEM119+,CD68+,CD163+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,326 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,334 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,354 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,383 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,390 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,393 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,393 - No Distance for TMEM119+,CD68+,CD163+--CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:41,394 - Analysis for distance from TMEM119+,CD68+,CD163+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,425 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,435 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,456 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,484 - TMEM119+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,491 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,493 - Dataframe is empty for distance from TMEM119+,CD68+,CD163+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,494 - No Distance for TMEM119+,CD68+,CD163+--CD44+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:41,494 - Analysis for distance from Ki67+,CD68+,CD163+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,505 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,507 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,513 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,519 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,525 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,527 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,527 - No Distance for Ki67+,CD68+,CD163+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:41,528 - Analysis for distance from Ki67+,CD68+,CD163+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,546 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,556 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,576 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,599 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,614 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,617 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,618 - No Distance for Ki67+,CD68+,CD163+--MCP1+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:41,618 - Analysis for distance from Ki67+,CD68+,CD163+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,628 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,630 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,637 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,644 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,649 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,651 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,652 - No Distance for Ki67+,CD68+,CD163+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:41,652 - Analysis for distance from Ki67+,CD68+,CD163+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,661 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,664 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,671 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,680 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,685 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,688 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:41,690 - No Distance for Ki67+,CD68+,CD163+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:41,690 - Analysis for distance from Ki67+,CD68+,CD163+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,714 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,722 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,743 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,776 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,795 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,797 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,798 - No Distance for Ki67+,CD68+,CD163+--CD44+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:41,798 - Analysis for distance from Ki67+,CD68+,CD163+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,811 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,814 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,832 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,857 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,870 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,872 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:41,873 - No Distance for Ki67+,CD68+,CD163+--CD68+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:41,873 - Analysis for distance from Ki67+,CD68+,CD163+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,883 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,895 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:41,917 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:41,943 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:41,949 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:41,951 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:41,952 - No Distance for Ki67+,CD68+,CD163+--CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:41,953 - Analysis for distance from Ki67+,CD68+,CD163+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:41,985 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:41,996 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:42,023 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:42,048 - Ki67+,CD68+,CD163+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:42,054 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:42,056 - Dataframe is empty for distance from Ki67+,CD68+,CD163+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:42,057 - No Distance for Ki67+,CD68+,CD163+--CD44+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:42,057 - Analysis for distance from MCP1+,CD68+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:42,069 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:42,072 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:42,078 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:42,084 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:42,089 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:42,090 - Dataframe is empty for distance from MCP1+,CD68+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:42,090 - No Distance for MCP1+,CD68+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:42,091 - Analysis for distance from MCP1+,CD68+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:42,097 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:42,100 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:42,107 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:42,112 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:42,116 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:42,117 - Dataframe is empty for distance from MCP1+,CD68+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:42,118 - No Distance for MCP1+,CD68+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:42,118 - Analysis for distance from MCP1+,CD68+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:42,126 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:42,128 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:42,132 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:42,138 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:42,142 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:42,144 - Dataframe is empty for distance from MCP1+,CD68+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:42,144 - No Distance for MCP1+,CD68+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:42,145 - Analysis for distance from MCP1+,CD68+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:42,151 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:42,154 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:42,158 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:42,165 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:42,170 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:42,171 - Dataframe is empty for distance from MCP1+,CD68+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:42,172 - No Distance for MCP1+,CD68+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:42,172 - Analysis for distance from MCP1+,CD68+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:42,276 - Dataframe is empty for distance from MCP1+,CD68+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:43,106 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:44,467 - Analysis for distance from MCP1+,CD68+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:44,482 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:44,500 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:44,626 - Dataframe is empty for distance from MCP1+,CD68+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:44,628 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:44,897 - Analysis for distance from MCP1+,CD68+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:44,927 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:45,051 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,052 - Dataframe is empty for distance from MCP1+,CD68+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:45,054 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:45,304 - Analysis for distance from MCP1+,CD68+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:45,459 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,460 - Dataframe is empty for distance from MCP1+,CD68+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:45,462 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:45,700 - Analysis for distance from MCP1+,CD68+,Ki67+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:45,719 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:45,723 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:45,741 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:45,749 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:45,789 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,793 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:45,794 - No Distance for MCP1+,CD68+,Ki67+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:45,794 - Analysis for distance from MCP1+,CD68+,Ki67+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:45,807 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:45,810 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:45,817 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:45,825 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:45,831 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,832 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:45,833 - No Distance for MCP1+,CD68+,Ki67+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:45,833 - Analysis for distance from MCP1+,CD68+,Ki67+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:45,861 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:45,873 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:45,894 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:45,916 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:45,931 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,933 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:45,933 - No Distance for MCP1+,CD68+,Ki67+--MCP1+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:45,933 - Analysis for distance from MCP1+,CD68+,Ki67+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:45,945 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:45,947 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:45,955 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:45,963 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:45,969 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:45,972 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:45,972 - No Distance for MCP1+,CD68+,Ki67+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:45,973 - Analysis for distance from MCP1+,CD68+,Ki67+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:45,995 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,002 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,022 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,047 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,062 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,064 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,064 - No Distance for MCP1+,CD68+,Ki67+--CD44+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:46,064 - Analysis for distance from MCP1+,CD68+,Ki67+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,075 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,104 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,127 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,145 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,155 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,157 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,158 - No Distance for MCP1+,CD68+,Ki67+--CD68+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:46,158 - Analysis for distance from MCP1+,CD68+,Ki67+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,165 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,174 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,190 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,211 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,216 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,218 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,218 - No Distance for MCP1+,CD68+,Ki67+--CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,219 - Analysis for distance from MCP1+,CD68+,Ki67+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,240 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,250 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,270 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,298 - MCP1+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,304 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,307 - Dataframe is empty for distance from MCP1+,CD68+,Ki67+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,307 - No Distance for MCP1+,CD68+,Ki67+--CD44+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:46,308 - Analysis for distance from CD44+,CD68+,Ki67+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,318 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,321 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,328 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,337 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,344 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,347 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,347 - No Distance for CD44+,CD68+,Ki67+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,348 - Analysis for distance from CD44+,CD68+,Ki67+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,361 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,364 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,374 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,381 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,387 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,390 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,391 - No Distance for CD44+,CD68+,Ki67+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,391 - Analysis for distance from CD44+,CD68+,Ki67+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,412 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,421 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,440 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,462 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,476 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,478 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,478 - No Distance for CD44+,CD68+,Ki67+--MCP1+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:46,478 - Analysis for distance from CD44+,CD68+,Ki67+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:46,486 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,489 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,494 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,499 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,503 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,506 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:46,507 - No Distance for CD44+,CD68+,Ki67+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:46,507 - Analysis for distance from CD44+,CD68+,Ki67+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,528 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,535 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,552 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,575 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,587 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,590 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,591 - No Distance for CD44+,CD68+,Ki67+--CD44+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:46,591 - Analysis for distance from CD44+,CD68+,Ki67+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,599 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,601 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,617 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,636 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,651 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,653 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:46,653 - No Distance for CD44+,CD68+,Ki67+--CD68+,TMEM119+
+[INFO] ALOA - 2024-02-16 10:13:46,654 - Analysis for distance from CD44+,CD68+,Ki67+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,665 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,674 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,693 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,716 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,722 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,724 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,725 - No Distance for CD44+,CD68+,Ki67+--CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,725 - Analysis for distance from CD44+,CD68+,Ki67+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,745 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,752 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,780 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,811 - CD44+,CD68+,Ki67+ not present in 'Phenotype' column for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,817 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,820 - Dataframe is empty for distance from CD44+,CD68+,Ki67+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:46,821 - No Distance for CD44+,CD68+,Ki67+--CD44+,CD68+
+[INFO] ALOA - 2024-02-16 10:13:46,823 - Analysis for distance from CD44+,TMEM119+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,834 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,837 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,845 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,853 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,861 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,864 - Dataframe is empty for distance from CD44+,TMEM119+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,864 - No Distance for CD44+,TMEM119+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,864 - Analysis for distance from CD44+,TMEM119+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,875 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:46,878 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:46,885 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:46,892 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:46,897 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:46,899 - Dataframe is empty for distance from CD44+,TMEM119+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:46,900 - No Distance for CD44+,TMEM119+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:46,900 - Analysis for distance from CD44+,TMEM119+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:47,039 - Dataframe is empty for distance from CD44+,TMEM119+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:47,042 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:47,335 - Analysis for distance from CD44+,TMEM119+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:47,363 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:47,369 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:47,385 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:47,398 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:47,414 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:47,423 - Dataframe is empty for distance from CD44+,TMEM119+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:47,424 - No Distance for CD44+,TMEM119+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:47,425 - Analysis for distance from CD44+,TMEM119+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:47,439 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:47,443 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:47,451 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:47,459 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:47,465 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:47,467 - Dataframe is empty for distance from CD44+,TMEM119+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:47,468 - No Distance for CD44+,TMEM119+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:47,468 - Analysis for distance from CD44+,TMEM119+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:47,478 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:47,481 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:47,580 - Dataframe is empty for distance from CD44+,TMEM119+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:47,583 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:47,830 - Analysis for distance from CD44+,TMEM119+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:47,900 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:48,009 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:48,011 - Dataframe is empty for distance from CD44+,TMEM119+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:48,014 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:48,308 - Analysis for distance from CD44+,TMEM119+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:48,498 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:48,500 - Dataframe is empty for distance from CD44+,TMEM119+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:48,503 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:48,767 - Analysis for distance from CD68+,TMEM119+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:48,793 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:48,797 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:48,806 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:48,835 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:48,862 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:48,866 - Dataframe is empty for distance from CD68+,TMEM119+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:48,866 - No Distance for CD68+,TMEM119+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:48,867 - Analysis for distance from CD68+,TMEM119+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:48,878 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:48,880 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:48,884 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:48,891 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:48,897 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:48,900 - Dataframe is empty for distance from CD68+,TMEM119+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:48,900 - No Distance for CD68+,TMEM119+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:48,900 - Analysis for distance from CD68+,TMEM119+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:48,924 - CD68+,TMEM119+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:48,933 - CD68+,TMEM119+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:49,029 - Dataframe is empty for distance from CD68+,TMEM119+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:49,031 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:49,312 - Analysis for distance from CD68+,TMEM119+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:49,333 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:49,337 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:49,354 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:49,369 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:49,377 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:49,385 - Dataframe is empty for distance from CD68+,TMEM119+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:49,388 - No Distance for CD68+,TMEM119+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:49,388 - Analysis for distance from CD68+,TMEM119+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:49,404 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:49,408 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:49,416 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:49,423 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:49,428 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:49,431 - Dataframe is empty for distance from CD68+,TMEM119+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:49,432 - No Distance for CD68+,TMEM119+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:49,432 - Analysis for distance from CD68+,TMEM119+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:49,456 - CD68+,TMEM119+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:49,465 - CD68+,TMEM119+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:49,552 - Dataframe is empty for distance from CD68+,TMEM119+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:49,554 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:49,802 - Analysis for distance from CD68+,TMEM119+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:49,814 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:49,838 - CD68+,TMEM119+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:49,950 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:49,951 - Dataframe is empty for distance from CD68+,TMEM119+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:49,953 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:50,184 - Analysis for distance from CD68+,TMEM119+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:50,208 - CD68+,TMEM119+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:50,221 - CD68+,TMEM119+ not present in 'Phenotype' column for 15397
+[WARNING] ALOA - 2024-02-16 10:13:50,302 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:50,303 - Dataframe is empty for distance from CD68+,TMEM119+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:50,305 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:50,551 - Analysis for distance from CD68+,CD163+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:50,566 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:50,571 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:50,580 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:50,599 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:50,608 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:50,613 - Dataframe is empty for distance from CD68+,CD163+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:50,616 - No Distance for CD68+,CD163+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:50,618 - Analysis for distance from CD68+,CD163+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:50,639 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:50,645 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:50,654 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:50,662 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:50,668 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:50,671 - Dataframe is empty for distance from CD68+,CD163+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:50,671 - No Distance for CD68+,CD163+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:50,671 - Analysis for distance from CD68+,CD163+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:50,694 - CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:50,788 - CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:50,789 - Dataframe is empty for distance from CD68+,CD163+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:50,791 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:51,025 - Analysis for distance from CD68+,CD163+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:51,054 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:51,057 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:51,106 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:51,119 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:51,126 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:51,129 - Dataframe is empty for distance from CD68+,CD163+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:51,129 - No Distance for CD68+,CD163+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:51,130 - Analysis for distance from CD68+,CD163+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:51,141 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:51,145 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:51,155 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:51,164 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:51,170 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:51,172 - Dataframe is empty for distance from CD68+,CD163+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:51,172 - No Distance for CD68+,CD163+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:51,172 - Analysis for distance from CD68+,CD163+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:51,200 - CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:51,309 - CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:51,311 - Dataframe is empty for distance from CD68+,CD163+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:51,313 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:51,596 - Analysis for distance from CD68+,CD163+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:51,639 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:51,656 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:51,759 - CD68+,CD163+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:51,761 - Dataframe is empty for distance from CD68+,CD163+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:51,763 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:52,034 - Analysis for distance from CD68+,CD163+---to---CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:52,093 - CD68+,CD163+ not present in 'Phenotype' column for 10647
+[WARNING] ALOA - 2024-02-16 10:13:52,190 - CD44+,CD68+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:52,191 - Dataframe is empty for distance from CD68+,CD163+ to CD44+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:52,193 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:52,468 - Analysis for distance from CD44+,CD68+---to---TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:52,496 - TMEM119+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:52,509 - TMEM119+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:52,532 - TMEM119+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:52,557 - TMEM119+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:52,562 - TMEM119+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:52,567 - Dataframe is empty for distance from CD44+,CD68+ to TMEM119+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:52,567 - No Distance for CD44+,CD68+--TMEM119+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:52,568 - Analysis for distance from CD44+,CD68+---to---Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:52,578 - Ki67+,CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:52,581 - Ki67+,CD68+,CD163+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:52,590 - Ki67+,CD68+,CD163+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:52,597 - Ki67+,CD68+,CD163+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:52,603 - Ki67+,CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:52,605 - Dataframe is empty for distance from CD44+,CD68+ to Ki67+,CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:52,605 - No Distance for CD44+,CD68+--Ki67+,CD68+,CD163+
+[INFO] ALOA - 2024-02-16 10:13:52,605 - Analysis for distance from CD44+,CD68+---to---MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:52,727 - CD44+,CD68+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:52,728 - Dataframe is empty for distance from CD44+,CD68+ to MCP1+,CD68+
+[WARNING] ALOA - 2024-02-16 10:13:52,730 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:53,010 - Analysis for distance from CD44+,CD68+---to---MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:53,063 - MCP1+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:53,079 - MCP1+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:53,105 - MCP1+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:53,114 - MCP1+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:53,120 - MCP1+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:53,122 - Dataframe is empty for distance from CD44+,CD68+ to MCP1+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:53,123 - No Distance for CD44+,CD68+--MCP1+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:53,123 - Analysis for distance from CD44+,CD68+---to---CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:53,135 - CD44+,CD68+,Ki67+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:53,138 - CD44+,CD68+,Ki67+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:53,144 - CD44+,CD68+,Ki67+ not present as Distance_to for 4315
+[WARNING] ALOA - 2024-02-16 10:13:53,152 - CD44+,CD68+,Ki67+ not present as Distance_to for 5808
+[WARNING] ALOA - 2024-02-16 10:13:53,157 - CD44+,CD68+,Ki67+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:53,158 - Dataframe is empty for distance from CD44+,CD68+ to CD44+,CD68+,Ki67+
+[WARNING] ALOA - 2024-02-16 10:13:53,159 - No Distance for CD44+,CD68+--CD44+,CD68+,Ki67+
+[INFO] ALOA - 2024-02-16 10:13:53,159 - Analysis for distance from CD44+,CD68+---to---CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:53,293 - CD44+,CD68+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:53,295 - Dataframe is empty for distance from CD44+,CD68+ to CD44+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:53,297 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:53,564 - Analysis for distance from CD44+,CD68+---to---CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:53,577 - CD68+,TMEM119+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:53,588 - CD68+,TMEM119+ not present as Distance_to for 15397
+[WARNING] ALOA - 2024-02-16 10:13:53,702 - CD44+,CD68+ not present in 'Phenotype' column for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:53,704 - Dataframe is empty for distance from CD44+,CD68+ to CD68+,TMEM119+
+[WARNING] ALOA - 2024-02-16 10:13:53,706 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:53,961 - Analysis for distance from CD44+,CD68+---to---CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:53,995 - CD68+,CD163+ not present as Distance_to for 10647
+[WARNING] ALOA - 2024-02-16 10:13:54,112 - CD68+,CD163+ not present as Distance_to for 8033K1
+[WARNING] ALOA - 2024-02-16 10:13:54,114 - Dataframe is empty for distance from CD44+,CD68+ to CD68+,CD163+
+[WARNING] ALOA - 2024-02-16 10:13:54,115 - Only One Group - not statistical is possible
+[INFO] ALOA - 2024-02-16 10:13:54,363 - End statistical analysis!
