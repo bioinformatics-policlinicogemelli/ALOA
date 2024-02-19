@@ -10,13 +10,15 @@ from image_proc_functions import pheno_filt
 import json
 import pathlib
 import random
+from sklearn.cluster import SpectralClustering
+from sklearn.preprocessing import StandardScaler
 
 import warnings
 warnings.filterwarnings("ignore")
 
-def plot_silhouette_analysis(df, output_path, idx, k_number):
+def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
 
-    print("Creating the output folder "+os.path.join(output_path, "silhoutte_scores"))
+    print("Creating the output folder " + os.path.join(output_path, "silhoutte_scores"))
     os.makedirs(os.path.join(output_path, "silhoutte_scores"), exist_ok=True)
 
     df_sample = df[['Cell.X.Position', 'Cell.Y.Position']]
@@ -41,21 +43,35 @@ def plot_silhouette_analysis(df, output_path, idx, k_number):
     # Select optimal cluster number based on silhouette score
     n_opt_cluster = K_range[silhouette_scores.index(max(silhouette_scores))]
     print(f"Optimal cluster Number: {n_opt_cluster}")
-
+    
     km = KMeans(n_clusters=n_opt_cluster)
-    label = km.fit_predict(df_sample.values)
-    print(df_sample.head())  # O stampa df_sample.columns
+    
+    if clust_alg.lower()=="kmeans":
+        df_sample['Cluster'] = km.fit_predict(df_sample.values)
+
+    elif clust_alg.lower()=="spectral":
+        scaler= StandardScaler()
+        spatial_data_normalizer = scaler.fit_transform(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
+        spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42)
+        df_sample['Cluster']= spectral.fit_predict(spatial_data_normalizer)
+    
+    else:
+        print(f"ERROR: wrong clustering algorithm selected. '{clust_alg}' were selected but only 'kmeans' and 'spectral' are currently supported! Check your cluster section in your config.json file!")
+        exit(1)
 
     df_sample["Pheno"]= df["Pheno"]
+    
+    return df_sample, n_opt_cluster, clust_alg
 
-    return df_sample, label, n_opt_cluster
+def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
 
-def plot_convex_hull(df_plot, label, n_opt_cluster, idx, output_path):
-
-    os.makedirs(os.path.join(output_path, "scatter_plot"), exist_ok=True)
+    output_path=os.path.join(output_path,clust_alg)
+    os.makedirs(output_path, exist_ok=True)
+        
+    output_f=os.path.join(output_path, "scatter_plot")
+    os.makedirs(output_f, exist_ok=True)
 
     phenolist=list(df_plot["Pheno"].unique())
-    df_plot['Cluster'] = label
 
     fig, ax = plt.subplots()
 
@@ -73,10 +89,6 @@ def plot_convex_hull(df_plot, label, n_opt_cluster, idx, output_path):
         # convex hull evaluation
         hull = ConvexHull(points)
 
-        for simplex in hull.simplices:
-            plt.fill(points[simplex, 0], points[simplex, 1], edgecolor=colors[cluster], facecolor=colors[cluster], alpha=1, closed=True)
-
-        #list of markers
         markers=['.','o','v','^','<','>',
                  '1','2','3','4',
                  's','p','*','h',
@@ -86,49 +98,46 @@ def plot_convex_hull(df_plot, label, n_opt_cluster, idx, output_path):
 
         # plot for each phenotype
         for i,ph in enumerate(phenolist):
-            points = cluster_data[cluster_data['Pheno'].str.strip() == ph]
-            if points.empty:
+            points_ch = cluster_data[cluster_data['Pheno'].str.strip() == ph]
+            if points_ch.empty:
                 continue
-            plt.scatter(points['Cell.X.Position'], points['Cell.Y.Position'], marker=markers[i], color=colors[cluster], label=f'C{cluster + 1} {ph}', s=2.5)
+            plt.scatter(points_ch['Cell.X.Position'], points_ch['Cell.Y.Position'], marker=markers[i], color=colors[cluster], label=f'C{cluster + 1} {ph}', s=4)
+        
+        for simplex in hull.simplices:
+            plt.fill(points[simplex, 0], points[simplex, 1], edgecolor=colors[cluster], facecolor=colors[cluster], alpha=1, closed=True)
 
     plt.xlabel('Cell X Position')
     plt.ylabel('Cell Y Position')
-    plt.title('Risultati con Convex Hull Colorati')
+    plt.title('Convex Hull')
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.savefig(os.path.join(os.path.join(output_path, "scatter_plot"),idx+".tiff"), dpi=300, bbox_inches = "tight")
+    plt.savefig(os.path.join(output_f,idx+".tiff"), dpi=300, bbox_inches = "tight")
     plt.close()
+    return output_path
 
-def plot_stacked_bar_chart(df_plot, output_path, idx):
-    # Verifica se la colonna 'Cluster' esiste nel DataFrame
-
-    if 'Cluster' not in df_plot.columns:
-        print("Errore: La colonna 'Cluster' non è presente nel DataFrame.")
-        return
-
-    # Verifica se la colonna 'Pheno' esiste nel DataFrame
-    if 'Pheno' not in df_plot.columns:
-        print("Errore: La colonna 'Pheno' non è presente nel DataFrame.")
-        return
-
-    # Verifica se il DataFrame non è vuoto
+def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
+    
+    # Check for empty dataframe
     if df_plot.empty:
-        print("Errore: Il DataFrame è vuoto.")
+        print("Error: Empty DataFrame")
         return
     
-    os.makedirs(os.path.join(output_path, "stacked_barplot"), exist_ok=True)
+    # Check for cluster column existance
+    if 'Cluster' not in df_plot.columns:
+        print("Error: 'Cluster' column not found in DataFrame")
+        return
+
+    # Check for pheno column existence
+    if 'Pheno' not in df_plot.columns:
+        print("Error: 'Pheno' column not found in DataFrame")
+        return
+    
+    output_barplot=os.path.join(output_path, "stacked_barplot")
+    os.makedirs(output_barplot, exist_ok=True)
 
     df_stacked = df_plot.groupby(['Cluster', 'Pheno']).size().unstack(fill_value=0)
 
-    # Calcolo delle percentuali per ogni Pheno nel totale
-    total_percentages = df_plot['Pheno'].value_counts(normalize=True)
-
     # Calcolo delle percentuali per ogni Pheno nei vari cluster
     cluster_percentages = df_stacked.div(df_stacked.sum(axis=1), axis=0)
-
-    # Ottieni i colori associati ai valori unici nella colonna 'Pheno'
-    # palette = sns.color_palette('Set1')
-    # unique_pheno_colors = {pheno: palette[i % len(palette)] for i, pheno in enumerate(df_plot['Pheno'].unique())}
-    # legend_labels = [plt.Line2D([0], [0], marker='o', color='w', label=f'{pheno}', markerfacecolor=unique_pheno_colors[pheno], markersize=10) for pheno in df_plot['Pheno'].unique()]
 
     # stacked barplot creation
     fig,ax=plt.subplots()
@@ -139,28 +148,23 @@ def plot_stacked_bar_chart(df_plot, output_path, idx):
             df_stacked.values.transpose()[i], bottom = np.sum(df_stacked.values.transpose()[:i], axis = 0), width = 0.25
             )
     
-    #ax.legend(loc="upper right")
     ax.set_xticks(list(range(0, df_stacked.values.shape[0])))
     ax.set_xticklabels(list(range(0, df_stacked.values.shape[0])))
     ax.legend(labels=list(df_stacked.columns), title='Phenotype', loc='upper left', bbox_to_anchor=(1, 1), frameon=False)
 
     plt.xlabel('Cluster')
     plt.ylabel('Count')
-    plt.title('Distribuzione di Pheno nei vari Cluster')
+    plt.title('Phenotype(s) distribution inside cluster')
     plt.tight_layout() 
-    plt.savefig(os.path.join(os.path.join(output_path, "stacked_barplot"),idx+".tiff"), dpi=300, bbox_inches = "tight")
-    #plt.show()
+    plt.savefig(os.path.join(output_barplot,idx+".tiff"), dpi=300, bbox_inches = "tight")
     plt.close()
 
-    os.makedirs(os.path.join(output_path, "percentage"), exist_ok=True)
+    output_barplot=os.path.join(output_path, "percentage")
+    os.makedirs(output_barplot, exist_ok=True)
 
-    # save percentage csv
-    total_percentages=total_percentages * 100
-    total_percentages.to_csv(os.path.join(os.path.join(output_path, "percentage"),"total_percentage_"+idx+".csv"), sep=",")
-
-    # Stampa delle percentuali nei vari cluster
+    # plot phenotype percentage inside cluster
     cluster_percentages=cluster_percentages * 100
-    cluster_percentages.to_csv(os.path.join(os.path.join(output_path, "percentage"),"cluster_percentage_"+idx+".csv"), sep=",")
+    cluster_percentages.to_csv(os.path.join(output_barplot,"cluster_percentage_"+idx+".csv"), sep=",")
 
 def main():
     
@@ -190,6 +194,7 @@ def main():
         for pzt in pzt_list:
             
             print("sbj: "+pzt)
+            
             # Load and filter data
             df = pd.read_csv(os.path.join(input_path,g,pzt), sep='\t')
             df_filt = pheno_filt(df, pheno_list)
@@ -197,13 +202,14 @@ def main():
             
             # silhouette analysis
             k=data["cluster"]["k"]
-            df_sample_tmp, cluster_label, n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k)
+            clust_alg=data["cluster"]["cluster_method"]
+            df_sample_tmp, n_cluster_opt, clust_alg = plot_silhouette_analysis(df_filt, output_path_g, idx, k, clust_alg)
 
             # Convex Hull plot
-            plot_convex_hull(df_sample_tmp, cluster_label, n_cluster_opt, idx, output_path_g)
+            output_res=plot_convex_hull(df_sample_tmp, n_cluster_opt, idx, output_path_g, clust_alg)
 
             # stacked barplot and percentage csv 
-            plot_stacked_bar_chart(df_sample_tmp, output_path_g, idx)
+            plot_stacked_bar_chart(df_sample_tmp, output_res, idx, clust_alg)
 
 if __name__ == "__main__":
     main()
