@@ -1,8 +1,20 @@
 import logging
 from datetime import datetime
+import os
+import json
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+import math
+import tap
+
+with open("config.json") as f:
+        data=json.load(f)
+
+log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
 
 log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-logging.basicConfig(format=log_format,filename=f"logs/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
+logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
@@ -13,9 +25,17 @@ logger.addHandler(console_handler)
 
 
 def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
-    import os
-    import pandas as pd
-    import logging
+    '''
+    function to calculate raw counts from merged file
+    Parameters
+    ----
+    PATH_MERGE_FOLDER : str
+    list_pheno : array
+
+    Return
+    ----
+    dict_global_info : dict
+    '''
 
     #creating a dictionary with raw count information for each patient
     
@@ -92,7 +112,7 @@ def calculate_mean_group_cells(dictionary_raw_count):
     ----
     count_mean_group_cells: dict
     '''
-    import numpy as np
+    
 
     #creating dictionary with the mean of total cells for each group
     count_mean_group_cells={}
@@ -121,9 +141,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
     '''
     - formula normalizzation single group = (number of cells positive for target (or phenotipes) / total cells patient ) * mean of total cells of group
 
-
-    funzione per conteggio normalizzato sul numero di cellule presenti, per ogni paziente, 
-    dei diversi target
+    function to calculate normal count for each patient
 
     Parameters
     ----
@@ -185,7 +203,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
 
 def create_output_dir(path_output,groups_name):
     '''
-    Funzione per la creazione dell cartella dove veranno inseriti gli output della descrittiva---> CARTELLA OUTPUT_DESCRIPTIVE con all'interno sottocartelle per ogni gruppo
+    function to create the folder where descriptive's output are saved
 
     Parameters
     ----
@@ -197,7 +215,6 @@ def create_output_dir(path_output,groups_name):
     None
 
     '''
-    import os
     
     for _g in groups_name:
         temp_folder=os.path.join(path_output,_g)
@@ -206,16 +223,27 @@ def create_output_dir(path_output,groups_name):
             os.makedirs(temp_folder)
             logging.info(f" Created folder {temp_folder}")
            
-        else:
-            logging.info(f" Folder {temp_folder} already exists")
+        #else:
+            #logging.info(f" Folder {temp_folder} already exists")
         
 
 
 #******************************************************
 
 def create_summury_file(path_output_results,dictionary_count,type_data):
-    import os
-    import logging
+    '''
+    Function to create a csv file for each patient, for each group, where are saved the raw count and/or normalized count for the phenotypes of interest
+    
+    Parameters
+    ----
+    path_output_results : str
+    dictionary_count : dict
+    type_data : str
+
+    Return
+    ----
+    None
+    '''
 
     #iterationg on dictionary count
     for grade,patients in dictionary_count.items():
@@ -234,9 +262,9 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
                 #----> aggiunta del log nella creazione della cartella
                 logging.info(f"Created folder {dire} for patient {patient}")
 
-            else:
+            #else:
                 #----> aggiunta del log se la cartella è gia presente
-                logging.info(f"Folder {dire} already exists for patient {patient}")
+                #logging.info(f"Folder {dire} already exists for patient {patient}")
 
             #writing csv file with count information for each patient
             with open(f'{dire}/{type_data}_count_{patient}.csv',"w") as f:
@@ -260,7 +288,22 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
 #***********************************+
 
 def create_norm_all_file(path_output_results,dictionary_norm_count):
-    import os
+
+    '''
+    
+    Function to save the normalized count, for all groups that are present, into a csv file
+
+    Parameters
+    ----
+    path_output_results : str
+    dictionary_norm_count : dict
+
+    Return
+    ----
+    None
+
+    '''
+
 
     logging.info("Start normalized count calculatin on all groups")
 
@@ -271,9 +314,9 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
             #--->logging directory
             logging.debug(f"Creating directory {dire}")
             os.makedirs(dire)
-        else:
+        #else:
             #--->logging directory
-            logging.debug(f"Directory {dire} already exists")
+            #logging.debug(f"Directory {dire} already exists")
         for patient,phenos in patients.items():
             with open(f'{dire}/all_norm_count_{patient}.csv',"w") as f:
                 f.write(f"Patient\tPheno\tCount_all_Norm\n")
@@ -287,7 +330,7 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
                     else:
                         f.write(f'{patient}\t{p}\t{dictionary_norm_count[grade][patient][p]}\n')
 
-    logging.info("End normalized count calculatin on all groups")
+    logging.info("End normalized count calculation on all groups")
 
 
 
@@ -310,13 +353,9 @@ def bar_plot(path_output_result,dict_data,type_data):
 
     '''
     
-    import plotly.graph_objects as go
-    import math
-    import os
-    
     
     #---->logging barplot
-    logging.info("Barplot creation")
+    logging.info(f"Barplot creation for {type_data} count")
     
     for group,data in dict_data.items():
         #----> logging for start barplot creation
@@ -360,9 +399,9 @@ def bar_plot(path_output_result,dict_data,type_data):
             os.makedirs(dire)
             #----> logging created directory
             logging.info(f" Created folder {dire}")
-        else:
+        #else:
             #---> logging directory just existed
-            logging.info(f" Folder {dire} already exists")
+            #logging.info(f" Folder {dire} already exists")
 
 
         # saved figure in jpeg format
@@ -388,10 +427,7 @@ def calculate_mean_total_groups(dictionary_raw_count):
     ----
     mean_cells : float
     '''
-    import numpy as np
-
-    ##BUG AGGIUNGERE CHE SE C'è UN SOLO GRUPPO NON HA SENSO FARE QUESTA COSA
-
+  
     _count_total=[]
 
     #iterating on raw count dictionary
@@ -411,6 +447,8 @@ def calculate_mean_total_groups(dictionary_raw_count):
 def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
     '''
     formula normalizzation all groups = number of cells positive for target (or phenotipes) / total cells patient ) * mean of total cells of all groups
+
+    Functions to calculate the normalized count on all groups present
 
     Parameters:
     ----
@@ -472,39 +510,34 @@ def prepare_data_box_plot(PATH_MERGE_FOLDER,dictionary_count):
     _data_all: DataFrame
 
     '''
-    import os
-    import pandas as pd
-    import math
-    import numpy as np
-    
 
 ##FIXME Questa parte l'ho inserita nel main, quindi qui potrei toglierla
-    _count_folder=0
-    for _d in os.listdir(PATH_MERGE_FOLDER):
+    #_count_folder=0
+    #for _d in os.listdir(PATH_MERGE_FOLDER):
         #cartella dei gruppi
-        if not os.path.isfile(_d):
-            _count_folder+=1
+     #   if not os.path.isfile(_d):
+     #       _count_folder+=1
 
     # if we have 2 or more groups
-    if _count_folder>=2:
+    #if _count_folder>=2:
 
         #creating an empty dataframe
-        _data_all=pd.DataFrame()
-        _data_norm=[]
+    _data_all=pd.DataFrame()
+    _data_norm=[]
 
-        # iterating on dictionary count
-        for _k,_v in dictionary_count.items():
-            for _k2,_v2 in _v.items():
-                for _t in _v2.keys():
-                    if _t=="Total_Cells":
-                        continue
+    # iterating on dictionary count
+    for _k,_v in dictionary_count.items():
+        for _k2,_v2 in _v.items():
+            for _t in _v2.keys():
+                if _t=="Total_Cells":
+                    continue
 
-                    #array with information about group, phenotype and count
-                    data_temp=[_k,_t,_v2[_t]]
-                    _data_norm.append(data_temp)
+                #array with information about group, phenotype and count
+                data_temp=[_k,_t,_v2[_t]]
+                _data_norm.append(data_temp)
 
-        #append list on dataframe
-        _data_all=pd.DataFrame(_data_norm,columns=["group","pheno","Count"])
+    #append list on dataframe
+    _data_all=pd.DataFrame(_data_norm,columns=["group","pheno","Count"])
 
 
     
@@ -515,6 +548,7 @@ def prepare_data_box_plot(PATH_MERGE_FOLDER,dictionary_count):
 
 def create_output_box_plot_dir(path_output):
     '''
+    Function to create the Box Plots folder, where are saved box plot image
     Funzione per la creazione cartella dove veranno inseriti gli output, con creazione della cartella box plot dove saranno salvate le immagini
 
     Parameters
@@ -526,8 +560,6 @@ def create_output_box_plot_dir(path_output):
     None
 
     '''
-    import os
-    import logging
 
     temp_folder=os.path.join(path_output,"Box Plots")
     if not os.path.exists(temp_folder):
@@ -535,9 +567,9 @@ def create_output_box_plot_dir(path_output):
         #----> logging created directory
         logging.info(f"Created folder {temp_folder}")
         
-    else:
+    #else:
         #----> logging directory already exists
-        logging.info(f"Folder {temp_folder} already exists")
+        #logging.info(f"Folder {temp_folder} already exists")
         
 
 
@@ -547,7 +579,7 @@ def create_output_box_plot_dir(path_output):
 
 def create_comparison_box_plot(path_output_result,data_all,type_data):
     '''
-    function to make statistical test and annoteted the relative boxplots, generated with ploylt, to compare target (or phenotype) betweenness different group
+    Function to make statistical test and annoteted the relative boxplots, generated with ploylt, to compare  phenotypes betweenness different group
 
     Parameters
     ----
@@ -561,8 +593,6 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
     None
    
     '''
-    import tap
-    import logging
 
     logging.info(f"Box Plot creation on {type_data} count")
 
@@ -580,72 +610,10 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
     #tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
     #tap.plot_stats(data_all,x,y,subcategory=hue)
     
-#**************************
-def union_panel_E(path_descriptive_e,path_descriptive_f,groups):
-
-    import os
-    import pandas as pd
-
-
-    dict_match_panel_e={}
-    dict_match_panel_f={}
-
-
-
-    for g in groups:
-            #PANEL F
-        dict_match_panel_f[g]={}
-        files_f=os.path.join(path_descriptive_f,g,"csv")
-            
-        for file_f in os.listdir(files_f):
-            if file_f.startswith("all_"):
-                file_f=os.path.join(files_f,file_f)
-                df=pd.read_csv(file_f,sep="\t")
-                for _r in df.iterrows():
-                    paz=_r[1]["Patient"]
-                    pheno=_r[1]["Pheno"]
-                    count=_r[1]["Count_all_Norm"]
-                    if paz not in dict_match_panel_f[g].keys():
-                        dict_match_panel_f[g][paz]={}
-                    if pheno!="Total_Cells":
-                        if pheno=="CD31+" or pheno=="CD31+,CD147+" or pheno=="CD147+,CD31+" or pheno=="GFAP+" or pheno=="GFAP+,CD147+" or pheno=="CD147+,GFAP+":
-                            dict_match_panel_f[g][paz][pheno]=count
-            #PANEL E  
-        dict_match_panel_e[g]={}
-        files_e=os.path.join(path_descriptive_e,g,"csv")
-        for file_e in os.listdir(files_e):
-            if file_e.startswith("all_"):
-                file_e=os.path.join(files_e,file_e)
-                df_2=pd.read_csv(file_e,sep="\t")
-
-                for _r in df_2.iterrows():
-                    paz=_r[1]["Patient"]
-                    pheno=_r[1]["Pheno"]
-                    count=_r[1]["Count_all_Norm"]
-                    if paz not in dict_match_panel_e[g].keys():
-                        dict_match_panel_e[g][paz]={}
-                        #if pheno!="Total_Cells":
-                    dict_match_panel_e[g][paz][pheno]=count
-            
-        #AGGIUNTA NELLA CONTA DI NORM DEL PANNEL E DEI DATI DI CD31+ E CD31+,CD147+ DI PANNEL F
-    for _k in dict_match_panel_e.keys():
-        for paz in dict_match_panel_e[_k]:
-            for paz2 in dict_match_panel_f[_k]:
-                if paz==paz2:
-                    dict_match_panel_e[_k][paz].update(dict_match_panel_f[_k][paz2])
-        
-
-    return dict_match_panel_e
-
 
 
 def main():
-    import json
-    import os
-
-
-    f=open("config.json")
-    data=json.load(f)
+    
     if data["Clean_data"]["other_rm"]:
         path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
         logging.info(f"Merge data are in {path_merge_folder}")
@@ -655,7 +623,7 @@ def main():
     
     
     dict_pheno_interested=data["Phenotypes"]["pheno_list"]
-    # logging.info(f" The phenotypes of interest are: {dict_pheno_interested}")
+    logging.info(f" The phenotypes of interest are: {dict_pheno_interested}")
     
     dict_raw_count=raw_count_cells(path_merge_folder,dict_pheno_interested)
     
@@ -680,7 +648,7 @@ def main():
             df_raw=prepare_data_box_plot(path_merge_folder,dict_raw_count)
             create_comparison_box_plot(path_output_results,df_raw,"Raw")
         else:
-            logging.warning("Found only one group-impossible to continue with group comparison")
+            logging.warning("Found only one group - impossible to continue with groups comparison and box plot figure")
             
     else:
         logging.info("Raw data is False in configuration file--Descriptive section")
@@ -701,6 +669,8 @@ def main():
             create_comparison_box_plot(path_output_results,df_norm,"Normalized")
         else:
              logging.warning("Found only one group-impossible to continue with group comparison")
+    else:
+        logging.info("Normalized data is False in configuration file--Descriptive section")
     
 
     logging.info("End descriptive analysis!")
