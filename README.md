@@ -11,6 +11,7 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
 
     The results can be saved into:<br>
     - <em>output/Merged_clean</em><br>
+                or
     - <em>output/Merged</em><br>
 
     <br>
