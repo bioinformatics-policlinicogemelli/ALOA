@@ -48,6 +48,9 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
         if _d==".DS_Store":
             continue
         sub_directory=os.path.join(PATH_MERGE_FOLDER,_d)
+        if not os.listdir(sub_directory):
+            logging.error(f"Directory {_d} is empty")
+            exit()
 
         #iterating on each files presented into group folder
         for f in os.listdir(sub_directory):
@@ -621,6 +624,10 @@ def main():
         path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged")
         logging.info(f"Merge data are in {path_merge_folder}")
     
+    
+    if not os.listdir(path_merge_folder):
+        logging.error(f"{path_merge_folder} is an empty directory")
+        exit()
     
     dict_pheno_interested=data["Phenotypes"]["pheno_list"]
     logging.info(f" The phenotypes of interest are: {dict_pheno_interested}")
