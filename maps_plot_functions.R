@@ -62,20 +62,5 @@ multi_maps_plot=function(data, id, out_folder, interact=F){
           guides(color = guide_legend("Phenotypes",override.aes = list(size = 5)))+
           theme(panel.background = element_rect(fill = 'white'),legend.text = element_text(size=10)))
   
-  
-  if (interact){
-    
-    dir.create(file.path(out_folder,"Interactive_plots"))
-    
-    plt=ggplot(data)+
-      geom_point(aes(`Cell.X.Position`,`Cell.Y.Position`, color=Pheno),size=0.05, alpha = 0.6)+
-      xlab("X Position") +
-      ylab("Y Position") +
-      guides(color = guide_legend("Phenotypes",override.aes = list(size = 2)))+
-      theme(panel.background = element_rect(fill = 'white'),legend.text = element_text(size=10))
-    
-    saveWidget(ggplotly(plt, width = 1000, height = 1200), file = file.path(out_folder,"Interactive_plots",paste0(id,"_All_Pheno_",paste(gene_list, collapse=''),".html")))
-  }
-  
   dev.off()
 }

@@ -1,8 +1,8 @@
 {
    "Paths":{
-      "data_input_folder":"./data_input_9998_F/raw_data",
-      "output_folder":"./output_panelE",
-      "sample_sheet":"./sample_sheet_9998.xlsx"
+      "data_input_folder":"/Users/chiaraparrillo/Desktop/Progetti/PhenoSpatialImage/data_inputF/raw_data",
+      "output_folder":"/Users/chiaraparrillo/Desktop/Progetti/PhenoSpatialImage/output_PanelF",
+      "sample_sheet":"./sample_sheet.xlsx"
    },
    "Packages":{
       "install_pkg_R":false,
@@ -10,26 +10,18 @@
    },
    "Phenotypes":{
       "pheno_list":[
-        "CD4+",
-        "CD8+",
-        "IBA1+",
-        "CD147+,CD4+",
-        "CD147+,IBA1+",
-        "CD147+,Ki67+",
-        "CD147+",
-        "CD147+,CD8+",
-        "CD147+,CD31+",
-        "CD31+",
-        "GFAP+,CD147+",
-        "TMEM119+,CD68+,CD163+", 
-        "Ki67+,CD68+,CD163+",
-        "MCP1+,CD68+",
-        "MCP1+,CD68+,Ki67+",
-        "CD44+,CD68+,Ki67+",
-        "CD44+,TMEM119+",
-        "CD68+,TMEM119+",
-        "CD68+,CD163+",
-        "CD44+,CD68+"
+         "CD4+",
+         "CD8+",
+         "IBA1+",
+         "Ki67+",
+         "CD147+,CD4+",
+         "CD147+,IBA1+",
+         "CD147+,Ki67+",
+         "CD147+",
+         "CD147+,CD8+",
+         "CD147+,CD31+",
+         "CD31+",
+         "GFAP+,CD147+"
       ]
    },
    "Clean_data":{
@@ -57,9 +49,7 @@
       "multi_plot":true,
       "pheno_list":[
 
-      ],
-      "combination":false,
-      "interactive":true
+      ]
    },
    "Distance":{
       "save_csv":true,
@@ -88,8 +78,8 @@
       "save_folder":"./output/output_PanelF_9998/Distance_Statistical"
    },
    "cluster":{
-      "pheno_list":[
-      ],
-      "k":10
+      "pheno_list":[],
+      "k":10,
+      "cluster_method":"kmeans"
    }
 }
