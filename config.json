@@ -72,10 +72,7 @@
    },
    "statistical_distance":{
       "pheno_from":"CD8+,CD147+",
-      "pheno_to":"CD31+,GFAP+,IBA1+",
-      "all_roi":true,
-      "root_folder":"./output/output_PanelF_9998/Distance",
-      "save_folder":"./output/output_PanelF_9998/Distance_Statistical"
+      "pheno_to":"CD31+,GFAP+,IBA1+"
    },
    "cluster":{
       "pheno_list":[],
