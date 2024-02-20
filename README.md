@@ -14,6 +14,21 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
                 or
     - <em>output/Merged</em><br>
 
-    <br>
 
-- Spatial **Imaging** Analysis 
+
+    From Merged or Merged clean file you can utilize 2 section:
+    - **Map Plot**, this section produces images to visualize spatial distribution of phenotypes of interest
+    
+ 
+    - **Description**, this section procudes **bar plots**, through which visualize phenotype count for each patient, and **box plots** through which compare phenotype count from groups. <br> For the count there is the possibility to calculate: <br>
+            - **RAW** count         <br>
+            - **NORMALIZED** count (inserire foto formule) <br>
+    - **Distance**, this section calculated the distance from specific phenotypes or from the combination of all the phenotypes of the panel, starting from [phenoptr - Computing inter-cellular distances ](https://akoyabio.github.io/phenoptr/articles/computing_distances.html).<br> From distance data, it's possibile to make statistical analysis from groups, through box plot (default) and distribution curve plot (optional)
+
+- Spatial **Imaging** Analysis <img src="images.jpeg" width=20 height=12>
+
+
+## Setup
+
+
+## Usage
