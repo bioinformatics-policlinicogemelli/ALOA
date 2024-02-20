@@ -13,24 +13,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import plotly.figure_factory as ff
 
-
-with open("config.json") as f:
-        data=json.load(f)
-
-log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
-log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{datetime.now()}.log",filemode="a")
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
-
-
 def standardization_distance_all_image(values,paz):
     '''
     function to calculate z-score from distance raw count (distance value-mean(distances)/standard deviation))
@@ -418,6 +400,22 @@ def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major
 
 
 def main():
+    
+    with open("config.json") as f:
+        data=json.load(f)
+
+    log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
+    log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
+    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{datetime.now()}.log",filemode="a")
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
     #path folder with distance
     root_folder=data["statistical_distance"]["root_folder"]
 

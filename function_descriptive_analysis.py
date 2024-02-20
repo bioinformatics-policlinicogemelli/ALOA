@@ -8,21 +8,6 @@ import plotly.graph_objects as go
 import math
 import tap
 
-with open("config.json") as f:
-        data=json.load(f)
-
-log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
-
-log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
-
 
 def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
     '''
@@ -616,6 +601,21 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
 
 
 def main():
+    
+    with open("config.json") as f:
+        data=json.load(f)
+
+    log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
+
+    log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
+    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
     
     if data["Clean_data"]["other_rm"]:
         path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
