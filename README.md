@@ -16,7 +16,7 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
 
 
 
-    From Merged or Merged clean file you can utilize 2 section:
+    From Merged or Merged clean file you can utilize 3 sections:
     - **Map Plot**, this section produces images to visualize spatial distribution of phenotypes of interest
     
  
@@ -28,7 +28,8 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
 - Spatial **Imaging** Analysis <img src="images.jpeg" width=20 height=12>
 
 
-## Setup
+## Installation
 
 
 ## Usage
+
