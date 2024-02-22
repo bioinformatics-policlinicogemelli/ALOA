@@ -29,7 +29,8 @@
 
     Box plot are created for raw and/or normalized count and saved into Box Plot folder.<br>
     <br>
-    <center><img src="boxplot_folder.png" height=300></center><br><br>
+    <center><img src="boxplot_folder.png" height=300></center>
+    <br><br>
     
 
     Statistical test is: <br>
@@ -38,8 +39,18 @@
 
     **+++INSERIRE IMMAGINE DI ESEMPIO DI UN BOXPLOT+++**
 
+<br><br>
 
-    
+- **function_statistical_distance.py**<br>
+The function_statistical_distance function is a Python script to make statistical analysis on distance results.
+Starting from distance files, generated for each patient for each group, the function can make:
+    - comparison between 2 specific markers insert into config file
+    ++inserire esempio della configurazione++
+    or
+    - comparison between all the permutation of the markers insert into 
+    ++inserire esempio della configurazione++
+
+<center> <img src="distance_statistical.png" width=400> </center>
 
 
    
