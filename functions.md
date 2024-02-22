@@ -5,27 +5,32 @@
     Through this function a parent folder is created, **descriptive**, containing just as many subfolders as there are groups present.<br>
     **Example**:<br> if we have 2 groups ("Group 2" and "Group 3")
 
-    <img src="subfolder.png">
+    <center><img src="subfolder.png" width=400></center>
 
-
+    <br>
+    <br>
     Through this function you can:
 
     - Calculated the raw count of the phenotypes for each patient for each group,saved as *"Raw_count_patientID.csv"* into **csv** folder
 
-    - Calculated the normalized count of the phenotypes for each patient for each group, saved as *"Norm_count_patientID.csv"* into **csv** folder<br>
+    - Calculated the normalized count of the phenotypes for each patient for each group (view formula), saved as *"Norm_count_patientID.csv"* into **csv** folder <br>
+    <br>
+    <center><img src="Barplot_norm.png" width=260></center>
 
-    **++INSERIRE FORMULA NORMALIZZAZIONE++**<br>
-
+    <br>
     Starting from this count, a barplot is created to visualize the distribution of the phenotypes for each patient into a single group, sved the image into **Bar_plot** folder.
 
     **++INSERIRE IMMAGINE DI ESEMPIO DI UN BARPLOT++**
 
-    If there are **more than one group**, this function makes a comparison between the group for the phenotypes of interest. Box plot are created for raw and/or normalized count and saved into Box Plot folder.<br>
+    If there are **more than one group**, this function makes a comparison between the group for the phenotypes of interest. <br>
+    For the comparison are utilized count normalized for all the groups present <br>
+
+    Box plot are created for raw and/or normalized count and saved into Box Plot folder.<br>
     <br>
-    <img src="boxplot_folder.png" height=300>
+    <center><img src="boxplot_folder.png" height=300></center>
     <br>
-    Statistical test is:
-    - **Mann-Whitney** test if there are 2 groups
+    Statistical test is:<br>
+    - **Mann-Whitney** test if there are 2 groups<br>
     - **Kruskal** test if there are more than 2 groups
 
 
