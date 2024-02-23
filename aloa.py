@@ -16,7 +16,7 @@ from distance_match import distance_match
 
 def aloa(args, data):
     
-    logging.info(f"\naloa.py args: \n[merge:{args.merge}, clear:{args.clean},\
+    logging.info(f"\naloa.py args: \n[merge:{args.merge},\
                  \nmapping:{args.maps},distance:{args.distance},\
                  \nimg_match:{args.imgMatch}, dst_match:{args.dstMatch},\
                  \noverview:{args.overview}, stats:{args.stats},\
@@ -33,18 +33,12 @@ def aloa(args, data):
     #########################################
     
     if args.merge:
+        
         logging.info("Merge step starting now")
         ro.r.source("./merge.R", encoding="utf-8")
-        
-        if args.clean:
-            if args.merge or os.listdir(os.path.join(data["Paths"]["output_folder"],"Merged")>0):
-                logging.info("Clean step starting now")
-                ro.r.source("./clean_data.R", encoding="utf-8")
-            else:
-                logging.error("Merge folder empty")
 
-        if not args.clean:
-            logging.warning("Clean step was not selected. This step is strongly recommended")
+        logging.info("Clean step starting now")
+        ro.r.source("./clean_data.R", encoding="utf-8")
         
         #########################################
         #             DESCRIPTIVE               #
@@ -126,11 +120,11 @@ def main():
     console_handler.setFormatter(logging.Formatter("[%(levelname)s] %(asctime)s - %(message)s", "%Y-%m-%d %H:%M:%S"))
     logger.addHandler(console_handler)
          
-    parser = MyArgumentParser(add_help=True, exit_on_error=True, usage=None, description='Argument of ALOA script')
+    parser = MyArgumentParser(add_help=True, usage=None, description='Argument of ALOA script')
     
     # MERGE + CLEAN BLOCK
     parser.add_argument('-m', '--merge', required=False, action='store_true', help='merge datasets from ROIs of the same patient')
-    parser.add_argument('-c', '--clean', required=False, action='store_true', help='remove the all Phenotype-negative cells')
+    #parser.add_argument('-c', '--clean', required=False, action='store_true', help='remove the all Phenotype-negative cells')
     
     # MAPS PLOT BLOCK
     parser.add_argument('-M', '--maps', required=False, action='store_true', help='create maps plot')
@@ -157,11 +151,7 @@ def main():
     except ValueError :
         logger.critical("Something went wrong! Check your inputs")
         exit(1)
-    
-    if (args.clean and not args.merge):
-        logger.critical("Something went wrong! This pipeline requires the merge (-m) option before the clean (-c) one!")
-        exit(1)
-       
+           
     if (not args.imgMatch or not args.dstMatch) and not args.merge:
         logger.critical("Something went wrong! This pipeline requires the merge (-m) option to proceed with the total analysis or one of the single image options (-I or -D)")
         exit(1)
