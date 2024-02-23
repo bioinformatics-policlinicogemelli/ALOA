@@ -592,9 +592,13 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
     hue_order=list(data_all["group"].unique())
     lables=sorted(list(data_all["pheno"].unique()))
 
-    #taplib library with logaritmic value on y axis
-    tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
-    
+    if len(hue_order)==2:
+        #taplib library with logaritmic value on y axis
+        tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+    elif len(hue_order)>2:
+        tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+
+        
     #tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
     #tap.plot_stats(data_all,x,y,subcategory=hue)
     
