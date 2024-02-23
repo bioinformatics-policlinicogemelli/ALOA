@@ -1,7 +1,7 @@
 {
    "Paths":{
-      "data_input_folder":"/Users/chiaraparrillo/Desktop/Progetti/PhenoSpatialImage/data_inputF/raw_data",
-      "output_folder":"/Users/chiaraparrillo/Desktop/Progetti/PhenoSpatialImage/output_PanelF",
+      "data_input_folder":"./data_test/raw_data",
+      "output_folder":"./output",
       "sample_sheet":"./sample_sheet.xlsx"
    },
    "Packages":{
@@ -12,7 +12,6 @@
       "pheno_list":[
          "CD4+",
          "CD8+",
-         "IBA1+",
          "Ki67+",
          "CD147+,CD4+",
          "CD147+,IBA1+",
@@ -48,7 +47,8 @@
    "Map_plot":{
       "multi_plot":true,
       "pheno_list":[
-
+         "CD4+",
+         "CD8+"
       ]
    },
    "Distance":{
@@ -77,6 +77,6 @@
    "cluster":{
       "pheno_list":[],
       "k":10,
-      "cluster_method":"kmeans"
+      "cluster_method":"spectral"
    }
 }
