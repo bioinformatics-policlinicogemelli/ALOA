@@ -7,7 +7,7 @@ library(logr)
 
 source("logger.R")
 logger(paste0("Merge_log_",format(Sys.time(), "%Y-%m-%d")))
-
+cat("\n")
 log4r_info("Start merging process: This step will merge together the cell_seg_data files for each subject")
 
 # Load json file
@@ -40,11 +40,11 @@ log4r_info("Start Merging process...")
 
 for (s in 1:nrow(data_input)){ #for loop on dataframe row (cells)
   
-  #print("#####################################")
+  cat("\n#####################################\n")
   id=data_input$sbj_ID[s]
   group=data_input$Group[s]
 
-  log4r_info(paste0("Subject ", id, " - Group: ", group))
+  log4r_info(paste0("Analyzing Subject ", id, " - Group: ", group))
   
   group_out_path=file.path(output_folder,"Merged",group)
   dir.create(group_out_path)
@@ -80,5 +80,7 @@ for (s in 1:nrow(data_input)){ #for loop on dataframe row (cells)
 
 } # end for loop
 
+cat("\n")
 log4r_info("Merge Step completed!")
+cat("\n")
 #readLines(my_logfile)

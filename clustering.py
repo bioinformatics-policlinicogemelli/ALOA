@@ -83,7 +83,6 @@ def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
     for cluster in range(n_opt_cluster):
 
         cluster_data = df_plot[df_plot['Cluster'] == cluster]
-
         points = cluster_data[['Cell.X.Position', 'Cell.Y.Position']].values
 
         # convex hull evaluation
@@ -112,9 +111,10 @@ def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.savefig(os.path.join(output_f,idx+".tiff"), dpi=300, bbox_inches = "tight")
     plt.close()
+    
     return output_path
 
-def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
+def plot_stacked_bar_chart(df_plot, output_path, idx):
     
     # Check for empty dataframe
     if df_plot.empty:
@@ -179,6 +179,9 @@ def main():
     output_path = os.path.join(data["Paths"]["output_folder"],"Clustering")
     pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)  
     
+    clust_alg=data["cluster"]["cluster_method"]
+    print(f"{clust_alg} algorithm selected!")
+    
     groups=[f for f in os.listdir(input_path) if not f.startswith('.')] 
 
     if not data["cluster"]["pheno_list"]:
@@ -191,6 +194,7 @@ def main():
         output_path_g=os.path.join(output_path,g)
         pzt_list=[f for f in os.listdir(os.path.join(input_path,g)) if not f.startswith('.')] 
         print("Starting analyzing group: "+g)
+        
         for pzt in pzt_list:
             
             print("sbj: "+pzt)
@@ -202,14 +206,13 @@ def main():
             
             # silhouette analysis
             k=data["cluster"]["k"]
-            clust_alg=data["cluster"]["cluster_method"]
             df_sample_tmp, n_cluster_opt, clust_alg = plot_silhouette_analysis(df_filt, output_path_g, idx, k, clust_alg)
 
             # Convex Hull plot
             output_res=plot_convex_hull(df_sample_tmp, n_cluster_opt, idx, output_path_g, clust_alg)
 
             # stacked barplot and percentage csv 
-            plot_stacked_bar_chart(df_sample_tmp, output_res, idx, clust_alg)
+            plot_stacked_bar_chart(df_sample_tmp, output_res, idx)
 
 if __name__ == "__main__":
     main()

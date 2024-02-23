@@ -1,0 +1,11 @@
+rjson
+remotes
+plotly
+ggplot2
+dplyr
+htmlwidgets
+readxl
+colorRamp2
+data.table
+logr
+

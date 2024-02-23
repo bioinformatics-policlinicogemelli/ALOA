@@ -64,12 +64,19 @@ for (g in group){ #for loop on dataframe row (cells)
     log4r_info(paste0(" -> Subject: ",id))
     seg_data=read.csv(csv, sep="\t")
     
-    if(!"Pheno" %in% colnames(seg_data)){
-      pheno_list=colnames(seg_data[ , grepl( "Phenotype" , names( seg_data ) ) ])
+    #if(!"Pheno" %in% colnames(seg_data)){
+    pheno_list=colnames(seg_data[ , grepl( "Pheno" , names( seg_data ) ) ])
+    pheno_list=pheno_list[pheno_list != "Pheno"]
+    if (length(pheno_list)>1){
       seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
+    }else{
+      seg_data$Pheno=seg_data[ ,  pheno_list]
     }
+    #}
     
-    pheno_list=colnames(seg_data[ , grepl( "Phenotype" , names( seg_data ) ) ])
+    #pheno_list=colnames(seg_data[ , grepl( "Pheno" , names( seg_data ) ) ])
+    
+    #pheno_list=colnames(seg_data[ , grepl( "Phenotype" , names( seg_data ) ) ])
     seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
     seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
     seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
