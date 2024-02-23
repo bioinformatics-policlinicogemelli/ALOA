@@ -319,83 +319,7 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
 
 
 
-'''
-def statistical_curve_plot(path_output_result,df,pheno_from,pheno_to,grade_major,dict_median,f,goups_original,plot_distance=False):
-    from scipy import stats
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    import plotly.figure_factory as ff
-    import os
 
-
-    #Output salvataggio file delle immagine delle distanze
-    ##FIXME metterla opzionale se si vogliono salvare e calcolare
-    if plot_distance:
-        dire =os.path.join(path_output_result,"distance_curve")
-        if not os.path.exists(dire):
-            os.makedirs(dire)
-
-    #lista dei gruppi presenti
-    groups=list(df["GROUP"].unique())
-
-    #array contenente i valori delle distanze per le diverse cellulle per i diversi pazienti nei diversi gradi [[valori grado II],[valori grado III]]
-    values_distance=[]
-
-    for g in groups:
-        temp=list(df[df["GROUP"]==g]["DISTANCE"].values)
-        values_distance.append(temp)
-    
-    p_value=10
-
-    #Caso in cui abbiamo SOLO 1 GRUPPO--> no statistiche
-    if len(df["GROUP"].unique())==1:
-        logging.warning("Only One Group - not statistical is possible")
-        if plot_distance:
-            #CREAZIONE DELLA CURVA DELLE DISTANZA
-            hist_data=[list(df["DISTANCE"].values)]
-            group_labels = df["GROUP"].unique()
-            fig = ff.create_distplot(hist_data, group_labels,show_hist=False,show_rug=False)
-            # Add title
-            fig.update_layout(title_text=f"Distance-Z score from {pheno_from} to {pheno_to}",
-                            yaxis=dict(tickformat=".4f",title_text=r"$Density$"),xaxis=dict(title_text=r"$Distance_{z}$"),legend_title_text="Group")
-            fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
-
-    #Caso in cui abbiamo 2 GRUPPI---> Test di mannwhitney
-    elif len(df["GROUP"].unique())==2:
-        logging.info("Executive Mann-Whitney test")
-        t_stat, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
-        f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(dict_median[g]) for g in goups_original)+"\t"+grade_major+"\n")
-
-    #Caso in cui i gruppi sono più di due---> Test di Kruskal per più sample
-    elif len(df["GROUP"].unique())>2:
-        t_stat, p_value = stats.kruskal(*[v for v in values_distance])
-        logging.info("Executive Kruskal test")
-        f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(dict_median[g]) for g in goups_original)+"\t"+grade_major+"\n")
-    
-            
-
-        
-    #CREAZIONE CURVE DISTANZE
-    if plot_distance:
-        group_labels = df["GROUP"].unique()
-        fig = ff.create_distplot(values_distance, group_labels,show_hist=False,show_rug=False)
-        
-        if p_value < 0.05 and p_value >= 0.001:
-            fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.05</span>",
-                            yaxis=dict(tickformat=".4f",title_text=r"$Density$"),xaxis=dict(title_text=r"$Distance_{z}$"),legend_title_text="Group")
-            fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
-        
-        elif p_value < 0.001:
-            fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.001</span>",
-                            yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-            fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
-            
-        elif p_value >= 0.05 and p_value<10:
-            fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:red;'>p value > 0.05</span>",
-                            yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-            fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
-        
-'''
 
 
 
@@ -417,14 +341,14 @@ def main():
     logger.addHandler(console_handler)
 
     #path folder with distance
-    root_folder=data["statistical_distance"]["root_folder"]
+    root_folder=os.path.join(data["output"],"Distance")
 
     if not os.listdir(root_folder):
         logging.error(f"{root_folder} is an empty directory")
         exit()
     
     #path folder save distance statistical results
-    path_output=data["statistical_distance"]["save_folder"]
+    path_output=os.path.join(data["output"],"Distance_Statistical")
 
     #create Distance_Statistical folder
     create_output_dir(path_output)
