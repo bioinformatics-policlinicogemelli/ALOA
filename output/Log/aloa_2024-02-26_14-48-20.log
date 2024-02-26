@@ -1,0 +1,12 @@
+[INFO] 2024-02-26 14:48:20 - 
+aloa.py args: 
+[merge:True,                 
+mapping:False,distance:False,                 
+img_match:False, dst_match:False,                 
+overview:False, stats:False,                 
+cluster:False,                 
+overwrite:False]
+[INFO] 2024-02-26 14:48:20 - Merge step starting now
+[INFO] 2024-02-26 14:48:21 - Clean step starting now
+[INFO] 2024-02-26 14:48:21 - Embedded R ended.
+[INFO] 2024-02-26 14:48:21 - Embedded R already ended.

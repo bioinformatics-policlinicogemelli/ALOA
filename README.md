@@ -25,7 +25,8 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
             - **NORMALIZED** count <br>
     - **Distance**: this section calculated the distance from specific markers or from the combination of all the markers of the panel, starting from [phenoptr - Computing inter-cellular distances ](https://akoyabio.github.io/phenoptr/articles/computing_distances.html).<br> From distance data, it's possibile to make statistical analysis from groups, through box plot (default) and distribution curve plot (optional)
 
-- Spatial **Imaging** Analysis <img src="Image_redme/images.jpeg" width=20 height=12><br>
+- Spatial **Imaging** Analysis <img src="./Image_redme/images.jpeg" width=20 height=12>
+<br>
 
     This section provides a data visualization feature that produce static and interactive images from a selected number of ROIs. 
 
@@ -43,7 +44,44 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
 ## Installation
 
 
+1. Open a terminal
+2. Digit the following command to clone the repository folder: 
+```
+git clone https://github.com/bioinformatics-policlinicogemelli/ALOA
+```
+3.  Install all of the packages required
+```
+cd <ALOA_folder_path>/ALOA
+
+pip install -r requirements.txt
+
+Rscript installation_rpackages.R req.txt
+```
+
+From Docker
+
 ## Usage
+The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 10 subsessions:
+<br>
+* **Paths**: here is possible to specify *data_input_folder*, *output_folder* and *sample_sheet* paths
+
+* **Packages**: 
+
+* **Phenotypes**: here are specified the markers of interest into *pheno_list*
+
+* **Descriptive**: here is possibile to specify parameters, for descriptive section, as *raw* and/or *normalized* count
+
+* **Map_plot**: here are specified parameters as *multi_plot*, if you can... and *pheno_list* where specified the markers on performing the analysis
+
+* **Distance**: here are specified the parameters for distance calculation as *save_csv* if you want to save the distance values, *save_img* uf you want to... and *pheno_list* if you want to calculate distance between specific markers
+
+* **image_match**:
+
+* **distance_match**:
+
+* **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
+
+* **cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify specific markers, *k* if you want to specify the number of clusters, *cluster_method* to choose the clustering method (spectral or kmeans)
 
 #### Launch ALOA main
 
