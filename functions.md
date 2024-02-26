@@ -5,7 +5,7 @@
     Through this function a parent folder is created, **descriptive**, containing just as many subfolders as there are groups present.<br>
     **Example**:<br> if we have 2 groups ("Group 2" and "Group 3")
 
-  <p align="center"><img src="image_readme/subfolder.png"></p>
+  <p align="center"><img src="Image_readme/subfolder.png"></p>
 
     <br>
     <br>
@@ -15,7 +15,7 @@
 
     - Calculated the normalized counts of the phenotypes for each patient for each group (view formula), saved as *"Norm_count_patientID.csv"* into **csv** folder <br>
     <br>
-    <p align="center"><img src="image_readme/Barplot_norm.png" width=260></p>
+    <p align="center"><img src="Image_readme/Barplot_norm.png" width=260></p>
 
     <br>
     Starting from this counts, a barplot is created to visualize the distribution of the phenotypes for each patient into a single group, saved the image into **Bar_plot** folder.
@@ -26,11 +26,11 @@
     If there are **more than one group**, this function makes a comparison between the group for the phenotypes of interest. <br>
     For the comparison are utilized count normalized for all the groups present as formula <br>
 
-   <p align="center"> <img src="image_readme/boxplot_norm.png" width=260></p>
+   <p align="center"> <img src="Image_readme/boxplot_norm.png" width=260></p>
 
     Box plot are created for raw and/or normalized count and saved into Box Plot folder.<br>
     <br>
-    <p align="center"><img src="image_readme/boxplot_folder.png" height=300></p>
+    <p align="center"><img src="Image_readme/boxplot_folder.png" height=300></p>
     <br><br>
     
 
@@ -80,7 +80,7 @@ Starting from distance files, generated for each patient for each group, the fun
     A parent folder is created, **Distance_statistical**, containing one or 3 folders as in figure.
     <br>
 
-    <p align="center"><img src="image_readme/distance_statistical.png" width=300> </p>
+    <p align="center"><img src="Image_readme/distance_statistical.png" width=300> </p>
 
     Through this function you can:
 
