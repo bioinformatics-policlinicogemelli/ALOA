@@ -21,7 +21,7 @@
     Starting from this counts, a barplot is created to visualize the distribution of the phenotypes for each patient into a single group, saved the image into **Bar_plot** folder.
 
  
-    <p align="center"><img src="output/descriptive/G2/Bar_plot/Bar_Plot_Normalized.jpeg" width=260></p>
+    <p align="center"><img src="output/descriptive/G2/Bar_plot/Bar_Plot_Normalized.jpeg" width=400></p>
 
     If there are **more than one group**, this function makes a comparison between the group for the phenotypes of interest. <br>
     For the comparison are utilized count normalized for all the groups present as formula <br>
@@ -39,7 +39,7 @@
     - **Kruskal** test if there are more than 2 groups
 
     
-    <p align="center"><img src="output/descriptive/Box Plots/box_plot_comparison_Normalized.jpeg" width=320></p>
+    <p align="center"><img src="output/descriptive/Box Plots/box_plot_comparison_Normalized.jpeg" width=400></p>
 
 <br><br>
 
