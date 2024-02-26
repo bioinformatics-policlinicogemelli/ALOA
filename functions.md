@@ -39,7 +39,7 @@
     - **Kruskal** test if there are more than 2 groups
 
     
-    <p align="center"><img src="output/descriptive/Box Plots/box_plot_comparison_Normalized.jpeg" width=400></p>
+    <p align="center"><img src="output/descriptive/Box Plots/box_plot_comparison_Normalized.jpeg" width=500></p>
 
 <br><br>
 
