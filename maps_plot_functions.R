@@ -38,7 +38,7 @@ filt_data_Pheno=function(data, id, gene_list){
       }
     }
   }
-
+  
   idx=list()
   i=1
   for (cc in pheno_list_mod){
