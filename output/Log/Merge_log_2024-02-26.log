@@ -1,0 +1,56 @@
+========================================================================= 
+Log Path: ./output/log/Merge_log_2024-02-26.log 
+Program Path: /Users/federicapersiani/Desktop/ALOA/merge.R 
+Working Directory: /Users/federicapersiani/Desktop/ALOA 
+User Name: federicapersiani 
+R Version: 4.3.1 (2023-06-16) 
+Machine: imacdibioinfo04.fd.rm.unicatt.it arm64 
+Operating System: Darwin 22.2.0 Darwin Kernel Version 22.2.0: Fri Nov 11 02:04:44 PST 2022; root:xnu-8792.61.2~4/RELEASE_ARM64_T8103 
+Base Packages: tools stats graphics grDevices utils datasets methods base Other Packages: logr_1.3.5 phenoptrReports_0.3.3 readxl_1.4.3 lubridate_1.9.3 forcats_1.0.0 stringr_1.5.1 dplyr_1.1.4 purrr_1.0.2 readr_2.1.4 tidyr_1.3.0 tibble_3.2.1 tidyverse_2.0.0 rjson_0.2.21 ggplot2_3.4.4 tiff_0.1-12 phenoptr_0.3.2 
+Log Start Time: 2024-02-26 14:48:20.912375 
+========================================================================= 
+
+2024-02-26 14:48:20 INFO: Start merging process: This step will merge together the cell_seg_data files for each subject 
+
+2024-02-26 14:48:20 INFO: Loading configuration file... 
+
+2024-02-26 14:48:20 INFO: Merged file will be stored in ./output/Merged 
+
+2024-02-26 14:48:20 INFO: Find 4 subjects! 
+
+2024-02-26 14:48:20 INFO: Start Merging process... 
+
+2024-02-26 14:48:20 INFO: Analyzing Subject 001 - Group: G1 
+
+2024-02-26 14:48:20 INFO: Check for already existing Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:20 INFO: Removing old Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: File ./output/Merged/G1/Merge_cell_seg_data_001.txt saved correctly! 
+
+2024-02-26 14:48:21 INFO: Analyzing Subject 002 - Group: G2 
+
+2024-02-26 14:48:21 INFO: Check for already existing Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: Removing old Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: File ./output/Merged/G2/Merge_cell_seg_data_002.txt saved correctly! 
+
+2024-02-26 14:48:21 INFO: Analyzing Subject 003 - Group: G2 
+
+2024-02-26 14:48:21 INFO: Check for already existing Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: Removing old Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: File ./output/Merged/G2/Merge_cell_seg_data_003.txt saved correctly! 
+
+2024-02-26 14:48:21 INFO: Analyzing Subject 004 - Group: G3 
+
+2024-02-26 14:48:21 INFO: Check for already existing Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: Removing old Merge_cell_seg_data.txt 
+
+2024-02-26 14:48:21 INFO: File ./output/Merged/G3/Merge_cell_seg_data_004.txt saved correctly! 
+
+2024-02-26 14:48:21 INFO: Merge Step completed! 
+

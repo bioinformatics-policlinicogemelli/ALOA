@@ -1,0 +1,53 @@
+[INFO] ALOA - 2024-02-26 14:48:23,807 - Merge data are in ./output/Merged_clean
+[INFO] ALOA - 2024-02-26 14:48:23,807 -  The phenotypes of interest are: ['CD4+', 'CD163+']
+[INFO] ALOA - 2024-02-26 14:48:23,807 - Start raw count calculation
+[INFO] ALOA - 2024-02-26 14:48:23,818 - End raw count calculation
+[INFO] ALOA - 2024-02-26 14:48:23,818 - Group/s presents ['G1', 'G2', 'G3']
+[INFO] ALOA - 2024-02-26 14:48:23,818 -  The output of descriptive section is ./output/descriptive
+[INFO] ALOA - 2024-02-26 14:48:23,818 -  Created folder ./output/descriptive/G1
+[INFO] ALOA - 2024-02-26 14:48:23,818 -  Created folder ./output/descriptive/G2
+[INFO] ALOA - 2024-02-26 14:48:23,818 -  Created folder ./output/descriptive/G3
+[INFO] ALOA - 2024-02-26 14:48:23,818 - Created folder ./output/descriptive/G1/csv for patient 001
+[INFO] ALOA - 2024-02-26 14:48:23,818 - Start Writing ./output/descriptive/G1/csv/Raw_count_001.csv file for patient 001
+[INFO] ALOA - 2024-02-26 14:48:23,818 - End Writing ./output/descriptive/G1/csv/Raw_count_001.csv file for patient 001
+[INFO] ALOA - 2024-02-26 14:48:23,818 - Created folder ./output/descriptive/G2/csv for patient 002
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Start Writing ./output/descriptive/G2/csv/Raw_count_002.csv file for patient 002
+[INFO] ALOA - 2024-02-26 14:48:23,819 - End Writing ./output/descriptive/G2/csv/Raw_count_002.csv file for patient 002
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Start Writing ./output/descriptive/G2/csv/Raw_count_003.csv file for patient 003
+[INFO] ALOA - 2024-02-26 14:48:23,819 - End Writing ./output/descriptive/G2/csv/Raw_count_003.csv file for patient 003
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Created folder ./output/descriptive/G3/csv for patient 004
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Start Writing ./output/descriptive/G3/csv/Raw_count_004.csv file for patient 004
+[INFO] ALOA - 2024-02-26 14:48:23,819 - End Writing ./output/descriptive/G3/csv/Raw_count_004.csv file for patient 004
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Barplot creation for Raw count
+[INFO] ALOA - 2024-02-26 14:48:23,819 - Start Barplot for group G1
+[INFO] ALOA - 2024-02-26 14:48:23,975 -  Created folder ./output/descriptive/G1/Bar_plot
+[INFO] ALOA - 2024-02-26 14:48:24,661 - Start Barplot for group G2
+[INFO] ALOA - 2024-02-26 14:48:24,665 -  Created folder ./output/descriptive/G2/Bar_plot
+[INFO] ALOA - 2024-02-26 14:48:24,804 - Start Barplot for group G3
+[INFO] ALOA - 2024-02-26 14:48:24,806 -  Created folder ./output/descriptive/G3/Bar_plot
+[INFO] ALOA - 2024-02-26 14:48:24,924 - Created folder ./output/descriptive/Box Plots
+[INFO] ALOA - 2024-02-26 14:48:24,925 - Box Plot creation on Raw count
+[INFO] ALOA - 2024-02-26 14:48:25,337 - Start normalized count calculation
+[INFO] ALOA - 2024-02-26 14:48:25,338 - End normalized count calculation
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Start Writing ./output/descriptive/G1/csv/Norm_count_001.csv file for patient 001
+[INFO] ALOA - 2024-02-26 14:48:25,338 - End Writing ./output/descriptive/G1/csv/Norm_count_001.csv file for patient 001
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Start Writing ./output/descriptive/G2/csv/Norm_count_002.csv file for patient 002
+[INFO] ALOA - 2024-02-26 14:48:25,338 - End Writing ./output/descriptive/G2/csv/Norm_count_002.csv file for patient 002
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Start Writing ./output/descriptive/G2/csv/Norm_count_003.csv file for patient 003
+[INFO] ALOA - 2024-02-26 14:48:25,338 - End Writing ./output/descriptive/G2/csv/Norm_count_003.csv file for patient 003
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Start Writing ./output/descriptive/G3/csv/Norm_count_004.csv file for patient 004
+[INFO] ALOA - 2024-02-26 14:48:25,338 - End Writing ./output/descriptive/G3/csv/Norm_count_004.csv file for patient 004
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Barplot creation for Normalized count
+[INFO] ALOA - 2024-02-26 14:48:25,338 - Start Barplot for group G1
+[INFO] ALOA - 2024-02-26 14:48:25,459 - Start Barplot for group G2
+[INFO] ALOA - 2024-02-26 14:48:25,590 - Start Barplot for group G3
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Starting normalized count on all groups
+[INFO] ALOA - 2024-02-26 14:48:25,709 - End normalized count on all groups
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Start normalized count calculatin on all groups
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Start writing file of normalized count on all groups for patient 001
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Start writing file of normalized count on all groups for patient 002
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Start writing file of normalized count on all groups for patient 003
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Start writing file of normalized count on all groups for patient 004
+[INFO] ALOA - 2024-02-26 14:48:25,709 - End normalized count calculation on all groups
+[INFO] ALOA - 2024-02-26 14:48:25,709 - Box Plot creation on Normalized count
+[INFO] ALOA - 2024-02-26 14:48:25,862 - End descriptive analysis!
