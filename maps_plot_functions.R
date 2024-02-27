@@ -25,16 +25,20 @@ filt_data_Pheno=function(data, id, gene_list){
       pheno_list_mod[p]=gene_list[p]
     }else if (lengths(str_split(gene_list[p],","))>1){
       l=str_split(gene_list[p],",")
-      comb=crossing(l[[1]],l[[1]])
-      for (i in 1:length(comb[[1]])){
-        cc=paste0(comb[[1]][i],comb[[2]][i])
-        if (length(Reduce(intersect,(list(cc, unique(data$Pheno)))))>0){
+      cmd=paste0("crossing(",paste(rep("l[[1]]",lengths(l)), collapse=","),")")
+      comb=eval(parse(text=cmd))
+      
+      list_c=apply( comb , 1 , paste , collapse = "" )
+
+      for (i in 1:length(list_c)){
+        cc=list_c[i]
+        if (cc %in% unique(data$Pheno)){
           pheno_list_mod[p]=cc
           }
       }
     }
   }
-
+  
   idx=list()
   i=1
   for (cc in pheno_list_mod){
