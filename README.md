@@ -16,7 +16,7 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
 
 
 
-    From *Merged* or *Merged_clean* files you can utilize 3 sections:
+    From  *Merged_clean* files you can utilize 3 sections:
     - **Map Plot**: this section produces images to visualize spatial distribution of markers of interest
     
  
@@ -25,7 +25,7 @@ ALOA is a useful bioinformatics tool for analyzing spatial data and imaging deri
             - **NORMALIZED** count <br>
     - **Distance**: this section calculated the distance from specific markers or from the combination of all the markers of the panel, starting from [phenoptr - Computing inter-cellular distances ](https://akoyabio.github.io/phenoptr/articles/computing_distances.html).<br> From distance data, it's possibile to make statistical analysis from groups, through box plot (default) and distribution curve plot (optional)
 
-- Spatial **Imaging** Analysis <img src="./Image_redme/images.jpeg" width=20 height=12>
+- Spatial **Imaging** Analysis <img src="./Image_readme/images.jpeg" width=20 height=12>
 <br>
 
     This section provides a data visualization feature that produce static and interactive images from a selected number of ROIs. 
