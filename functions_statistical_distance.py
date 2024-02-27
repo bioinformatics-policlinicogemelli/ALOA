@@ -330,7 +330,8 @@ def main():
 
     log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
     log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{datetime.now()}.log",filemode="a")
+    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{format_time}.log",filemode="a")
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
