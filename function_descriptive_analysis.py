@@ -594,9 +594,20 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
 
     if len(hue_order)==2:
         #taplib library with logaritmic value on y axis
-        tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+        try:
+            tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+        except ValueError:
+            logging.error("Mann-Whitney Test Error-All numbers are identical")
+        except Exception:
+            logging.error("Something went wrong during KMann-Whitneytest")
+
     elif len(hue_order)>2:
-        tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+        try:
+            tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+        except ValueError:
+            logging.error("Kruskal-Wallis Test Error-All numbers are identical")
+        except Exception:
+            logging.error("Something went wrong during Kruskal-Wallis test")
 
         
     #tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
@@ -610,9 +621,10 @@ def main():
         data=json.load(f)
 
     log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
+    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
     log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis{datetime.now()}.log",filemode="a")
+    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis_{format_time}.log",filemode="a")
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     console_handler = logging.StreamHandler()
