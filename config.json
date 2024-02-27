@@ -28,21 +28,7 @@
    },
     "Descriptive":{
       "raw":true,
-      "normalized":true,
-      "pheno_interested":
-         {
-            "CD4+":[],
-            "CD8+":[],
-            "IBA1+":[],
-            "GFAP+":[],
-            "GFAP+,CD147+":[],
-            "CD147+,CD4+":[],
-            "CD147+,IBA1+":[],
-            "CD147+":[],
-            "CD147+,CD8+":[],
-            "CD147+,CD31+":[],
-            "CD31+":[]
-         }
+      "normalized":true
    },
    "Map_plot":{
       "multi_plot":true,
