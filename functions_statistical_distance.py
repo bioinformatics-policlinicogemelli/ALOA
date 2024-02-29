@@ -342,14 +342,14 @@ def main():
     logger.addHandler(console_handler)
 
     #path folder with distance
-    root_folder=os.path.join(data["output"],"Distance")
+    root_folder=os.path.join(data["Paths"]["output_folder"],"Distance")
 
     if not os.listdir(root_folder):
         logging.error(f"{root_folder} is an empty directory")
         exit()
     
     #path folder save distance statistical results
-    path_output=os.path.join(data["output"],"Distance_Statistical")
+    path_output=os.path.join(data["Paths"]["output_folder"],"Distance_Statistical")
 
     #create Distance_Statistical folder
     create_output_dir(path_output)
