@@ -44,7 +44,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             if f==".DS_Store":
                 continue
             #patient name
-            _id_paz=f.split("_")[-1].split(".")[0]
+            _id_paz=f.replace("Merge_cell_seg_data_clean_","").replace(".txt","")
 
             #adding group name as key of dictionary
             if _d not in dict_global_info.keys():

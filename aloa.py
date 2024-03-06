@@ -10,6 +10,7 @@ import rpy2.robjects as ro
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
 from datetime import datetime
+import glob
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -28,9 +29,9 @@ def all_true(args):
         print(arg, getattr(args, arg))
         
 def check_output(output):
-    cmd=f"find {output} -name '*.txt'"
-    check=subprocess.run([cmd], shell=True, capture_output=True, text=True)
-    return(check.stdout)
+    path_to_find=os.path.join(output,"*","*txt")
+    check=glob.glob(path_to_find)
+    return(check)
 
 def aloa(args, data, logfile):
     
@@ -127,8 +128,8 @@ def aloa(args, data, logfile):
         distance_match()
         
     log_txt=open(os.path.join(output,"Log",logfile), 'r').read()
-    
-    logger.info(f"ALOA script completed with {err + log_txt.count("ERROR")} error(s)!")
+    n_err=err + int(log_txt.count("ERROR"))
+    logger.info(f"ALOA script completed with {n_err} error(s)!")
     
 #### 
 class MyArgumentParser(argparse.ArgumentParser):
