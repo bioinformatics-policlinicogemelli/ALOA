@@ -5,25 +5,26 @@ import pandas as pd
 import json
 import os
 import pathlib
+from loguru import logger
 
 def img_match():
-    with open('config.json', 'r') as myfile:
-        data=myfile.read()
-    # parse json file
-    obj = json.loads(data)
+    
+    logger.info("############################# DESCRIPTIVE ANALYSIS #############################")
+    
+    with open("config.json") as f:
+        data=json.load(f)
+    
+    output=data["Paths"]["output_folder"]
+            
+    input_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
+    if len(data["distance_match"]["pheno_list"])==0:
+        pheno_list=data["Phenotypes"]["pheno_list"]
+    else:
+        pheno_list=data["image_match"]["pheno_list"]
 
-    output=obj["Paths"]["output_folder"]
-    pathlib.Path(output).mkdir(parents=True, exist_ok=True) 
     output_f=os.path.join(output,"Img_match")
     pathlib.Path(output_f).mkdir(parents=True, exist_ok=True)
-
-    input_folder=os.path.join(obj["Paths"]["data_input_folder"],"img_match") 
-    #pheno_list=obj["image_match"]["pheno_list"]
-    if len(obj["distance_match"]["pheno_list"])==0:
-        pheno_list=obj["Phenotypes"]["pheno_list"]
-    else:
-        pheno_list=obj["image_match"]["pheno_list"]
-
+    
     dir=[f for f in os.listdir(input_folder) if not f.startswith('.')]
     dir=list(set(list(map(lambda x: os.path.join(input_folder,x.split(']_')[0]+"]"), dir))))
     
@@ -34,8 +35,17 @@ def img_match():
         #dataframe section
         df=pd.read_csv(d+"_cell_seg_data.txt",sep="\t")
         
-        # image section
-        img = cv2.imread(d+"_composite_image.tif")
+        # image 
+        img_filename=d+"_composite_image"
+        if os.path.isfile(img_filename+".tif"):
+            img_filename=img_filename+".tif"
+        elif os.path.isfile(img_filename+".png"):
+            img_filename=img_filename+".tif"
+        elif os.path.isfile(img_filename+".jpg"):
+            img_filename=img_filename+".jpg"
+        else:
+            logger.critical("Image not found! Exiting img match script!")
+        img = cv2.imread(img_filename)
         masked_img=img_filt(img)
         crop=crop_img(masked_img,50)
 
@@ -61,12 +71,12 @@ def img_match():
         filename=(d+"_composite_image.tif").split("/")[-1].replace(".tif","_match_") + ''.join(map(str, pheno_list))
         plot_pheno(crop, pheno_df, os.path.join(output_f, filename))
         
-        if obj["image_match"]["interactive"]:
+        if data["image_match"]["interactive"]:
             pathlib.Path(os.path.join(output_f, "Interactive_plots")).mkdir(parents=True, exist_ok=True) 
             plot_interactive(crop, pheno_df, os.path.join(os.path.join(output_f, "Interactive_plots"), filename), 
-                             obj["image_match"]["layout_marker_edge_col"], 
-                             obj["image_match"]["layout_marker_size"], 
-                             obj["image_match"]["layout_xsize"], obj["image_match"]["layout_ysize"])
+                             data["image_match"]["layout_marker_edge_col"], 
+                             data["image_match"]["layout_marker_size"], 
+                             data["image_match"]["layout_xsize"], data["image_match"]["layout_ysize"])
         
     print("All done!")
     

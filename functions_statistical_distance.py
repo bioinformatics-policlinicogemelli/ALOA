@@ -1,5 +1,7 @@
-import logging
 from datetime import datetime
+from loguru import logger
+import sys
+import pathlib
 import os
 import json
 import numpy as np
@@ -9,8 +11,6 @@ import pandas as pd
 import tap
 from scipy import stats
 import itertools
-import seaborn as sns
-import matplotlib.pyplot as plt
 import plotly.figure_factory as ff
 
 def standardization_distance_all_image(values,paz):
@@ -25,7 +25,7 @@ def standardization_distance_all_image(values,paz):
     ----
     '''
     if len(values)<2:
-        logging.info(f"only one or less distance for {paz}")
+        logger.info(f"only one or less distance for {paz}")
         #print(f"only one or less distance for {paz}")
         return [],0,0
 
@@ -33,7 +33,7 @@ def standardization_distance_all_image(values,paz):
     std=np.std(values)
 
     if std==0:
-        logging.info(f"for {paz} std = 0")
+        logger.info(f"for {paz} std = 0")
         #print(f"for {paz} std = 0")
         return [],0,0
                         
@@ -61,17 +61,17 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
             continue
         if group=="Stats":
             continue
-        print("Parsing Group:",group)
+        #print("Parsing Group:",group)
         DICT_DISTANCES[group] = []
         if not os.listdir(os.path.join(root_folder,group)):
-            logging.error(f"{os.path.join(root_folder,group)} is an empty folder")
+            logger.error(f"{os.path.join(root_folder,group)} is an empty folder")
             exit()
         for directory in os.listdir(os.path.join(root_folder,group)):
             if directory==".DS_Store":
                 continue
             if directory=="csv":
                 if not os.listdir(os.path.join(root_folder, group,directory)):
-                    logging.error(f"{os.path.join(root_folder, group,directory)} is an empty folder")
+                    logger.error(f"{os.path.join(root_folder, group,directory)} is an empty folder")
                     exit()
                 list_files=os.listdir(os.path.join(root_folder, group,directory))
                 for file in list_files:
@@ -91,7 +91,7 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
                             break
 
                     if real_pheno_to is None:
-                        logging.warning(f"{pheno_to} not present as Distance_to for {paz}")
+                        logger.warning(f"{pheno_to} not present as Distance_to for {paz}")
                         continue
 
 
@@ -116,7 +116,7 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
                             break
 
                     if real_pheno_from is None:
-                        logging.warning(f"{pheno_from} not present in 'Phenotype' column for {paz}")
+                        logger.warning(f"{pheno_from} not present in 'Phenotype' column for {paz}")
                         continue
 
                     #PRENDI DATI
@@ -162,12 +162,12 @@ def create_output_dir(path_output_results):
     if not os.path.exists(temp_folder):
         os.makedirs(temp_folder)
 
-        #---->logging
-        logging.info(f"Created folder {temp_folder}")
+        #---->logger
+        logger.info(f"Created folder {temp_folder}")
         
     else:
-        #--->logging
-       logging.info(f"Folder {temp_folder} already exists-deleting its contents for the new analysis")
+        #--->logger
+       logger.info(f"Folder {temp_folder} already exists-deleting its contents for the new analysis")
        for direct in os.listdir(temp_folder):
             direct_path = os.path.join(temp_folder, direct)
             if not os.path.isfile(direct_path):
@@ -175,7 +175,7 @@ def create_output_dir(path_output_results):
                     file_path=os.path.join(direct_path,file)
                     if os.path.isfile(file_path):
                         os.remove(file_path)
-                        #logging.info(f"File '{file_path}' deleted.")
+                        #logger.info(f"File '{file_path}' deleted.")
                 os.rmdir(direct_path)
 
 #*****************************************************************
@@ -200,7 +200,7 @@ def create_df_distances(DICT_DISTANCES,path_output,pheno_from,pheno_to,save_zeta
         df.to_csv(f'{direc}/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv', sep="\t",index=False)
 
     else:
-        logging.warning(f"Dataframe is empty for distance from {pheno_from} to {pheno_to}")
+        logger.warning(f"Dataframe is empty for distance from {pheno_from} to {pheno_to}")
 
     return df
 
@@ -224,7 +224,7 @@ def calculate_median_distribution(dictionary_group,groups):
 
     #if any(value is None for value in dict_meadian.values()):
     if all(value=="NaN"for value in dict_median.values()):
-        print("both group's values are NaN for meadian distance calculation")
+        #print("both group's values are NaN for meadian distance calculation")
         grade_major="NaN"
         return grade_major,dict_median
     else:
@@ -264,20 +264,20 @@ def statistical_test(path_output_result,df,pheno_from,pheno_to):
     p_value=10
 
     if len(df["GROUP"].unique())==1:
-        logging.warning("Only One Group - not statistical is possible")
+        logger.warning("Only One Group - not statistical is possible")
     
     #Caso in cui abbiamo 2 GRUPPI---> Test di mannwhitney
     elif len(df["GROUP"].unique())==2:
-        logging.info("Executive Mann-Whitney test")
+        logger.info("Executive Mann-Whitney test")
         t_stat, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
         #dict_p_value[f'{pheno_from}to{pheno_to}']=p_value
     
     #Caso in cui i gruppi sono più di due---> Test di Kruskal per più sample
     elif len(df["GROUP"].unique())>2:
         t_stat, p_value = stats.kruskal(*[v for v in values_distance])
-        logging.info("Executive Kruskal test")
+        logger.info("Executive Kruskal test")
         #dict_p_value[f'{pheno_from}to{pheno_to}']=p_value
-    print(p_value)
+    #print(p_value)
     return p_value
     
 
@@ -317,35 +317,19 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
         fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
 
-
-
-
-
-
-
 def main():
     
+    logger.info("######################## STATISTICAL ANALYSIS DISTANCE #########################")
+    
+    logger.info("Read configuration file")
     with open("config.json") as f:
         data=json.load(f)
-
-    log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
-    log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_statistical_distance_{format_time}.log",filemode="a")
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
+    
     #path folder with distance
     root_folder=os.path.join(data["Paths"]["output_folder"],"Distance")
 
     if not os.listdir(root_folder):
-        logging.error(f"{root_folder} is an empty directory")
+        logger.error(f"{root_folder} is an empty directory")
         exit()
     
     #path folder save distance statistical results
@@ -399,7 +383,7 @@ def main():
             pheno_from=pheno[0]
             pheno_to=pheno[1]
 
-            logging.info(f"Analysis for distance from {pheno_from}---to---{pheno_to}")
+            logger.info(f"Analysis for distance from {pheno_from}---to---{pheno_to}")
         
             dict_distance=prepare_dataframe_distances(root_folder,pheno_from,pheno_to)
 
@@ -408,7 +392,7 @@ def main():
             df_distance=create_df_distances(dict_distance,path_output,pheno_from,pheno_to,save_csv_zetascore)
 
             if len(df_distance)==0:
-                logging.warning(f"No Distance for {pheno_from}--{pheno_to}")
+                logger.warning(f"No Distance for {pheno_from}--{pheno_to}")
                 continue
 
             ##BUG è NECESSARIO RILEGGERLO????
@@ -447,15 +431,15 @@ def main():
         dict_statistical_result={}
 
         if pheno_from not in pheno_interested or pheno_to not in pheno_interested:
-            logging.error(f"Name error inserted in pheno from and/or pheno to ({pheno_from}---{pheno_to})")
-            exit()
+            logger.critical(f"Name error inserted in pheno from and/or pheno to ({pheno_from}---{pheno_to})")
+            return()
 
         dict_distance=prepare_dataframe_distances(root_folder,pheno_from,pheno_to)
         grade_major,dict_median=calculate_median_distribution(dict_distance,groups)
         df_distance=create_df_distances(dict_distance,path_output,pheno_from,pheno_to,save_csv_zetascore)
         if len(df_distance)==0:
-            logging.warning(f"No Distance for {pheno_from}--{pheno_to}")
-            exit() ##FIXME è GIUSTO?????
+            logger.critical(f"No Distance for {pheno_from}--{pheno_to}")
+            return()
             
         #df_distance=pd.read_csv(f"{path_output}/csv/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv",sep="\t")
         box_plots_distances(path_output,df_distance,pheno_from,pheno_to)
@@ -485,9 +469,10 @@ def main():
 
 
     #if not os.listdir(path_output):
-       # logging.info("delete empty folder Distance_Statistical")
+       # logger.info("delete empty folder Distance_Statistical")
        # os.rmdir(path_output)
-    logging.info("End statistical analysis!")      
-
+    logger.info("End statistical analysis!")      
+    return()
+    
 if __name__=="__main__":
     main()

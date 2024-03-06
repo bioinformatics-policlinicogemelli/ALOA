@@ -1,5 +1,7 @@
-import logging
+from loguru import logger
 from datetime import datetime
+import sys
+import pathlib
 import os
 import json
 import pandas as pd
@@ -24,7 +26,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
 
     #creating a dictionary with raw count information for each patient
     
-    logging.info("Start raw count calculation")
+    logger.info("Start raw count calculation")
 
     dict_global_info = {}
 
@@ -34,7 +36,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             continue
         sub_directory=os.path.join(PATH_MERGE_FOLDER,_d)
         if not os.listdir(sub_directory):
-            logging.error(f"Directory {_d} is empty")
+            logger.error(f"Directory {_d} is empty")
             exit()
 
         #iterating on each files presented into group folder
@@ -59,7 +61,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             _data=pd.read_csv(_file, sep="\t")
 
             #---->logging
-            logging.debug(f"Read File {_file}")
+            logger.info(f"Read File {_file}")
 
             #calculating total cells
             _total_cells=len(_data)
@@ -78,7 +80,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             for main_pheno in list_pheno:
                 dict_global_info[_d][_id_paz][f"{main_pheno}"] = _data_dict.get(frozenset(main_pheno.split(",")), 0)
 
-    logging.info("End raw count calculation")
+    logger.info("End raw count calculation")
 
     return dict_global_info 
 
@@ -142,7 +144,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
 
     '''
 
-    logging.info("Start normalized count calculation")
+    logger.info("Start normalized count calculation")
 
     #creating dictionary for normalized count
     dict_normalized_count_cells={}
@@ -158,7 +160,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
         #iterationg on patient- pheno raw count dictionary
         for patient, counters in patients.items():
             #---->logging patient
-            logging.debug(f"Normalized count for patient {patient}")
+            logger.info(f"Normalized count for patient {patient}")
 
             #adding patient as second key of the dictionary
             dict_normalized_count_cells[grade][patient]={}
@@ -181,7 +183,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
                 dict_normalized_count_cells[grade][patient][pheno]=_new_value
 
 
-    logging.info("End normalized count calculation")
+    logger.info("End normalized count calculation")
 
     return dict_normalized_count_cells
 
@@ -209,7 +211,7 @@ def create_output_dir(path_output,groups_name):
         if not os.path.exists(temp_folder):
         #if not os.path.isdir(temp_folder):
             os.makedirs(temp_folder)
-            logging.info(f" Created folder {temp_folder}")
+            logger.info(f" Created folder {temp_folder}")
            
         #else:
             #logging.info(f" Folder {temp_folder} already exists")
@@ -248,7 +250,7 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
                 os.makedirs(dire)
 
                 #----> aggiunta del log nella creazione della cartella
-                logging.info(f"Created folder {dire} for patient {patient}")
+                logger.info(f"Created folder {dire} for patient {patient}")
 
             #else:
                 #----> aggiunta del log se la cartella è gia presente
@@ -259,7 +261,7 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
                 f.write(f"Patient\tPheno\tCount_{type_data}\n")
 
                 #----> aggiunta del log per l'inizio scrittura del file
-                logging.info(f"Start Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}")
+                logger.info(f"Start Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}")
 
                 #list of phenotypes
                 pheno=list(phenos.keys())
@@ -271,7 +273,7 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
                         f.write(f'{patient}\t{p}\t{dictionary_count[grade][patient][p]}\n')
                 
                 #----> aggiunta del log per la fine della scrittura del file
-                logging.info(f"End Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}")
+                logger.info(f"End Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}")
 
 #***********************************+
 
@@ -293,14 +295,14 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
     '''
 
 
-    logging.info("Start normalized count calculatin on all groups")
+    logger.info("Start normalized count calculatin on all groups")
 
     
     for grade,patients in dictionary_norm_count.items():
         dire = os.path.join(path_output_results,grade,"csv")
         if not os.path.exists(dire):
             #--->logging directory
-            logging.debug(f"Creating directory {dire}")
+            logger.info(f"Creating directory {dire}")
             os.makedirs(dire)
         #else:
             #--->logging directory
@@ -310,7 +312,7 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
                 f.write(f"Patient\tPheno\tCount_all_Norm\n")
 
                 #---->logging write file
-                logging.info(f"Start writing file of normalized count on all groups for patient {patient}")
+                logger.info(f"Start writing file of normalized count on all groups for patient {patient}")
                 pheno=list(phenos.keys())
                 for p in pheno:
                     if p=="Total_Cells":
@@ -318,7 +320,7 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
                     else:
                         f.write(f'{patient}\t{p}\t{dictionary_norm_count[grade][patient][p]}\n')
 
-    logging.info("End normalized count calculation on all groups")
+    logger.info("End normalized count calculation on all groups")
 
 
 
@@ -343,17 +345,17 @@ def bar_plot(path_output_result,dict_data,type_data):
     
     
     #---->logging barplot
-    logging.info(f"Barplot creation for {type_data} count")
+    logger.info(f"Barplot creation for {type_data} count")
     
     for group,data in dict_data.items():
         #----> logging for start barplot creation
-        logging.info(f"Start Barplot for group {group}")
+        logger.info(f"Start Barplot for group {group}")
 
         max_val_y=0
         fig=go.Figure()
         for patient,targets in data.items():
             #----> logging for creation patient barplot
-            logging.debug(f"Barplot for patient {patient}")
+            logger.info(f"Barplot for patient {patient}")
 
             #sorted phenotypes in alphabetic order
             sorted_target=dict(sorted(targets.items(),key=lambda x:x[0]))
@@ -386,7 +388,7 @@ def bar_plot(path_output_result,dict_data,type_data):
         if not os.path.exists(dire):
             os.makedirs(dire)
             #----> logging created directory
-            logging.info(f" Created folder {dire}")
+            logger.info(f" Created folder {dire}")
         #else:
             #---> logging directory just existed
             #logging.info(f" Folder {dire} already exists")
@@ -450,7 +452,7 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
     '''
 
     #---->logging
-    logging.info("Starting normalized count on all groups")
+    logger.info("Starting normalized count on all groups")
 
     # define dictionary of count normalized on all group present
     dict_normalized_count_cells={}
@@ -477,7 +479,7 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
                 dict_normalized_count_cells[grade][patient][pheno]=_new_value
 
     #---->logging
-    logging.info("End normalized count on all groups")
+    logger.info("End normalized count on all groups")
 
     return dict_normalized_count_cells
 
@@ -553,7 +555,7 @@ def create_output_box_plot_dir(path_output):
     if not os.path.exists(temp_folder):
         os.makedirs(temp_folder)
         #----> logging created directory
-        logging.info(f"Created folder {temp_folder}")
+        logger.info(f"Created folder {temp_folder}")
         
     #else:
         #----> logging directory already exists
@@ -582,8 +584,7 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
    
     '''
 
-    logging.info(f"Box Plot creation on {type_data} count")
-
+    logger.info(f"Box Plot creation on {type_data} count")
 
     #define paramerts as x, y and separated
     x="pheno"
@@ -597,71 +598,48 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
         try:
             tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
         except ValueError:
-            logging.error("Mann-Whitney Test Error-All numbers are identical")
+            logger.error("Mann-Whitney Test Error-All numbers are identical")
         except Exception:
-            logging.error("Something went wrong during KMann-Whitneytest")
+            logger.error("Something went wrong during KMann-Whitneytest")
 
     elif len(hue_order)>2:
         try:
             tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
         except ValueError:
-            logging.error("Kruskal-Wallis Test Error-All numbers are identical")
+            logger.error("Kruskal-Wallis Test Error-All numbers are identical")
         except Exception:
-            logging.error("Something went wrong during Kruskal-Wallis test")
+            logger.error("Something went wrong during Kruskal-Wallis test")
 
-        
-    #tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
-    #tap.plot_stats(data_all,x,y,subcategory=hue)
+
     
-
-
 def main():
     
+    logger.info("############################# DESCRIPTIVE ANALYSIS #############################")
+    
+    logger.info("Read configuration file")
     with open("config.json") as f:
         data=json.load(f)
-
-    log_folder=os.path.join(data["Paths"]["output_folder"],"Log")
-    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-
-    log_format = '[%(levelname)s] ALOA - %(asctime)s - %(message)s'
-    logging.basicConfig(format=log_format,filename=f"{log_folder}/functions_descriptive_analysis_{format_time}.log",filemode="a")
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('[%(levelname)s] ALOA - %(asctime)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
     
-    if data["Clean_data"]["other_rm"]:
-        path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
-        logging.info(f"Merge data are in {path_merge_folder}")
-    else:
-        path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged")
-        logging.info(f"Merge data are in {path_merge_folder}")
-    
+    path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
+    logger.info(f"Merge data are in {path_merge_folder}")
     
     if not os.listdir(path_merge_folder):
-        logging.error(f"{path_merge_folder} is an empty directory")
-        exit()
+        logger.critical(f"{path_merge_folder} is an empty directory")
     
     dict_pheno_interested=data["Phenotypes"]["pheno_list"]
-    logging.info(f" The phenotypes of interest are: {dict_pheno_interested}")
+    logger.info(f" The phenotypes of interest are: {dict_pheno_interested}")
     
     dict_raw_count=raw_count_cells(path_merge_folder,dict_pheno_interested)
     
     groups=list(dict_raw_count.keys())
-    logging.info(f"Group/s presents {groups}")
+    logger.info(f"Group/s presents {groups}")
 
-
-    path_output_results=os.path.join(data["Paths"]["output_folder"],"descriptive")
-    logging.info(f" The output of descriptive section is {path_output_results}")
+    path_output_results=os.path.join(data["Paths"]["output_folder"],"Descriptive")
+    logger.info(f" The output of descriptive section is {path_output_results}")
     create_output_dir(path_output_results,groups)
     
-
     type_data_raw=data["Descriptive"]["raw"]
     type_data_norm=data["Descriptive"]["normalized"]
-    
     
     if type_data_raw:
         create_summury_file(path_output_results,dict_raw_count,"Raw")
@@ -671,12 +649,11 @@ def main():
             df_raw=prepare_data_box_plot(path_merge_folder,dict_raw_count)
             create_comparison_box_plot(path_output_results,df_raw,"Raw")
         else:
-            logging.warning("Found only one group - impossible to continue with groups comparison and box plot figure")
+            logger.warning("Found only one group - impossible to continue with groups comparison and box plot figure")
             
     else:
-        logging.info("Raw data is False in configuration file--Descriptive section")
+        logger.info("Raw data is False in configuration file--Descriptive section")
 
-    
     if type_data_norm:
         mean_group=calculate_mean_group_cells(dict_raw_count)
         norm_count=normalized_count_cells(dict_raw_count,mean_group)
@@ -691,15 +668,13 @@ def main():
             df_norm=prepare_data_box_plot(path_merge_folder,norm_count_all_groups)
             create_comparison_box_plot(path_output_results,df_norm,"Normalized")
         else:
-             logging.warning("Found only one group-impossible to continue with group comparison")
+            logger.warning("Found only one group-impossible to continue with group comparison")
     else:
-        logging.info("Normalized data is False in configuration file--Descriptive section")
+        logger.info("Normalized data is False in configuration file--Descriptive section")
     
 
-    logging.info("End descriptive analysis!")
-   
-
-
+    logger.info("End descriptive analysis!")
+    return()
 
 if __name__=="__main__":
     main()

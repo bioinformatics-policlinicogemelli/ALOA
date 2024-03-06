@@ -6,7 +6,11 @@ library(tidyverse)
 
 distance_eval=function(csd){
   
-  names(csd)[names(csd) == "Pheno"] <- "Phenotype"
+  phenocol=colnames(csd[ , grepl( "Pheno" , names( csd ) ) ])
+  if (!("Phenotype" %in% phenocol)){
+    names(csd)[names(csd) == "Pheno"] <- "Phenotype"
+  }
+  
   names(csd)[names(csd) == "Cell.ID"] <- "Cell ID"
   
   distances <- find_nearest_distance(csd)

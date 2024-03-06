@@ -6,27 +6,25 @@ import json
 import os
 import pathlib
 import itertools
+from loguru import logger
 
 def distance_match():
     
-    with open('config.json', 'r') as myfile:
-        data=myfile.read()
-    # parse json file
-    obj = json.loads(data)
-
-    output=obj["Paths"]["output_folder"]
-    pathlib.Path(output).mkdir(parents=True, exist_ok=True) 
+    f=open("config.json")
+    data=json.load(f)
+    
+    output=data["Paths"]["output_folder"]
     output_f=os.path.join(output,"Distance_match")
     pathlib.Path(output_f).mkdir(parents=True, exist_ok=True)
 
-    input_folder=os.path.join(obj["Paths"]["data_input_folder"],"img_match")
+    input_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match")
     
-    if len(obj["distance_match"]["pheno_list"])==0:
-        pheno_list=obj["Phenotypes"]["pheno_list"]
+    if len(data["distance_match"]["pheno_list"])==0:
+        pheno_list=data["Phenotypes"]["pheno_list"]
     else:
-        pheno_list=obj["distance_match"]["pheno_list"]
+        pheno_list=data["distance_match"]["pheno_list"]
     
-    dir=os.listdir(input_folder)
+    dir=[f for f in os.listdir(input_folder) if not f.startswith('.')]
     dir=list(set(list(map(lambda x: os.path.join(input_folder,x.split(']_')[0]+"]"), dir))))
 
     for d in dir:
@@ -35,7 +33,16 @@ def distance_match():
         df=pd.read_csv(d+"_cell_seg_data.txt",sep="\t")
         
         # image preproc section
-        img = cv2.imread(d+"_composite_image.tif")
+        img_filename=d+"_composite_image"
+        if os.path.isfile(img_filename+".tif"):
+            img_filename=img_filename+".tif"
+        elif os.path.isfile(img_filename+".png"):
+            img_filename=img_filename+".tif"
+        elif os.path.isfile(img_filename+".jpg"):
+            img_filename=img_filename+".jpg"
+        else:
+            logger.critical("Image not found! Exiting img match script!")
+        img = cv2.imread(img_filename)
         masked_img=img_filt(img)
         crop=crop_img(masked_img,50)
 
@@ -90,6 +97,8 @@ def distance_match():
             mutual=ph2_to_ph1[ph2_to_ph1["Cell ID"]==ph2_to_ph1["Cell ID "+c[1]+"."+c[0]]]
             if len(mutual)>0:
                 plot_dist(crop, pheno_df_dist, mutual, os.path.join(output_f, filename),m=True)
+    
+    return()
 
 if __name__ == '__main__':
     distance_match()

@@ -42,7 +42,7 @@ filt_data_Pheno=function(data, id, gene_list){
   idx=list()
   i=1
   for (cc in pheno_list_mod){
-    print(cc)
+    #print(cc)
 
     idx[[i]]=which(data$Pheno == cc)
     i=i+1

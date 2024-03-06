@@ -10,6 +10,8 @@ from image_proc_functions import pheno_filt
 import json
 import pathlib
 import random
+import logging
+from datetime import datetime
 from sklearn.cluster import SpectralClustering
 from sklearn.preprocessing import StandardScaler
 
@@ -171,11 +173,25 @@ def main():
     f=open("config.json")
     data=json.load(f)
     
-    if data["Clean_data"]["other_rm"]:
-        input_path = os.path.join(data["Paths"]["output_folder"],"Merged_clean")
-    else:
-        input_path = os.path.join(data["Paths"]["output_folder"],"Merged")
-        
+    output=data["Paths"]["output_folder"]
+    pathlib.Path(output).mkdir(parents=True, exist_ok=True)
+    log_path=os.path.join(output,"Log")
+    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
+
+    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    logging.basicConfig(format="[%(levelname)s] %(asctime)s - %(message)s", datefmt='%Y-%m-%d %H:%M:%S',filename=os.path.join(log_path,"clustering_"+format_time+".log"),filemode="a", force=True)
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    logger = logging.getLogger()
+    
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(logging.Formatter("[%(levelname)s] %(asctime)s - %(message)s", "%Y-%m-%d %H:%M:%S"))
+    logger.addHandler(console_handler)
+    
+    input_path = os.path.join(data["Paths"]["output_folder"],"Merged_clean")
+   
     output_path = os.path.join(data["Paths"]["output_folder"],"Clustering")
     pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)  
     
@@ -213,6 +229,8 @@ def main():
 
             # stacked barplot and percentage csv 
             plot_stacked_bar_chart(df_sample_tmp, output_res, idx)
+            
+    return (logging.getLoggerClass().root.handlers[0].baseFilename)
 
 if __name__ == "__main__":
     main()
