@@ -55,10 +55,8 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
 
     DICT_DISTANCES = dict()
 
-    list_groups = os.listdir(root_folder)
-    for group in list_groups:
-        if group==".DS_Store":
-            continue
+    #list_groups = os.listdir(root_folder)
+    for group in [f for f in os.listdir(root_folder) if not f.startswith('.')]:
         if group=="Stats":
             continue
         #print("Parsing Group:",group)
@@ -66,80 +64,81 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
         if not os.listdir(os.path.join(root_folder,group)):
             logger.error(f"{os.path.join(root_folder,group)} is an empty folder")
             exit()
-        for directory in os.listdir(os.path.join(root_folder,group)):
-            if directory==".DS_Store":
+        for file in [f for f in os.listdir(os.path.join(root_folder,group)) if not f.startswith('.')]:
+        #for directory in os.listdir(os.path.join(root_folder,group)):
+            # if directory==".DS_Store":
+                # continue
+            # if directory=="csv":
+            # if not os.listdir(os.path.join(root_folder, group,directory)):
+            #     logger.error(f"{os.path.join(root_folder, group,directory)} is an empty folder")
+            #     exit()
+            # list_files=os.listdir(os.path.join(root_folder, group,directory))
+            # for file in list_files:
+            paz=file.replace("_Distance.txt","")
+            file_path = os.path.join(root_folder, group, file)
+            # file_path = os.path.join(root_folder, group,directory, file)
+
+        #CALCOLA HEADER
+            df = pl.scan_csv(file_path,separator="\t")
+            df_columns = df.columns
+
+            real_pheno_to = None
+            set_pheno_to = set(pheno_to.split(","))
+            for col in df_columns:
+                set_col = set(col.replace("Distance to ", "").split(","))
+                if set_col == set_pheno_to:
+                    real_pheno_to = col
+                    break
+
+            if real_pheno_to is None:
+                logger.warning(f"{pheno_to} not present as Distance_to for {paz}")
                 continue
-            if directory=="csv":
-                if not os.listdir(os.path.join(root_folder, group,directory)):
-                    logger.error(f"{os.path.join(root_folder, group,directory)} is an empty folder")
-                    exit()
-                list_files=os.listdir(os.path.join(root_folder, group,directory))
-                for file in list_files:
-                    paz=file.split("_")[0]
-                    file_path = os.path.join(root_folder, group,directory, file)
 
-                #CALCOLA HEADER
-                    df = pl.scan_csv(file_path,separator="\t")
-                    df_columns = df.columns
+            #CERCO VALORE PHENO FROM
+            real_pheno_from = None
+            set_pheno_from=set(pheno_from.split(","))
 
-                    real_pheno_to = None
-                    set_pheno_to = set(pheno_to.split(","))
-                    for col in df_columns:
-                        set_col = set(col.replace("Distance to ", "").split(","))
-                        if set_col == set_pheno_to:
-                            real_pheno_to = col
-                            break
+            unique_values = pl.scan_csv(
+                    file_path,
+                    separator="\t",
+                    null_values=["NA"]
+                ).select(["Phenotype"]) \
+                .drop_nulls() \
+                .unique() \
+                .collect()["Phenotype"] \
+                .to_list()
 
-                    if real_pheno_to is None:
-                        logger.warning(f"{pheno_to} not present as Distance_to for {paz}")
-                        continue
+            for val in unique_values:
+                set_val = set(val.split(","))
+                if set_val == set_pheno_from:
+                    real_pheno_from = val
+                    break
 
+            if real_pheno_from is None:
+                logger.warning(f"{pheno_from} not present in 'Phenotype' column for {paz}")
+                continue
 
-                    #CERCO VALORE PHENO FROM
-                    real_pheno_from = None
-                    set_pheno_from=set(pheno_from.split(","))
+            #PRENDI DATI
+            df_filtered = pl.scan_csv(
+                    file_path,
+                    separator="\t",
+                    null_values=["NA"]
+                ).select(["Phenotype", real_pheno_to]) \
+                .drop_nulls() \
+                .filter(pl.col("Phenotype") == real_pheno_from) \
+                .select([real_pheno_to])
+            
+            
+            values = list(map(lambda x: float(x),df_filtered.collect()[real_pheno_to].to_list()))
+            values = [item for item in values if not(math.isnan(item)) == True]
 
-                    unique_values = pl.scan_csv(
-                            file_path,
-                            separator="\t",
-                            null_values=["NA"]
-                        ).select(["Phenotype"]) \
-                        .drop_nulls() \
-                        .unique() \
-                        .collect()["Phenotype"] \
-                        .to_list()
-
-                    for val in unique_values:
-                        set_val = set(val.split(","))
-                        if set_val == set_pheno_from:
-                            real_pheno_from = val
-                            break
-
-                    if real_pheno_from is None:
-                        logger.warning(f"{pheno_from} not present in 'Phenotype' column for {paz}")
-                        continue
-
-                    #PRENDI DATI
-                    df_filtered = pl.scan_csv(
-                            file_path,
-                            separator="\t",
-                            null_values=["NA"]
-                        ).select(["Phenotype", real_pheno_to]) \
-                        .drop_nulls() \
-                        .filter(pl.col("Phenotype") == real_pheno_from) \
-                        .select([real_pheno_to])
-                    
-                    
-                    values = list(map(lambda x: float(x),df_filtered.collect()[real_pheno_to].to_list()))
-                    values = [item for item in values if not(math.isnan(item)) == True]
-
-                    try:
-                        values_standard,mean,std= standardization_distance_all_image(values,paz)
-                        #if values_standard !=[]:
-                            #f.write(f'{paz}\t{pheno_from}\t{pheno_to}\t{mean}\t{std}\n')
-                        DICT_DISTANCES[group] += values_standard
-                    except:
-                        continue
+            try:
+                values_standard,mean,std= standardization_distance_all_image(values,paz)
+                #if values_standard !=[]:
+                    #f.write(f'{paz}\t{pheno_from}\t{pheno_to}\t{mean}\t{std}\n')
+                DICT_DISTANCES[group] += values_standard
+            except:
+                continue
 
     return DICT_DISTANCES
 #*****************************************************************
@@ -355,9 +354,8 @@ def main():
 
     #groups of analysis
     groups=[]
-    for group in os.listdir(root_folder):
-        if not group.startswith(".DS"):
-            groups.append(group)
+    for group in [f for f in os.listdir(root_folder) if not f.startswith('.')]:
+        groups.append(group)
     
     #path for summary statistical file
     path_stats_file=os.path.join(path_output,"summary_statistical_2.csv")
