@@ -616,7 +616,7 @@ def main():
     
     logger.info("############################# DESCRIPTIVE ANALYSIS #############################")
     
-    logger.info("Read configuration file")
+    logger.info("Reading configuration file")
     with open("config.json") as f:
         data=json.load(f)
     

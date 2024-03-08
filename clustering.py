@@ -4,38 +4,37 @@ from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 from scipy.spatial import ConvexHull
 import os
-import seaborn as sns
 import numpy as np
 from image_proc_functions import pheno_filt
 import json
 import pathlib
 import random
-import logging
 from datetime import datetime
 from sklearn.cluster import SpectralClustering
 from sklearn.preprocessing import StandardScaler
+from loguru import logger
 
 import warnings
 warnings.filterwarnings("ignore")
 
 def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
 
-    print("Creating the output folder " + os.path.join(output_path, "silhoutte_scores"))
+    logger.info("Creating the output folder " + os.path.join(output_path, "silhoutte_scores"))
     os.makedirs(os.path.join(output_path, "silhoutte_scores"), exist_ok=True)
 
     df_sample = df[['Cell.X.Position', 'Cell.Y.Position']]
 
-    print("silhouette evaluation")
+    logger.info("Starting silhouette analysis")
     silhouette_scores = []
     K_range = range(2, k_number)
     for k in K_range:
-        print(k)
+        logger.debug(k)
         kmeans = KMeans(n_clusters=k)
         etichette_cluster = kmeans.fit_predict(df_sample.values)
         silhouette_avg = silhouette_score(df_sample.values, etichette_cluster)
         silhouette_scores.append(silhouette_avg)
 
-    print("Creating optimal cluster number graph")
+    logger.info("Creating optimal cluster number graph")
     plt.plot(K_range, silhouette_scores, marker='o')
     plt.xlabel('N cluster')
     plt.ylabel('Silhouette score')
@@ -44,29 +43,31 @@ def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
 
     # Select optimal cluster number based on silhouette score
     n_opt_cluster = K_range[silhouette_scores.index(max(silhouette_scores))]
-    print(f"Optimal cluster Number: {n_opt_cluster}")
+    logger.info(f"Optimal cluster Number: {n_opt_cluster}")
     
     km = KMeans(n_clusters=n_opt_cluster)
     
-    if clust_alg.lower()=="kmeans":
-        df_sample['Cluster'] = km.fit_predict(df_sample.values)
+    if "k" in clust_alg.lower():
+        logger.info("kmeans algorithm selected!")
+        df_sample['kmeans'] = km.fit_predict(df_sample.values)
 
-    elif clust_alg.lower()=="spectral":
+    if "s" in clust_alg.lower():
+        logger.info("spectral algorithm selected!")
         scaler= StandardScaler()
         spatial_data_normalizer = scaler.fit_transform(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
         spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42)
-        df_sample['Cluster']= spectral.fit_predict(spatial_data_normalizer)
+        df_sample['spectral']= spectral.fit_predict(spatial_data_normalizer)
     
     else:
-        print(f"ERROR: wrong clustering algorithm selected. '{clust_alg}' were selected but only 'kmeans' and 'spectral' are currently supported! Check your cluster section in your config.json file!")
+        logger.critical(f"ERROR: wrong clustering algorithm selected. '{clust_alg}' were selected but only 'kmeans' (k) and 'spectral' (s) are currently supported! Check your cluster section in your config.json file!")
         exit(1)
 
     df_sample["Pheno"]= df["Pheno"]
     
-    return df_sample, n_opt_cluster, clust_alg
+    return df_sample, n_opt_cluster
 
 def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
-
+   
     output_path=os.path.join(output_path,clust_alg)
     os.makedirs(output_path, exist_ok=True)
         
@@ -81,10 +82,10 @@ def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
     cmap = plt.get_cmap("tab10")
     colors = cmap(np.arange(n_opt_cluster))
  
-    print("Creation of convex hull plot")
+    logger.info("Creation of convex hull plot")
     for cluster in range(n_opt_cluster):
 
-        cluster_data = df_plot[df_plot['Cluster'] == cluster]
+        cluster_data = df_plot[df_plot[clust_alg] == cluster]
         points = cluster_data[['Cell.X.Position', 'Cell.Y.Position']].values
 
         # convex hull evaluation
@@ -116,27 +117,27 @@ def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
     
     return output_path
 
-def plot_stacked_bar_chart(df_plot, output_path, idx):
+def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
     
     # Check for empty dataframe
     if df_plot.empty:
-        print("Error: Empty DataFrame")
+        logger.error("Error: Empty DataFrame")
         return
     
     # Check for cluster column existance
-    if 'Cluster' not in df_plot.columns:
-        print("Error: 'Cluster' column not found in DataFrame")
+    if clust_alg not in df_plot.columns:
+        logger.error("Error: cluster method column not found in DataFrame")
         return
 
     # Check for pheno column existence
     if 'Pheno' not in df_plot.columns:
-        print("Error: 'Pheno' column not found in DataFrame")
+        logger.error("Error: 'Pheno' column not found in DataFrame")
         return
     
     output_barplot=os.path.join(output_path, "stacked_barplot")
     os.makedirs(output_barplot, exist_ok=True)
 
-    df_stacked = df_plot.groupby(['Cluster', 'Pheno']).size().unstack(fill_value=0)
+    df_stacked = df_plot.groupby([clust_alg, 'Pheno']).size().unstack(fill_value=0)
 
     # Calcolo delle percentuali per ogni Pheno nei vari cluster
     cluster_percentages = df_stacked.div(df_stacked.sum(axis=1), axis=0)
@@ -146,7 +147,7 @@ def plot_stacked_bar_chart(df_plot, output_path, idx):
 
     for i in range(df_stacked.values.shape[1]):
         ax.bar(
-            sorted(list(df_plot["Cluster"].unique())),    
+            sorted(list(df_plot[clust_alg].unique())),    
             df_stacked.values.transpose()[i], bottom = np.sum(df_stacked.values.transpose()[:i], axis = 0), width = 0.25
             )
     
@@ -170,46 +171,29 @@ def plot_stacked_bar_chart(df_plot, output_path, idx):
 
 def main():
     
-    f=open("config.json")
-    data=json.load(f)
-    
-    output=data["Paths"]["output_folder"]
-    pathlib.Path(output).mkdir(parents=True, exist_ok=True)
-    log_path=os.path.join(output,"Log")
-    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
-
-    format_time=datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    logging.basicConfig(format="[%(levelname)s] %(asctime)s - %(message)s", datefmt='%Y-%m-%d %H:%M:%S',filename=os.path.join(log_path,"clustering_"+format_time+".log"),filemode="a", force=True)
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
-    logger = logging.getLogger()
-    
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(logging.Formatter("[%(levelname)s] %(asctime)s - %(message)s", "%Y-%m-%d %H:%M:%S"))
-    logger.addHandler(console_handler)
-    
+    logger.info("Reading configuration file")
+    with open("config.json") as f:
+        data=json.load(f)
+        
     input_path = os.path.join(data["Paths"]["output_folder"],"Merged_clean")
    
     output_path = os.path.join(data["Paths"]["output_folder"],"Clustering")
     pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)  
     
     clust_alg=data["cluster"]["cluster_method"]
-    print(f"{clust_alg} algorithm selected!")
-    
-    groups=[f for f in os.listdir(input_path) if not f.startswith('.')] 
 
     if not data["cluster"]["pheno_list"]:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
         pheno_list=data["cluster"]["pheno_list"]
     
+    groups=[f for f in os.listdir(input_path) if not f.startswith('.')] 
+
     for g in groups:
 
         output_path_g=os.path.join(output_path,g)
         pzt_list=[f for f in os.listdir(os.path.join(input_path,g)) if not f.startswith('.')] 
-        print("Starting analyzing group: "+g)
+        logger.info("Starting analyzing group: "+g)
         
         for pzt in pzt_list:
             
@@ -218,19 +202,33 @@ def main():
             # Load and filter data
             df = pd.read_csv(os.path.join(input_path,g,pzt), sep='\t')
             df_filt = pheno_filt(df, pheno_list)
+            if len(df_filt)==0:
+                print("No Phenotyoe(s) found. Check the phenotype list and Phenotype columns of your data!")
+                print("Skip to next subject")
+                continue
+
             idx=df["Sample.Name"][0].split(" ")[0]
             
             # silhouette analysis
             k=data["cluster"]["k"]
-            df_sample_tmp, n_cluster_opt, clust_alg = plot_silhouette_analysis(df_filt, output_path_g, idx, k, clust_alg)
+            df_sample_tmp, n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k, clust_alg)
 
-            # Convex Hull plot
-            output_res=plot_convex_hull(df_sample_tmp, n_cluster_opt, idx, output_path_g, clust_alg)
+            cluster_type=list(clust_alg)
 
-            # stacked barplot and percentage csv 
-            plot_stacked_bar_chart(df_sample_tmp, output_res, idx)
+            for cl in cluster_type:
+
+                if cl=="k":
+                    cl="kmeans"
+                if cl=="s":
+                    cl="spectral"
+
+                # Convex Hull plot
+                output_res=plot_convex_hull(df_sample_tmp, n_cluster_opt, idx, output_path_g, cl)
+
+                # stacked barplot and percentage csv 
+                plot_stacked_bar_chart(df_sample_tmp, output_res, idx, cl)
             
-    return (logging.getLoggerClass().root.handlers[0].baseFilename)
+    return ()
 
 if __name__ == "__main__":
     main()

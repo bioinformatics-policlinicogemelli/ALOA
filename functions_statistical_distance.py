@@ -320,7 +320,7 @@ def main():
     
     logger.info("######################## STATISTICAL ANALYSIS DISTANCE #########################")
     
-    logger.info("Read configuration file")
+    logger.info("Reading configuration file")
     with open("config.json") as f:
         data=json.load(f)
     
