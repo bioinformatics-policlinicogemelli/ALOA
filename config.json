@@ -2,7 +2,7 @@
    "Paths":{
       "data_input_folder":"./data_test",
       "output_folder":"./output",
-      "sample_sheet":"./sample_sheet.xlsx"
+      "sample_sheet":"./data_test/sample_sheet.xlsx"
    },
    "Packages":{
       "install_pkg_R":false,
@@ -15,9 +15,6 @@
          "FoxP3+",
          "CK+"
       ]
-   },
-   "Clean_data":{
-      "other_rm":true
    },
     "Descriptive":{
       "raw":true,

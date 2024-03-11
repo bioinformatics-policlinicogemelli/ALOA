@@ -26,7 +26,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
 
     #creating a dictionary with raw count information for each patient
     
-    logger.info("Start raw count calculation")
+    logger.info("Start raw count calculation:")
 
     dict_global_info = {}
 
@@ -61,7 +61,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             _data=pd.read_csv(_file, sep="\t")
 
             #---->logging
-            logger.info(f"Read File {_file}")
+            logger.info(f"Reading File {_file}")
 
             #calculating total cells
             _total_cells=len(_data)
@@ -80,7 +80,7 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
             for main_pheno in list_pheno:
                 dict_global_info[_d][_id_paz][f"{main_pheno}"] = _data_dict.get(frozenset(main_pheno.split(",")), 0)
 
-    logger.info("End raw count calculation")
+    logger.info("End raw count calculation\n")
 
     return dict_global_info 
 
@@ -150,12 +150,12 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
     dict_normalized_count_cells={}
 
     #iterating on raw count dictionary
-    for grade, patients in dictionary_raw_count.items():
+    for group, patients in dictionary_raw_count.items():
         # adding group as first key of the dictionary
-        dict_normalized_count_cells[grade]={}
+        dict_normalized_count_cells[group]={}
 
         # taking the mean value of the group
-        mean_group=dictionary_mean_count[grade]
+        mean_group=dictionary_mean_count[group]
 
         #iterationg on patient- pheno raw count dictionary
         for patient, counters in patients.items():
@@ -163,13 +163,13 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
             logger.info(f"Normalized count for patient {patient}")
 
             #adding patient as second key of the dictionary
-            dict_normalized_count_cells[grade][patient]={}
+            dict_normalized_count_cells[group][patient]={}
 
             #taking the value of total cells for each patient
             total_cells=counters["Total_Cells"]
           
             #adding Total_Cells as third key of the dictionary
-            dict_normalized_count_cells[grade][patient]["Total_Cells"]=total_cells
+            dict_normalized_count_cells[group][patient]["Total_Cells"]=total_cells
 
             #iterating on pheno-raw count
             for pheno, value in counters.items():
@@ -180,7 +180,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
                 _new_value=(value/total_cells)*mean_group
 
                 #adding pheno as fourth key of the dictionary
-                dict_normalized_count_cells[grade][patient][pheno]=_new_value
+                dict_normalized_count_cells[group][patient][pheno]=_new_value
 
 
     logger.info("End normalized count calculation")
@@ -234,29 +234,21 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
     ----
     None
     '''
-
+    logger.info("writing csv file with count info for each patient\n")
     #iterationg on dictionary count
-    for grade,patients in dictionary_count.items():
-
+    for group,patients in dictionary_count.items():
+        logger.info(f"Group: {group}")
+        #path of csv directory into group directory
+        dire = os.path.join(path_output_results,group,"csv")
+        try:
+            pathlib.Path(dire).mkdir(parents=True, exist_ok=True)
+        except Exception:
+            logger.critical(f"Something went wrong during the creation of {dire} folder!")
+            return()
         #iterating on patient and pheno count
         for patient,phenos in patients.items():
+            logger.info(f"Subject: {patient}")
 
-            #path of csv directory into group directory
-            dire = os.path.join(path_output_results,grade,"csv")
-
-            #creation on folder if not present
-            if not os.path.exists(dire):
-            #if not os.path.isdir(dire):
-                os.makedirs(dire)
-
-                #----> aggiunta del log nella creazione della cartella
-                logger.info(f"Created folder {dire} for patient {patient}")
-
-            #else:
-                #----> aggiunta del log se la cartella è gia presente
-                #logging.info(f"Folder {dire} already exists for patient {patient}")
-
-            #writing csv file with count information for each patient
             with open(f'{dire}/{type_data}_count_{patient}.csv',"w") as f:
                 f.write(f"Patient\tPheno\tCount_{type_data}\n")
 
@@ -268,12 +260,12 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
                 #iteration on pheno list
                 for p in pheno:
                     if p=="Total_Cells":
-                        f.write(f'{patient}\t{p}\t{dictionary_count[grade][patient]["Total_Cells"]}\n')
+                        f.write(f'{patient}\t{p}\t{dictionary_count[group][patient]["Total_Cells"]}\n')
                     else:
-                        f.write(f'{patient}\t{p}\t{dictionary_count[grade][patient][p]}\n')
+                        f.write(f'{patient}\t{p}\t{dictionary_count[group][patient][p]}\n')
                 
                 #----> aggiunta del log per la fine della scrittura del file
-                logger.info(f"End Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}")
+                logger.info(f"End Writing {dire}/{type_data}_count_{patient}.csv file for patient {patient}\n")
 
 #***********************************+
 
@@ -298,8 +290,8 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
     logger.info("Start normalized count calculatin on all groups")
 
     
-    for grade,patients in dictionary_norm_count.items():
-        dire = os.path.join(path_output_results,grade,"csv")
+    for group,patients in dictionary_norm_count.items():
+        dire = os.path.join(path_output_results,group,"csv")
         if not os.path.exists(dire):
             #--->logging directory
             logger.info(f"Creating directory {dire}")
@@ -316,9 +308,9 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
                 pheno=list(phenos.keys())
                 for p in pheno:
                     if p=="Total_Cells":
-                        f.write(f'{patient}\t{p}\t{dictionary_norm_count[grade][patient]["Total_Cells"]}\n')
+                        f.write(f'{patient}\t{p}\t{dictionary_norm_count[group][patient]["Total_Cells"]}\n')
                     else:
-                        f.write(f'{patient}\t{p}\t{dictionary_norm_count[grade][patient][p]}\n')
+                        f.write(f'{patient}\t{p}\t{dictionary_norm_count[group][patient][p]}\n')
 
     logger.info("End normalized count calculation on all groups")
 
@@ -458,17 +450,17 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
     dict_normalized_count_cells={}
 
     #iterating on raw count dictionary
-    for grade, patients in dictionary_raw_count.items():
-        # adding grade as first key of dictionary
-        dict_normalized_count_cells[grade]={}
+    for group, patients in dictionary_raw_count.items():
+        # adding group as first key of dictionary
+        dict_normalized_count_cells[group]={}
         # iterating on patient-raw count
         for patient, counters in patients.items():
             # adding patient as second key of dictionary
-            dict_normalized_count_cells[grade][patient]={}
+            dict_normalized_count_cells[group][patient]={}
             # save total cells of each patient
             total_cells=counters["Total_Cells"]
             # adding Total_Cells as third key of dictionary
-            dict_normalized_count_cells[grade][patient]["Total_Cells"]=total_cells
+            dict_normalized_count_cells[group][patient]["Total_Cells"]=total_cells
             # iterating on phenotypes and relative count
             for pheno, value in counters.items():
                 if pheno == "Total_Cells":
@@ -476,7 +468,7 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
                 #normalized count base on mean of all groups
                 _new_value=(value/total_cells)*mean_all_groups
                 # adding phenotypes as fourth key of dictionary
-                dict_normalized_count_cells[grade][patient][pheno]=_new_value
+                dict_normalized_count_cells[group][patient][pheno]=_new_value
 
     #---->logging
     logger.info("End normalized count on all groups")
@@ -614,34 +606,33 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
     
 def main():
     
-    logger.info("############################# DESCRIPTIVE ANALYSIS #############################")
+    print("\n############################# DESCRIPTIVE ANALYSIS #############################\n")
     
-    logger.info("Reading configuration file")
+    logger.info("Start overview process: This step will give a description of input data and, if more than one group is involved, will also provide a statistical comparison for all the listed phenotypes\n")
+    
+    logger.info("Reading configuration file\n")
     with open("config.json") as f:
         data=json.load(f)
     
     path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
-    logger.info(f"Merge data are in {path_merge_folder}")
+    logger.info(f"Merge data found in {path_merge_folder}")
     
     if not os.listdir(path_merge_folder):
         logger.critical(f"{path_merge_folder} is an empty directory")
     
+    path_output_results=os.path.join(data["Paths"]["output_folder"],"Descriptive")
+    logger.info(f"Descriptive output will be stored in {path_output_results}")
+    
     dict_pheno_interested=data["Phenotypes"]["pheno_list"]
-    logger.info(f" The phenotypes of interest are: {dict_pheno_interested}")
+    logger.info(f"The following phenotypes will be considered: {dict_pheno_interested}\n")
     
     dict_raw_count=raw_count_cells(path_merge_folder,dict_pheno_interested)
-    
+        
     groups=list(dict_raw_count.keys())
-    logger.info(f"Group/s presents {groups}")
-
-    path_output_results=os.path.join(data["Paths"]["output_folder"],"Descriptive")
-    logger.info(f" The output of descriptive section is {path_output_results}")
+    logger.info(f"{len(groups)} group(s) found: {groups}\n")
     create_output_dir(path_output_results,groups)
     
-    type_data_raw=data["Descriptive"]["raw"]
-    type_data_norm=data["Descriptive"]["normalized"]
-    
-    if type_data_raw:
+    if data["Descriptive"]["raw"]:
         create_summury_file(path_output_results,dict_raw_count,"Raw")
         bar_plot(path_output_results,dict_raw_count,"Raw")
         if len(groups)>=2:
@@ -654,7 +645,7 @@ def main():
     else:
         logger.info("Raw data is False in configuration file--Descriptive section")
 
-    if type_data_norm:
+    if data["Descriptive"]["normalized"]:
         mean_group=calculate_mean_group_cells(dict_raw_count)
         norm_count=normalized_count_cells(dict_raw_count,mean_group)
         create_summury_file(path_output_results,norm_count,"Norm")

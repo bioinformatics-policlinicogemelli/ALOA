@@ -72,7 +72,7 @@ def aloa(args, data, logfile):
         #########################################
         
         if args.overview:
-            logger.info("Descriptive step starting now")
+            logger.info("Descriptive step starting now\n")
             descriptive()
         
         #########################################

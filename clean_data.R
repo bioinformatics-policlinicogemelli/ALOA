@@ -13,9 +13,10 @@ clean=function(){
   
   log_name=paste0("clean_data_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
   logger(log_name)
-
+  cat("\n")
   log4r_info("Start cleaning process: This step will remove cell negative to all phenotype(s)")
-
+  cat("\n")
+  
   # Load json file
   log4r_info("Loading configuration file...")
 
@@ -52,7 +53,7 @@ clean=function(){
     
     cat("\n#############################\n")
     log4r_info(paste0("Group: ",g))
-    cat("\n#############################\n")
+    cat("\n")
     group_out_path=file.path(output_folder,"Merged_clean",g)
     dir.create(group_out_path)
     
@@ -65,10 +66,10 @@ clean=function(){
     }
 
     for (csv in csv_file){
-      
+      cat("\n")
       id=gsub(".txt","",gsub("Merge_cell_seg_data_","",path_file(csv)))
 
-      log4r_info(paste0(" -> Subject: ",id))
+      log4r_info(paste0("Subject: ",id))
       seg_data=read.csv(csv, sep="\t")
 
       pheno_list=colnames(seg_data[ , grepl( "Pheno" , names( seg_data ) ) ])
@@ -86,7 +87,7 @@ clean=function(){
         seg_clean=subset(seg_data, seg_data$Pheno!="other" & seg_data$Pheno!="OTHER")
       }
 
-      log4r_info(paste0("     All empty/all other Row removed: ", nrow(seg_data)-nrow(seg_clean), " of ", nrow(seg_data)))
+      log4r_info(paste0("All empty/only other Row removed: ", nrow(seg_data)-nrow(seg_clean), " of ", nrow(seg_data)))
       
       log4r_info(paste0("Writing ", "Merge_cell_seg_data_clean_",id,".txt file..."))
       write.table(seg_clean, file.path(group_out_path,paste0("Merge_cell_seg_data_clean_",id,".txt")), sep="\t", row.names = F, quote = F)

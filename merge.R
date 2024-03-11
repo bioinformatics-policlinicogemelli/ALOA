@@ -15,6 +15,7 @@ merge=function(){
   logger(log_name)
   cat("\n")
   log4r_info("Start merging process: This step will merge together the cell_seg_data files for each subject")
+  cat("\n")
   
   # Load json file
   log4r_info("Loading configuration file...")
@@ -39,6 +40,7 @@ merge=function(){
   dir.create(output_folder)
   dir.create(file.path(output_folder,"Merged"))
   log4r_info(paste0("Merged file will be stored in ",file.path(output_folder,"Merged")))
+  cat("\n")
   
   #### Data merge
   log4r_info(paste0("Find ",nrow(data_input), " subjects!"))
@@ -46,6 +48,7 @@ merge=function(){
   
   for (s in 1:nrow(data_input)){ #for loop on dataframe row (cells)
     
+    cat("\n#############################\n")
     id=data_input$sbj_ID[s]
     group=data_input$Group[s]
   
@@ -57,10 +60,13 @@ merge=function(){
     csv_file=list.files(data_input_folder, full.names = T)[grep(id, list.files(data_input_folder))]
     
     log4r_info("Check for already existing Merge_cell_seg_data.txt")
+    
     if ("Merge_cell_seg_data.txt" %in% list.files(csv_file)){
       log4r_info("Removing old Merge_cell_seg_data.txt")
       file.remove(file.path(csv_file,"Merge_cell_seg_data.txt"))
     }
+    
+    cat("\n")
     
     files_merged=phenoptrReports::merge_cell_seg_files(csv_file)
     files_merged=list.files(csv_file,patter="Merge")
@@ -83,6 +89,7 @@ merge=function(){
     }
     
     #write merged file
+    cat("\n")
     write.table(seg_data, file.path(group_out_path,paste0("Merge_cell_seg_data_",id,".txt")), sep="\t", row.names = F, quote = F)
     log4r_info(paste0("File ",file.path(group_out_path,paste0("Merge_cell_seg_data_",id,".txt")), " saved correctly!"))
   
