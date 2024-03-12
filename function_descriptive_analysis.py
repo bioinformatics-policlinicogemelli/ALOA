@@ -237,7 +237,7 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
     logger.info("writing csv file with count info for each patient\n")
     #iterationg on dictionary count
     for group,patients in dictionary_count.items():
-        logger.info(f"Group: {group}")
+        logger.info(f"Group: {group}\n")
         #path of csv directory into group directory
         dire = os.path.join(path_output_results,group,"csv")
         try:
@@ -337,17 +337,26 @@ def bar_plot(path_output_result,dict_data,type_data):
     
     
     #---->logging barplot
-    logger.info(f"Barplot creation for {type_data} count")
+    logger.info(f"Barplot creation for {type_data} count\n")
     
     for group,data in dict_data.items():
-        #----> logging for start barplot creation
-        logger.info(f"Start Barplot for group {group}")
+        
+        dire = os.path.join(path_output_result,group,"Bar_plot")
+
+        #check if the directory exists
+        try:
+            pathlib.Path(dire).mkdir(parents=True, exist_ok=True)
+        except Exception:
+            logger.critical(f"Something went wrong during the creation of {dire} folder!")
+            return()
+        
+        logger.info(f"Group: {group}\n")
 
         max_val_y=0
         fig=go.Figure()
         for patient,targets in data.items():
             #----> logging for creation patient barplot
-            logger.info(f"Barplot for patient {patient}")
+            logger.info(f"Subject: {patient}")
 
             #sorted phenotypes in alphabetic order
             sorted_target=dict(sorted(targets.items(),key=lambda x:x[0]))
@@ -374,13 +383,7 @@ def bar_plot(path_output_result,dict_data,type_data):
         fig.update_yaxes(range=[0,(math.log(max_val_y,10)+1.0)])
 
         # define path of Bar_plot directory, where saved the figure
-        dire = os.path.join(path_output_result,group,"Bar_plot")
 
-        #check if the directory exists
-        if not os.path.exists(dire):
-            os.makedirs(dire)
-            #----> logging created directory
-            logger.info(f" Created folder {dire}")
         #else:
             #---> logging directory just existed
             #logging.info(f" Folder {dire} already exists")
@@ -493,23 +496,13 @@ def prepare_data_box_plot(PATH_MERGE_FOLDER,dictionary_count):
 
     '''
 
-##FIXME Questa parte l'ho inserita nel main, quindi qui potrei toglierla
-    #_count_folder=0
-    #for _d in os.listdir(PATH_MERGE_FOLDER):
-        #cartella dei gruppi
-     #   if not os.path.isfile(_d):
-     #       _count_folder+=1
-
-    # if we have 2 or more groups
-    #if _count_folder>=2:
-
-        #creating an empty dataframe
+    #creating an empty dataframe
     _data_all=pd.DataFrame()
     _data_norm=[]
 
     # iterating on dictionary count
     for _k,_v in dictionary_count.items():
-        for _k2,_v2 in _v.items():
+        for _,_v2 in _v.items():
             for _t in _v2.keys():
                 if _t=="Total_Cells":
                     continue
@@ -520,9 +513,6 @@ def prepare_data_box_plot(PATH_MERGE_FOLDER,dictionary_count):
 
     #append list on dataframe
     _data_all=pd.DataFrame(_data_norm,columns=["group","pheno","Count"])
-
-
-    
 
     return _data_all
 
@@ -542,18 +532,14 @@ def create_output_box_plot_dir(path_output):
     None
 
     '''
-
+    
     temp_folder=os.path.join(path_output,"Box Plots")
-    if not os.path.exists(temp_folder):
-        os.makedirs(temp_folder)
-        #----> logging created directory
-        logger.info(f"Created folder {temp_folder}")
-        
-    #else:
-        #----> logging directory already exists
-        #logging.info(f"Folder {temp_folder} already exists")
-        
-
+    
+    try:
+        pathlib.Path(temp_folder).mkdir(parents=True, exist_ok=True)
+    except Exception:
+        logger.critical(f"Something went wrong during the creation of {temp_folder} folder!")
+        return()
 
 
 ## ******PROVA TAP********
@@ -585,10 +571,11 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
     hue_order=list(data_all["group"].unique())
     lables=sorted(list(data_all["pheno"].unique()))
 
+    filename=os.path.join(path_output_result,"Box Plots","box_plot_comparison_"+type_data+".jpeg")
     if len(hue_order)==2:
         #taplib library with logaritmic value on y axis
         try:
-            tap.plot_stats(data_all,x,y,order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+            tap.plot_stats(data_all,x,y,order=lables,filename=filename,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
         except ValueError:
             logger.error("Mann-Whitney Test Error-All numbers are identical")
         except Exception:
@@ -596,7 +583,7 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
 
     elif len(hue_order)>2:
         try:
-            tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=f'{path_output_result}/Box Plots/box_plot_comparison_{type_data}.jpeg',export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+            tap.plot_stats(data_all,x,y,type_test="Kruskal-Wallis",order=lables,filename=filename,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
         except ValueError:
             logger.error("Kruskal-Wallis Test Error-All numbers are identical")
         except Exception:
