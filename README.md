@@ -11,7 +11,7 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
 
     This section provides an overall slide analysis and consists of several steps outlined below.
 
-    The first step is the merge of cell seg data files of each roi. This files are merged into a single file, for each patient and cells that don't have any of the phenotypes of interest (OTHER) are removed. <br>
+    The first step is the merge of cell seg data files of each roi. This files are merged into a single file for each patient. Cells that don't have any of the phenotypes of interest (OTHER) are removed. <br>
 
     The results will be saved into:<br>
     - <em><output_folder>/Merged_clean</em><br>
@@ -84,7 +84,39 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify specific markers, *k* if you want to specify the number of clusters, *cluster_method* to choose the clustering method (spectral or kmeans)
 
-#### Launch ALOA main
+#INSERIRE WORFLOW
+### 1. Merge cell seg data
+The first step is merged, for each patient, the cell_seg_data.txt files
+```
+data_test/
+├── img_match
+│   ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
+│   ├── Set4_1-6plex_[11472,51360]_composite_image.jpeg
+|   ├── ...
+|   |── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+│   └── Set12_20-6plex_[17241,54367]_composite_image.jpeg
+|
+├── raw_data
+│   ├── Set4_1-6plex_S
+│   ├── 
+|   ├── ...
+│   └── 010.vcf
+|
+├── sample_sheet.xlsx
+
+```
+
+### 2. Map Plots
+
+### 3. Descriptive data + statistical analysis
+
+
+### 4. Distances calculation + statistical analysis
+
+### 5. 
+
+
+## Launch ALOA main
 
 These are the options that can be set for this block:
 
