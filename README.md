@@ -86,7 +86,8 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 #INSERIRE WORFLOW
 ### 1. Merge cell seg data
-The first step is merged, for each patient, the cell_seg_data.txt files
+In this section the cell_seg_data.txt files, for each patient, are merged into a single file.
+The single cell_seg_data are in patient specific folder into data_test/raw_data.
 ```
 data_test/
 ├── img_match
@@ -98,22 +99,54 @@ data_test/
 |
 ├── raw_data
 │   ├── Set4_1-6plex_S
-│   ├── 
+|       |── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
+|       |──...
+|       |── Set4_1-6plex_[16142,55840]_cell_seg_data.txt
 |   ├── ...
-│   └── 010.vcf
+│   └── Set12_20-6plex_S
+|       |── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
+|       |──...
+|       |── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+
 |
 ├── sample_sheet.xlsx
 
 ```
+The merged files are saved in a specific folder (*Merged*) into the output folder specified in the configuration file. If there are two groups, into *Merged* will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
+
+```
+output_folder/
+├── Merged
+|   ├── Stroma
+|       ├── Set4_1-6plex_S.txt
+|       ├── ...
+|       ├── Set12_20-6plex_S.txt
+|
+|   ├── Tumor
+|       ├── Set4_1-6plex_T.txt
+|       ├── ...
+|       ├── Set12_20-6plex_T.txt
+|
+```
+
 
 ### 2. Map Plots
 
 ### 3. Descriptive data + statistical analysis
+From merged file, this section produces raw and/or normalized markers counts, for each patient and for each group, saved into csv files and visualize through a **barplot**
 
+A *Descriptive* folder is created to save all the results of this section. For major details see [functions](./functions.md)
+
+<p align="center"><img src="Image_readme/subfolder.png" width=320></p>
+
+
+
+
+From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library
 
 ### 4. Distances calculation + statistical analysis
 
-### 5. 
+### 5. Imaging
 
 
 ## Launch ALOA main
