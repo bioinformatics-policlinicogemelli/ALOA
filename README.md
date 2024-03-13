@@ -94,22 +94,22 @@ data_test/
 │   ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
 │   ├── Set4_1-6plex_[11472,51360]_composite_image.jpeg
 |   ├── ...
-|   |── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+|   ├── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
 │   └── Set12_20-6plex_[17241,54367]_composite_image.jpeg
 |
 ├── raw_data
 │   ├── Set4_1-6plex_S
-|       |── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
-|       |──...
-|       |── Set4_1-6plex_[16142,55840]_cell_seg_data.txt
+|       ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
+|       ├── ...
+|       └──  Set4_1-6plex_[16142,55840]_cell_seg_data.txt
 |   ├── ...
 │   └── Set12_20-6plex_S
-|       |── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
-|       |──...
-|       |── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+|       ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
+|       ├── ...
+|       └──  Set12_20-6plex_[17241,54367]_cell_seg_data.txt
 
 |
-├── sample_sheet.xlsx
+└──  sample_sheet.xlsx
 
 ```
 The merged files are saved in a specific folder (*Merged*) into the output folder specified in the configuration file. If there are two groups, into *Merged* will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
@@ -120,12 +120,12 @@ output_folder/
 |   ├── Stroma
 |       ├── Set4_1-6plex_S.txt
 |       ├── ...
-|       ├── Set12_20-6plex_S.txt
+|       └──  Set12_20-6plex_S.txt
 |
-|   ├── Tumor
+|   └──  Tumor
 |       ├── Set4_1-6plex_T.txt
 |       ├── ...
-|       ├── Set12_20-6plex_T.txt
+|       └──  Set12_20-6plex_T.txt
 |
 ```
 
@@ -142,7 +142,39 @@ A *Descriptive* folder is created to save all the results of this section. For m
 
 
 
-From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library
+From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *box_plot* folder
+
+```
+output_folder/
+|    ├── Descriptive
+|           ├── Group Stroma
+|           |    ├── Barplot
+|           |    |     ├── Bar_Plot_Raw.jpeg
+|           |    |     └──  Bar_Plot_Normalized.jpeg
+|           |    └── csv
+|           |          ├── Norm_count_Set4_1-6plex_S.csv
+|           |          ├── ...
+|           |          ├── Norm_count_ Set12_20-6plex_S.csv
+|           |          ├── Rwe_count_Set4_1-6plex_S.csv
+|           |          ├── ...
+|           |          └──  Raw_count_Set12_20-6plex_S.csv
+|           |
+|           ├── Group Tumor
+|           |    ├── Barplot
+|           |          ├── Bar_Plot_Raw.jpeg
+|           |          └──  Bar_Plot_Normalized.jpeg
+|           |    ├── csv
+|           |          ├── Norm_count_Set4_1-6plex_T.csv
+|           |          ├── ...
+|           |          ├── Norm_count_ Set12_20-6plex_T.csv
+|           |          ├── Raw_count_Set4_1-6plex_T.csv
+|           |          ├── ...
+|           |          └──  Raw_count_Set12_20-6plex_T.csv                
+|           |
+|           |
+|           └──  Box_plot
+
+```
 
 ### 4. Distances calculation + statistical analysis
 
