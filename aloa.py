@@ -128,8 +128,10 @@ def aloa(args, data, logfile):
         distance_match()
         
     log_txt=open(os.path.join(output,"Log",logfile), 'r').read()
+    n_warn=int(log_txt.count("WARNING"))
     n_err=err + int(log_txt.count("ERROR"))
-    logger.info(f"ALOA script completed with {n_err} error(s)!")
+    n_crit=int(log_txt.count("CRITICAL"))
+    logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
     
 #### 
 class MyArgumentParser(argparse.ArgumentParser):
