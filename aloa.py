@@ -4,7 +4,6 @@ import argparse
 from loguru import logger
 import logging
 import pathlib
-import subprocess
 import sys
 import rpy2.robjects as ro
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
@@ -33,6 +32,13 @@ def check_output(output):
     check=glob.glob(path_to_find)
     return(check)
 
+def check_log(n_warn, n_err, n_crit, log):
+    log_txt=open(log, 'r').read()
+    n_warn+=int(log_txt.count("WARNING"))
+    n_err+= int(log_txt.count("ERROR"))
+    n_crit+=int(log_txt.count("CRITICAL"))
+    return(n_warn,n_err,n_crit)
+
 def aloa(args, data, logfile):
     
     logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, all:{args.all}]")
@@ -43,7 +49,9 @@ def aloa(args, data, logfile):
         logger.critical(f"It seems that {output} folder already exists! Delete the folder or change the output name in the config file!")
         return()
         
-    err=0
+    n_err=0
+    n_warn=0
+    n_crit=0
              
     #########################################
     #          DATA REORGANIZATION          #
@@ -63,9 +71,12 @@ def aloa(args, data, logfile):
         
         if len(check_output(os.path.join(output,'Merged_clean')))==0:
             logger.critical(f"Something went wrong in the Merging step. Check {log_name_merge} and {log_name_clean} files for more info.")
-            err+=1
-            logger.info(f"ALOA script exited with {err} error(s)!")
+            n_err+=1
+            logger.info(f"ALOA script exited with {n_err} error(s)!")
             return()
+        
+        n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_merge)
+        n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_clean)
                 
         #########################################
         #             DESCRIPTIVE               #
@@ -87,7 +98,9 @@ def aloa(args, data, logfile):
 
             if len(check_output(os.path.join(output,'Maps_plot')))==0 or "ERROR" in open(f"{log_name}", 'r').read():
                 logger.error(f"Something went wrong in the Maps plot step. Check {log_name} for more info.")
-                err+=1
+                n_err+=1
+
+            n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, log_name)
             
         #########################################
         #               DISTANCE                #
@@ -101,7 +114,9 @@ def aloa(args, data, logfile):
             
             if len(check_output(os.path.join(output,'Distance')))==0 or "ERROR" in open(f"{log_name}", 'r').read():
                 logger.error(f"Something went wrong in the Distance step. Check {log_name} for more info.")
-                err+=1
+                n_err+=1
+
+            n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, log_name)
             
             if args.stats:
                 logger.info("Distance statistical evaluation step starting now")
@@ -126,11 +141,8 @@ def aloa(args, data, logfile):
     if args.dstMatch: 
         logger.info("Distance matching step starting now")
         distance_match()
-        
-    log_txt=open(os.path.join(output,"Log",logfile), 'r').read()
-    n_warn=int(log_txt.count("WARNING"))
-    n_err=err + int(log_txt.count("ERROR"))
-    n_crit=int(log_txt.count("CRITICAL"))
+    
+    n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, logfile)
     logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
     
 #### 

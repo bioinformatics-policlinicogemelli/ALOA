@@ -96,7 +96,7 @@ merge=function(){
   } # end for loop
   
   cat("\n")
-  log4r_info("Merge Step completed!")
+  log4r_info("End merge step!")
   cat("\n")
   
   return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))

@@ -18,6 +18,7 @@ distance=function(){
   logger(log_name)
   cat("\n")
   log4r_info("Start distance evaluation: This step will will evaluate distances between couples of phenotypes positive cells")
+  cat("\n")
   
   #load info from json
   log4r_info("Loading configuration file...")
@@ -39,14 +40,12 @@ distance=function(){
   
   #plot generation
   for (group in groups){
-    
+    cat("\n###################\n")
     log4r_info(paste0("Checking Group: ",group))
     
     #creating output folders
     out_f_gr=file.path(out_f,group)
     dir.create(out_f_gr)
-    # out_f_gr_csv=file.path(out_f_gr,"csv")
-    # dir.create(out_f_gr_csv)
     
     for (file in list.files(file.path(output_f,group), full.names = T)){
       
@@ -71,13 +70,15 @@ distance=function(){
       if (myData$Distance["save_csv"][[1]]){
         name_csv=paste0(id,"_Distance.txt")
         
-        print(paste0("Saving ",name_csv))
+        print(paste0("Saving ",name_csv," file"))
         write.table(csd_with_distance, file.path(out_f_gr,name_csv), append = FALSE, sep = "\t", dec = ".",
                     row.names = F, col.names = TRUE, quote = F)
       }
+      cat("\n")
     }
   }
-  log4r_info("All done!")
+  log4r_info("End distance evaluation!")
+  cat("\n")
 
   return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
 }
