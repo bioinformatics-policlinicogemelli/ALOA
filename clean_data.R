@@ -53,7 +53,6 @@ clean=function(){
     
     cat("\n#############################\n")
     log4r_info(paste0("Group: ",g))
-    cat("\n")
     group_out_path=file.path(output_folder,"Merged_clean",g)
     dir.create(group_out_path)
     

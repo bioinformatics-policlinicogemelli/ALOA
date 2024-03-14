@@ -26,12 +26,13 @@ def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
 
     logger.info("Starting silhouette analysis")
     silhouette_scores = []
+    etichette_cluster={}
     K_range = range(2, k_number)
     for k in K_range:
-        logger.debug(k)
+        logger.info(f"Check for {k} clusters")
         kmeans = KMeans(n_clusters=k)
-        etichette_cluster = kmeans.fit_predict(df_sample.values)
-        silhouette_avg = silhouette_score(df_sample.values, etichette_cluster)
+        etichette_cluster[k] = kmeans.fit_predict(df_sample.values)
+        silhouette_avg = silhouette_score(df_sample.values, etichette_cluster[k])
         silhouette_scores.append(silhouette_avg)
 
     logger.info("Creating optimal cluster number graph")
@@ -76,7 +77,7 @@ def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
 
     phenolist=list(df_plot["Pheno"].unique())
 
-    fig, ax = plt.subplots()
+    _, _ = plt.subplots()
 
     # color map for cluster
     cmap = plt.get_cmap("tab10")
@@ -171,6 +172,10 @@ def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
 
 def main():
     
+    print("\n############################### CLUSTER ANALYSIS ###############################\n")
+    
+    logger.info("Start clustering process: This step will produce a spatial clustering\n")
+
     logger.info("Reading configuration file")
     with open("config.json") as f:
         data=json.load(f)
@@ -178,7 +183,8 @@ def main():
     input_path = os.path.join(data["Paths"]["output_folder"],"Merged_clean")
    
     output_path = os.path.join(data["Paths"]["output_folder"],"Clustering")
-    pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)  
+    pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)
+    logger.info(f"Clustering output will be stored in {output_path}")
     
     clust_alg=data["cluster"]["cluster_method"]
 
@@ -227,7 +233,8 @@ def main():
 
                 # stacked barplot and percentage csv 
                 plot_stacked_bar_chart(df_sample_tmp, output_res, idx, cl)
-            
+    
+    logger.info("End clustering analysis!\n")
     return ()
 
 if __name__ == "__main__":

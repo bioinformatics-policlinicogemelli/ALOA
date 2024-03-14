@@ -1,6 +1,4 @@
 from loguru import logger
-from datetime import datetime
-import sys
 import pathlib
 import os
 import json
@@ -9,7 +7,6 @@ import numpy as np
 import plotly.graph_objects as go
 import math
 import tap
-
 
 def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
     '''
@@ -81,10 +78,6 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
 
     return dict_global_info 
 
-
-
-
-
 #******************************************************
 
 def calculate_mean_group_cells(dictionary_raw_count):
@@ -100,7 +93,6 @@ def calculate_mean_group_cells(dictionary_raw_count):
     count_mean_group_cells: dict
     '''
     
-
     #creating dictionary with the mean of total cells for each group
     count_mean_group_cells={}
 
@@ -122,7 +114,6 @@ def calculate_mean_group_cells(dictionary_raw_count):
     return count_mean_group_cells
 
 #******************************************************
-
 
 def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
     '''
@@ -183,9 +174,7 @@ def normalized_count_cells(dictionary_raw_count,dictionary_mean_count):
 
     return dict_normalized_count_cells
 
-
 #******************************************************
-
 
 def create_output_dir(path_output,groups_name):
     '''
@@ -205,15 +194,9 @@ def create_output_dir(path_output,groups_name):
     for _g in groups_name:
         temp_folder=os.path.join(path_output,_g)
         if not os.path.exists(temp_folder):
-        #if not os.path.isdir(temp_folder):
             os.makedirs(temp_folder)
             logger.info(f" Created folder {temp_folder}")
-           
-        #else:
-            #logging.info(f" Folder {temp_folder} already exists")
         
-
-
 #******************************************************
 
 def create_summury_file(path_output_results,dictionary_count,type_data):
@@ -306,10 +289,7 @@ def create_norm_all_file(path_output_results,dictionary_norm_count):
 
     logger.info("End normalized count calculation on all groups")
 
-
-
 #******************************************************
-
 
 def bar_plot(path_output_result,dict_data,type_data):
     '''
@@ -327,8 +307,6 @@ def bar_plot(path_output_result,dict_data,type_data):
 
     '''
     
-    
-    #---->logging barplot
     logger.info(f"Barplot creation for {type_data} count")
     
     for group,data in dict_data.items():
@@ -347,7 +325,7 @@ def bar_plot(path_output_result,dict_data,type_data):
         max_val_y=0
         fig=go.Figure()
         for patient,targets in data.items():
-            #----> logging for creation patient barplot
+
             logger.info(f"Subject: {patient}")
 
             #sorted phenotypes in alphabetic order
@@ -374,23 +352,10 @@ def bar_plot(path_output_result,dict_data,type_data):
         #adding y axis range in log scale
         fig.update_yaxes(range=[0,(math.log(max_val_y,10)+1.0)])
 
-        # define path of Bar_plot directory, where saved the figure
-
-        #else:
-            #---> logging directory just existed
-            #logging.info(f" Folder {dire} already exists")
-
-
         # saved figure in jpeg format
         fig.write_image(f'{dire}/Bar_Plot_{type_data}.jpeg',scale=6)
-        #fig.show()        
         
-
-
-            
-
 #******************************************************
-
 
 def calculate_mean_total_groups(dictionary_raw_count):
     '''
@@ -420,7 +385,6 @@ def calculate_mean_total_groups(dictionary_raw_count):
 
 #******************************************************
 
-
 def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
     '''
     formula normalizzation all groups = number of cells positive for target (or phenotipes) / total cells patient ) * mean of total cells of all groups
@@ -438,7 +402,6 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
 
     '''
 
-    #---->logging
     logger.info("Starting normalized count on all groups")
 
     # define dictionary of count normalized on all group present
@@ -467,11 +430,9 @@ def normalized_count_on_all_groups(dictionary_raw_count,mean_all_groups):
                 # adding phenotypes as fourth key of dictionary
                 dict_normalized_count_cells[group][patient][pheno]=_new_value
 
-    #---->logging
     logger.info("End normalized count on all groups")
 
     return dict_normalized_count_cells
-
 
 #******************************************************
 
@@ -509,8 +470,8 @@ def prepare_data_box_plot(dictionary_count):
     _data_all=pd.DataFrame(_data_norm,columns=["group","pheno","Count"])
 
     return _data_all
-
-    
+  
+#*****************************************************************
 
 def create_output_box_plot_dir(path_output):
     '''
@@ -534,10 +495,8 @@ def create_output_box_plot_dir(path_output):
     except Exception:
         logger.critical(f"Something went wrong during the creation of {temp_folder} folder!")
         return()
-
-
-## ******PROVA TAP********
-
+    
+#*****************************************************************
 
 def create_comparison_box_plot(path_output_result,data_all,type_data):
     '''
@@ -590,8 +549,8 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
             logger.error("Something went wrong during Kruskal-Wallis test")
             return()
 
-
-    
+#*****************************************************************
+#*****************************************************************
 def main():
     
     print("\n############################# DESCRIPTIVE ANALYSIS #############################\n")

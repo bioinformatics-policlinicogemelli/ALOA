@@ -1,11 +1,9 @@
-#libraries import
-import os
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 import pandas as pd
 pd.DataFrame.iteritems = pd.DataFrame.items
-
+from loguru import logger
 import seaborn as sns
 
 from skimage.metrics import structural_similarity
@@ -17,15 +15,28 @@ from rpy2.robjects.conversion import localconverter
 
 import itertools
 
-from chart_studio import plotly as py
 import plotly.graph_objs as go
-import plotly.express as px
 from PIL import Image
 
 ### Image Preprocessing Section ###
 
-# function to filter dataframe (remove phenotype not of interest)
-def pheno_filt(pheno_df, pheno_list=[]):    
+def pheno_filt(pheno_df, pheno_list=[]):   
+
+    '''
+    Function to filter dataframe (remove phenotype not of interest)
+
+    Parameters
+    ----
+    pheno_df : DataFrame
+    pheno_list : list
+    
+
+    Return
+    ---
+    pheno_df : DataFrame
+   
+    '''
+
     pheno_col=pheno_df[pheno_df.columns[pd.Series(pheno_df.columns).str.startswith('Phenotype')]]
     
     pheno_col=pheno_col.columns
@@ -58,8 +69,24 @@ def pheno_filt(pheno_df, pheno_list=[]):
     
     return pheno_df.reset_index()
 
-# function to filter image (remove isolated pixels)
+#*****************************************************************
+
 def img_filt(img):
+        
+    '''
+    Function to filter image (remove isolated pixels)
+
+    Parameters
+    ----
+    img : numpyArray
+    
+
+    Return
+    ---
+    masked_img : numpyArray
+   
+    '''
+
     blur = cv2.GaussianBlur(img, (15, 15), 2)
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     lower_green = np.array([37, 0, 0])
@@ -78,18 +105,53 @@ def img_filt(img):
     score, _ = structural_similarity(img_gray, masked_img_gray, full=True)
     
     if score<.4:
-        print("Low similiraty: {:.2f}%".format(score))
+        logger.warning("Low similiraty: {:.2f}%".format(score))
         return img
     
     return masked_img
 
-# function to crop images
-def crop_img(image,th):
-    y_nonzero, x_nonzero, _ = np.nonzero(image>th)
-    return image[np.min(y_nonzero):np.max(y_nonzero), np.min(x_nonzero):np.max(x_nonzero)]
+#*****************************************************************
 
-#function to normalize X and Y cell positions
+def crop_img(image,th):
+
+    '''
+    Function to crop image
+
+    Parameters
+    ----
+    image : numpyArray
+    th : int
+    
+
+    Return
+    ---
+    crop_img : numpyArray
+   
+    '''
+        
+    y_nonzero, x_nonzero, _ = np.nonzero(image>th)
+    crop_img=image[np.min(y_nonzero):np.max(y_nonzero), np.min(x_nonzero):np.max(x_nonzero)]
+    return crop_img
+
+#*****************************************************************
+
 def norm_values(pheno_df, crop):
+    
+    '''
+    Function to normalize X and Y cell positions
+
+    Parameters
+    ----
+    pheno_df : DataFrame
+    crop : numpyArray
+    
+
+    Return
+    ---
+    pheno_df : DataFrame
+   
+    '''
+        
     pheno_df["Cell X Position Norm"]=(
         (pheno_df["Cell X Position"]-min(pheno_df["Cell X Position"]))/
         (max(pheno_df["Cell X Position"])-min(pheno_df["Cell X Position"]))
@@ -102,8 +164,29 @@ def norm_values(pheno_df, crop):
 
     return pheno_df
 
-#function to plot pheno images
+#*****************************************************************
+
 def plot_pheno(img, pheno_df, filename , p='gist_ncar', edge_col='black', dim_dot=15):
+
+    '''
+    Function to plot pheno images
+
+    Parameters
+    ----
+    img : numpyArray
+    pheno_df : DataFrame
+    filename : str
+    p : str
+    edge_col : str
+    dim_dot : int
+    
+
+    Return
+    ---
+    None
+   
+    '''
+
     implot=plt.imshow(img)
     sns.scatterplot(pheno_df, 
                     x=pheno_df["Cell X Position Norm"], 
@@ -120,58 +203,30 @@ def plot_pheno(img, pheno_df, filename , p='gist_ncar', edge_col='black', dim_do
     
     plt.close()
 
-### Distance Section ###
-
-#R environment settings
-r = ro.r
-r['source']('distance_match_func.R')
-distance_eval_fun_r = ro.globalenv['distance_eval']
-
-#function to evaluate distance    
-def dist_eval(pheno_df):
-    with localconverter(ro.default_converter + pandas2ri.converter):
-            #convert python df to R df
-        pheno_df_r = ro.conversion.py2rpy(pheno_df)
-            #launch r function
-    df_result_r = distance_eval_fun_r(pheno_df_r)
-            #convert R df to python df
-    pheno_df=ro.pandas2ri.rpy2py_dataframe(df_result_r)
-    return pheno_df
-
-#function to plot distance images
-def plot_dist(img, pheno_df, ph1_to_ph2, filename, dim_dot=8, m=False):
-    
-    ph1_to_ph2=ph1_to_ph2.reset_index()
-    
-    ph1=ph1_to_ph2["Phenotype"][0]
-    ph2=[col for col in ph1_to_ph2 if col.startswith('Phenotype.')][0].split('.')[-1]
-    
-    ph1_df=pheno_df[pheno_df["Phenotype"]==ph1].reset_index()
-    ph2_df=pheno_df[pheno_df["Phenotype"]==ph2].reset_index()
-        
-    implot=plt.imshow(img)
-    
-    plt.plot(ph1_df['Cell X Position Norm'], ph1_df['Cell Y Position Norm'],'k.', markerfacecolor='c', markersize=dim_dot, label=ph1)
-    plt.plot(ph2_df['Cell X Position Norm'], ph2_df['Cell Y Position Norm'],'k.', markerfacecolor='r', markersize=dim_dot, label=ph2)
-    
-    for n in range(0, len(ph1_to_ph2), 2):
-        plt.plot([ph1_to_ph2.loc[n, 'Cell X Position Norm'], ph1_to_ph2.loc[n, 'Cell X Position Norm.'+ph2]], 
-                 [ph1_to_ph2.loc[n, 'Cell Y Position Norm'], ph1_to_ph2.loc[n, 'Cell Y Position Norm.'+ph2]], 'w--', alpha=0.8)
-                
-    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0, markerscale=2)
-    plt.xlabel("X Cell Position ($\mu$m)")
-    plt.ylabel("Y Cell Position ($\mu$m)")
-    
-    if not m:
-        plt.title("Nearest "+ph1+" to each "+ph2)
-        plt.savefig(filename+"_Nearest_"+ph1+"_to_each_"+ph2+".tif",dpi=300, format="tiff", bbox_inches='tight')
-    else:
-        plt.title("Mutual nearest neighbors -"+ph1+" and "+ph2)
-        plt.savefig(filename+"_Mutual_nearest_neighbors_"+ph1+"_and_"+ph2+".tif",dpi=300, format="tiff", bbox_inches='tight')
-    
-    plt.close()
+#*****************************************************************
 
 def plot_interactive(img, pheno_df, filename , edge_col='black', dim_dot=10, xsize_img=1200, ysize_img=900):
+
+    '''
+    Function to plot interactive distance images
+
+    Parameters
+    ----
+    img : numpyArray
+    pheno_df : DataFrame
+    filename : str
+    edge_col : str
+    dim_dot : int
+    xsize_img : int
+    ysize_img : int
+    
+
+    Return
+    ---
+    None
+   
+    '''
+
     image=Image.fromarray(img)
 
     data=[]
@@ -209,5 +264,91 @@ def plot_interactive(img, pheno_df, filename , edge_col='black', dim_dot=10, xsi
                       xaxis_showticklabels=False, yaxis_showticklabels=False,
                       showlegend=True
                       )
-    #fig.show()
+
     fig.write_html(filename+".html")
+
+    
+### Distance Section ###
+
+#R environment settings
+r = ro.r
+r['source']('distance_match_func.R')
+distance_eval_fun_r = ro.globalenv['distance_eval']
+
+def dist_eval(pheno_df):
+
+    '''
+    Function to evaluate distance
+
+    Parameters
+    ----
+    pheno_df : DataFrame
+    
+
+    Return
+    ---
+    pheno_df : DataFrame
+   
+    '''
+        
+    with localconverter(ro.default_converter + pandas2ri.converter):
+        #convert python df to R df
+        pheno_df_r = ro.conversion.py2rpy(pheno_df)
+    #launch r function
+    df_result_r = distance_eval_fun_r(pheno_df_r)
+    #convert R df to python df
+    pheno_df=ro.pandas2ri.rpy2py_dataframe(df_result_r)
+    return pheno_df
+
+#*****************************************************************
+
+def plot_dist(img, pheno_df, ph1_to_ph2, filename, dim_dot=8, m=False):
+
+    '''
+    Function to plot distance images
+
+    Parameters
+    ----
+    img : numpyArray
+    pheno_df : DataFrame
+    ph1_to_ph2 : DataFrame
+    filename : str
+    dim_dot : int
+    m : boolean
+    
+
+    Return
+    ---
+    pheno_df : DataFrame
+   
+    '''
+    
+    ph1_to_ph2=ph1_to_ph2.reset_index()
+    
+    ph1=ph1_to_ph2["Phenotype"][0]
+    ph2=[col for col in ph1_to_ph2 if col.startswith('Phenotype.')][0].split('.')[-1]
+    
+    ph1_df=pheno_df[pheno_df["Phenotype"]==ph1].reset_index()
+    ph2_df=pheno_df[pheno_df["Phenotype"]==ph2].reset_index()
+        
+    implot=plt.imshow(img)
+    
+    plt.plot(ph1_df['Cell X Position Norm'], ph1_df['Cell Y Position Norm'],'k.', markerfacecolor='c', markersize=dim_dot, label=ph1)
+    plt.plot(ph2_df['Cell X Position Norm'], ph2_df['Cell Y Position Norm'],'k.', markerfacecolor='r', markersize=dim_dot, label=ph2)
+    
+    for n in range(0, len(ph1_to_ph2), 2):
+        plt.plot([ph1_to_ph2.loc[n, 'Cell X Position Norm'], ph1_to_ph2.loc[n, 'Cell X Position Norm.'+ph2]], 
+                 [ph1_to_ph2.loc[n, 'Cell Y Position Norm'], ph1_to_ph2.loc[n, 'Cell Y Position Norm.'+ph2]], 'w--', alpha=0.8)
+                
+    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', borderaxespad=0, markerscale=2)
+    plt.xlabel("X Cell Position ($\mu$m)")
+    plt.ylabel("Y Cell Position ($\mu$m)")
+    
+    if not m:
+        plt.title("Nearest "+ph1+" to each "+ph2)
+        plt.savefig(filename+"_Nearest_"+ph1+"_to_each_"+ph2+".tif",dpi=300, format="tiff", bbox_inches='tight')
+    else:
+        plt.title("Mutual nearest neighbors -"+ph1+" and "+ph2)
+        plt.savefig(filename+"_Mutual_nearest_neighbors_"+ph1+"_and_"+ph2+".tif",dpi=300, format="tiff", bbox_inches='tight')
+    
+    plt.close()

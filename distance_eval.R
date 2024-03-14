@@ -26,7 +26,7 @@ distance=function(){
   
   out_f=file.path(myData$Paths["output_folder"],"Distance")
   dir.create(out_f)
-  log4r_info(paste0("Distances csv file will be stored in ", out_f))
+  log4r_info(paste0("Distances output file will be stored in ", out_f))
   
   output_f=file.path(myData$Paths["output_folder"],"Merged_clean")
 
@@ -34,6 +34,10 @@ distance=function(){
     gene_list=myData$Phenotypes["pheno_list"][[1]]
   }else{
     gene_list=myData$Distance["pheno_list"][[1]]
+  }
+  
+  if (length(gene_list)){
+    log4r_info
   }
   
   groups=list.files(output_f)

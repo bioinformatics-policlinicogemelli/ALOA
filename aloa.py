@@ -26,11 +26,15 @@ def all_true(args):
         print(arg, getattr(args, arg))
         setattr(args, arg,True)
         print(arg, getattr(args, arg))
+
+#*****************************************************************
         
 def check_output(output):
     path_to_find=os.path.join(output,"*","*txt")
     check=glob.glob(path_to_find)
     return(check)
+
+#*****************************************************************
 
 def check_log(n_warn, n_err, n_crit, log):
     log_txt=open(log, 'r').read()
@@ -38,6 +42,9 @@ def check_log(n_warn, n_err, n_crit, log):
     n_err+= int(log_txt.count("ERROR"))
     n_crit+=int(log_txt.count("CRITICAL"))
     return(n_warn,n_err,n_crit)
+
+#*****************************************************************
+#*****************************************************************
 
 def aloa(args, data, logfile):
     
@@ -59,12 +66,12 @@ def aloa(args, data, logfile):
     
     if args.merge:
         
-        logger.info("Merge step starting now")
+        logger.info("|-> Merge step starting now")
         ro.r['source']('merge.R')
         merge = ro.globalenv['merge']
         log_name_merge=merge()[0]
         
-        logger.info("Clean step starting now")
+        logger.info("|-> Clean step starting now")
         ro.r['source']('clean_data.R')
         clean = ro.globalenv['clean']
         log_name_clean=clean()[0]
@@ -83,7 +90,7 @@ def aloa(args, data, logfile):
         #########################################
         
         if args.overview:
-            logger.info("Descriptive step starting now\n")
+            logger.info("|-> Descriptive step starting now\n")
             descriptive()
         
         #########################################
@@ -91,7 +98,7 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.maps:
-            logger.info("Maps plot step starting now")
+            logger.info("|-> Maps plot step starting now")
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
             log_name=maps()[0]
@@ -107,7 +114,7 @@ def aloa(args, data, logfile):
         #########################################
         
         if args.distance:
-            logger.info("Distance evaluation step starting now")
+            logger.info("|-> Distance evaluation step starting now")
             ro.r['source']('distance_eval.R')
             distance = ro.globalenv['distance']
             log_name=distance()[0]
@@ -119,7 +126,7 @@ def aloa(args, data, logfile):
             n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, log_name)
             
             if args.stats:
-                logger.info("Distance statistical evaluation step starting now")
+                logger.info("|-> Distance statistical evaluation step starting now")
                 stat_dist()
                 
         #########################################
@@ -127,19 +134,19 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.clustering:
-            logger.info("Clustering step starting now")
+            logger.info("|-> Clustering step starting now")
             clust()
             
     #########################################
     #               IMAGING                 #
     #########################################        
     if args.imgMatch:          
-        logger.info("Image matching step starting now")
+        logger.info("|-> Image matching step starting now")
         img_match()
                        
          
     if args.dstMatch: 
-        logger.info("Distance matching step starting now")
+        logger.info("|-> Distance matching step starting now")
         distance_match()
     
     n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, logfile)
@@ -212,7 +219,7 @@ def main():
         logger.critical(f"It seems that stats (-s) option is provided without the distance (-d) one. That is not possible beacause statistical evaluation requires distance evaluation. Try launch the command again setting -d and -s concurrently.")
         exit(1)
             
-    aloa(args, data, logfile)
+    aloa(args, data, os.path.join(log_path,logfile))
     
 if __name__ == '__main__':
     main()

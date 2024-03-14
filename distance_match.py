@@ -9,6 +9,10 @@ import itertools
 from loguru import logger
 
 def distance_match():
+
+    print("\n################################ DISTANCE MATCH ################################\n")
+    
+    logger.info("Start distance match process: This step will provide the plot of the distance between couple of phenotypes on the tiff image(s)\n")
     
     f=open("config.json")
     data=json.load(f)
@@ -28,7 +32,7 @@ def distance_match():
     dir=list(set(list(map(lambda x: os.path.join(input_folder,x.split(']_')[0]+"]"), dir))))
 
     for d in dir:
-        print(f"Analyzing file {d}")
+        logger.info(f"Analyzing file {d}")
         #dataframe section
         df=pd.read_csv(d+"_cell_seg_data.txt",sep="\t")
         
@@ -57,11 +61,11 @@ def distance_match():
         pheno_df=norm_values(df, crop)
         comb=list(itertools.combinations(pheno_list, 2))
         for c in comb:
-            print(f"Check distance between {c[0]} and {c[1]}")
+            logger.info(f"Check distance between {c[0]} and {c[1]}")
             
             pheno_df=pheno_filt(df,list(c))
             if len(pheno_df["Pheno"].unique())!=2:
-                print("Data " + d + "has no match with requested Phenotype list. Skip to the next one!")
+                logger.warning("Data " + d + "has no match with requested Phenotype list. Skip to the next one!")
                 continue
 
             
@@ -72,16 +76,16 @@ def distance_match():
             ph2=pheno_df_dist[pheno_df_dist["Phenotype"]==c[1]]
             
             if len(ph1)==0:
-                print(f"{ph1} not found!")
-                print("skip to the next couple oh phenotypes")
+                logger.warning(f"{ph1} not found!")
+                logger.info("skip to the next couple oh phenotypes")
                 continue
             
             if len(ph2)==0:
-                print(f"{ph2} not found!")
-                print("skip to the next couple oh phenotypes")
+                logger.warning(f"{ph2} not found!")
+                logger.info("skip to the next couple oh phenotypes")
                 continue
             
-            filename=(d+"_composite_image.tif").split("/")[-1].replace(".tif","_dist_match_") + ''.join(map(str, list(c)))
+            filename=(d+"_composite_image.tif").split("\\")[-1].split("/")[-1].replace(".tif","_dist_match_") + ''.join(map(str, list(c)))
             
             # nearest ph2 cell for each ph1
             ph1_to_ph2=pd.merge(ph1, ph2, left_on='Cell ID ' + c[1], right_on='Cell ID', suffixes=[None, "."+c[1]])
@@ -98,6 +102,7 @@ def distance_match():
             if len(mutual)>0:
                 plot_dist(crop, pheno_df_dist, mutual, os.path.join(output_f, filename),m=True)
     
+    logger.info("End distance match!\n")
     return()
 
 if __name__ == '__main__':

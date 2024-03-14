@@ -1,4 +1,3 @@
-#libraries import
 from image_proc_functions import pheno_filt, img_filt, crop_img, norm_values, plot_pheno, plot_interactive
 import cv2
 import pandas as pd
@@ -9,8 +8,10 @@ from loguru import logger
 
 def img_match():
     
-    logger.info("############################# DESCRIPTIVE ANALYSIS #############################")
+    print("\n################################# IMAGE MATCH ##################################\n")
     
+    logger.info("Start image match process: This step will provide the plot of the phenotype(s) on the tiff image(s)\n")
+
     with open("config.json") as f:
         data=json.load(f)
     
@@ -30,13 +31,14 @@ def img_match():
     
     for d in dir:
         
-        print("Analyzing data "+ d)
+        logger.info("Analyzing data "+ d)
         
         #dataframe section
         df=pd.read_csv(d+"_cell_seg_data.txt",sep="\t")
         
         # image 
         img_filename=d+"_composite_image"
+
         if os.path.isfile(img_filename+".tif"):
             img_filename=img_filename+".tif"
         elif os.path.isfile(img_filename+".png"):
@@ -45,6 +47,8 @@ def img_match():
             img_filename=img_filename+".jpg"
         else:
             logger.critical("Image not found! Exiting img match script!")
+            return()
+        
         img = cv2.imread(img_filename)
         masked_img=img_filt(img)
         crop=crop_img(masked_img,50)
@@ -64,11 +68,11 @@ def img_match():
         pheno_df=pheno_filt(pheno_df,pheno_list)
         
         if len(pheno_df)==0:
-            print("Data " + d + "has no match with requested Phenotype list. Skip to the next one!")
+            logger.warning("Data " + d + "has no match with requested Phenotype list. Skip to the next one!")
             continue
         
         #plot
-        filename=(d+"_composite_image.tif").split("/")[-1].replace(".tif","_match_") + ''.join(map(str, pheno_list))
+        filename=(d+"_composite_image.tif").split("\\")[-1].split("/")[-1].replace(".tif","_match_") + ''.join(map(str, pheno_list))
         plot_pheno(crop, pheno_df, os.path.join(output_f, filename))
         
         if data["image_match"]["interactive"]:
@@ -78,7 +82,7 @@ def img_match():
                              data["image_match"]["layout_marker_size"], 
                              data["image_match"]["layout_xsize"], data["image_match"]["layout_ysize"])
         
-    print("All done!")
+    logger.info("End image match!\n")
     
 if __name__ == '__main__':
     img_match()
