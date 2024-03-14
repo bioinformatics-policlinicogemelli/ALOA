@@ -4,7 +4,6 @@ library(rjson)
 library(phenoptr)
 library(phenoptrReports)
 library(logr)
-
 source("logger.R")
 
 merge=function(){
@@ -32,7 +31,7 @@ merge=function(){
   #### Input parsing
   data_input_folder=file.path(myData$Paths["data_input_folder"][[1]],"raw_data")
   output_folder=myData$Paths["output_folder"][[1]]
-  sample_sheet=myData$Paths["sample_sheet"][[1]]
+  sample_sheet=file.path(myData$Paths["data_input_folder"][[1]],"sample_sheet.xlsx")
   
   data_input=read_xlsx(sample_sheet)
   
