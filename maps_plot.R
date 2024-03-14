@@ -73,8 +73,7 @@ maps=function(){
       multi_maps_plot(filt_data, id ,out_f_gr, myData$Map_plot["interactive"][[1]])
   
     }
-    log4r_info("All done!")
-    
-    return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
   }
+  log4r_info("End maps plot!")
+  return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
 }

@@ -29,8 +29,13 @@ def all_true(args):
 
 #*****************************************************************
         
-def check_output(output):
-    path_to_find=os.path.join(output,"*","*txt")
+def check_output(output,fun):
+    if fun=="merge" or fun=="dist":
+        path_to_find=os.path.join(output,"*","*txt")
+    elif fun=="maps":
+        path_to_find=os.path.join(output,"*","*pdf")
+    else:
+        return("")
     check=glob.glob(path_to_find)
     return(check)
 
@@ -76,7 +81,7 @@ def aloa(args, data, logfile):
         clean = ro.globalenv['clean']
         log_name_clean=clean()[0]
         
-        if len(check_output(os.path.join(output,'Merged_clean')))==0:
+        if len(check_output(os.path.join(output,'Merged_clean'),"merge"))==0:
             logger.critical(f"Something went wrong in the Merging step. Check {log_name_merge} and {log_name_clean} files for more info.")
             n_err+=1
             logger.info(f"ALOA script exited with {n_err} error(s)!")
@@ -103,7 +108,7 @@ def aloa(args, data, logfile):
             maps = ro.globalenv['maps']
             log_name=maps()[0]
 
-            if len(check_output(os.path.join(output,'Maps_plot')))==0 or "ERROR" in open(f"{log_name}", 'r').read():
+            if len(check_output(os.path.join(output,'Maps_plot'),"maps"))==0 or "ERROR" in open(f"{log_name}", 'r').read():
                 logger.error(f"Something went wrong in the Maps plot step. Check {log_name} for more info.")
                 n_err+=1
 
@@ -119,7 +124,7 @@ def aloa(args, data, logfile):
             distance = ro.globalenv['distance']
             log_name=distance()[0]
             
-            if len(check_output(os.path.join(output,'Distance')))==0 or "ERROR" in open(f"{log_name}", 'r').read():
+            if len(check_output(os.path.join(output,'Distance'),"dist"))==0 or "ERROR" in open(f"{log_name}", 'r').read():
                 logger.error(f"Something went wrong in the Distance step. Check {log_name} for more info.")
                 n_err+=1
 
