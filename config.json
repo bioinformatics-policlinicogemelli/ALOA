@@ -1,12 +1,7 @@
 {
    "Paths":{
       "data_input_folder":"./data_test",
-      "output_folder":"./output",
-      "sample_sheet":"./data_test/sample_sheet.xlsx"
-   },
-   "Packages":{
-      "install_pkg_R":false,
-      "install_pkg_Python":false
+      "output_folder":"./output"
    },
    "Phenotypes":{
       "pheno_list":[
