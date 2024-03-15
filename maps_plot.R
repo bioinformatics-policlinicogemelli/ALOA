@@ -60,7 +60,7 @@ maps=function(){
       print("################################")
       cat("\n")
       print(paste0("Analyzing ",file, "..."))
-      id=gsub(".txt","",strsplit(file,"_")[[1]][length(strsplit(file,"_")[[1]])])
+      id=gsub(".txt","",gsub("Merge_cell_seg_data_","",path_file(file)))
       data<-read.delim(file)
       
       print("starting multi images plot")
