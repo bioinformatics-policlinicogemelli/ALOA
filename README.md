@@ -44,20 +44,21 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
 
 ## Installation
 
+
 1. Open a terminal
-2. Clone the repository folder: 
+2. Digit the following command to clone the repository folder: 
 ```
 git clone https://github.com/bioinformatics-policlinicogemelli/ALOA
 ```
-
-#### Local 
-
-3. Install all the packages required
+3.  Install all of the packages required
 ```
 cd <ALOA_folder_path>/ALOA
+
 pip install -r requirements.txt
+
 Rscript installation_rpackages.R req.txt
 ```
+
 #### Docker
 
 3. Build docker file
@@ -75,11 +76,10 @@ docker run -it -v <data_input_path>:./<data_input_folder_name> -v <output_data>:
 docker run -it -v <data_input_path>:./data_input -v <output_data>:./output -v ./<path_to_config.json>:/config.json aloa
 ```
 
-
 ## Usage
 The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 10 subsessions:
 <br>
-* **Paths**: here is possible to specify *data_input_folder* and *output_folder* paths
+* **Paths**: here is possible to specify *data_input_folder*, *output_folder* and *sample_sheet* paths
 
 * **Phenotypes**: here are specified the markers of interest into *pheno_list*
 
@@ -95,7 +95,7 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
-* **cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify specific markers, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral and/or kmeans)
+* **cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify specific markers, *k* if you want to specify the number of clusters, *cluster_method* to choose the clustering method (spectral or kmeans)
 
 #INSERIRE WORFLOW
 ### 1. Merge cell seg data
@@ -120,72 +120,95 @@ data_test/
 |       ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
 |       ├── ...
 |       └──  Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+
 |
 └──  sample_sheet.xlsx
 
 ```
-The merged files are saved in a specific folder (*Merged*) into the output folder specified in the configuration file. If there are two groups, into *Merged* will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
+All ALOA results are saved into a folder output whose path is specified in *config.json* file.
+
+All log files, of this section, are saved into LOG folder with an intuitive name files.
+
+For the merge, two types of files are genetared:
+- files where **negative cellulas**, for markers of interest, haven't been deleted (saved into *Merged* folder)
+- files where **negative cellulas**, for  markers of interest, have been deleted (saved into *Merged_clean* folder)
+
+If there are two groups, into *Merged* and *Merged_clean*, will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
 
 ```
 output_folder/
-└── Merged
-    ├── Stroma
-    |   ├── Set4_1-6plex_S.txt
-    |   ├── ...
-    |   └──  Set12_20-6plex_S.txt
-    └──  Tumor
-        ├── Set4_1-6plex_T.txt
-        ├── ...
-        └──  Set12_20-6plex_T.txt
+├── Log
+|   ├── aloa_year_month_day_hour_minute_seconds.log
+|   ├── clean_data_year_month_day_hour_minute_seconds.log
+|   └── Merge_year_month_day_hour_minute_seconds.log
+|
+├── Merged
+|   ├── Stroma
+|   |   ├── Merge_cell_seg_data_Set4_1-6plex_S.txt
+|   |   ├── ...
+|   |    └──  Merge_cell_seg_data_Set12_20-6plex_S.txt
+|   |
+|   └──  Tumor
+|       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
+|       ├── ...
+|       └──  Merge_cell_seg_data_Set12_20-6plex_T.txt
+|
+├── Merged_clean
+|   ├── Stroma
+|   |     ├── Merge_cell_seg_data_Set4_1-6plex_S.txt
+|   |   ├── ...
+|   |   └──  Merge_cell_seg_data_Set12_20-6plex_S.txt
+|   |
+|   └──  Tumor
+|       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
+|       ├── ...
+|       └──  Merge_cell_seg_data_Set12_20-6plex_T.txt
+
+
 ```
+
 
 ### 2. Map Plots
-From merged file, this section produces a plot of all the markers coordinates, for each patient. The output image(s) are saved as pdf files.
-```
-output_folder/
-└── Maps_plot
-    ├── Stroma
-    |   ├── Set4_1-6plex_S_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
-    |   ├── ...
-    |   └──  Set12_20-6plex_S_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
-    └──  Tumor
-        ├── Set4_1-6plex_T_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
-        ├── ...
-        └──  Set12_20-6plex_T_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
-```
 
 ### 3. Descriptive data + statistical analysis
-From merged file, this section produces raw and/or normalized markers counts, for each patient and for each group, saved into csv files and visualize through a **barplot**
+From merged file, this section produces raw and/or normalized markers counts, for each patient and for each group, saved into csv files (*csv* folder) and visualize through **barplot** figures saved into *Barplot* folder.
 
-A *Descriptive* folder is created to save all the results of this section. For major details see [functions](./functions.md)
+⚠️ Two different formulas are used for normalized counts in barplots (*Norm_count_patientname.csv*) and in boxplots (*all_norm_count_patientsname*). For more details see [functions](./functions.md)
+
+
+A *Descriptive* folder is created to save all the results of this section.
 
 <p align="center"><img src="Image_readme/subfolder.png" width=320></p>
 
 
-
-
-From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *box_plot* folder
+From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** figure, with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *box_plot* folder
 
 ```
 output_folder/
-|    └── Descriptive
-|           ├── Group Stroma
-|           |    ├── Barplot
-|           |    |     ├── Bar_Plot_Raw.jpeg
-|           |    |     └──  Bar_Plot_Normalized.jpeg
+|    ├── Descriptive
+|           ├── Stroma
+|           |    ├── Bar_plot
+|           |    |     ├── Bar_Plot_Normalized.jpeg
+|           |    |     └── Bar_Plot_Raw.jpeg
 |           |    └── csv
+|           |          ├── all_norm_count_Set4_1-6plex_S.csv
+|           |          ├── ...
+|           |          ├── all_norm_count_Set12_20-6plex_S.csv
 |           |          ├── Norm_count_Set4_1-6plex_S.csv
 |           |          ├── ...
-|           |          ├── Norm_count_ Set12_20-6plex_S.csv
-|           |          ├── Rwe_count_Set4_1-6plex_S.csv
+|           |          ├── Norm_count_Set12_20-6plex_S.csv
+|           |          ├── Raw_count_Set4_1-6plex_S.csv
 |           |          ├── ...
-|           |          └──  Raw_count_Set12_20-6plex_S.csv
+|           |          └── Raw_count_Set12_20-6plex_S.csv
 |           |
-|           ├── Group Tumor
-|           |    ├── Barplot
-|           |          ├── Bar_Plot_Raw.jpeg
-|           |          └──  Bar_Plot_Normalized.jpeg
+|           ├── Tumor
+|           |    ├── Bar_plot
+|           |          ├── Bar_Plot_Normalized.jpeg
+|           |          └── Bar_Plot_Raw.jpeg
 |           |    ├── csv
+|           |          ├── all_norm_count_Set4_1-6plex_T.csv
+|           |          ├── ...
+|           |          ├── all_norm_count_Set12_20-6plex_T.csv
 |           |          ├── Norm_count_Set4_1-6plex_T.csv
 |           |          ├── ...
 |           |          ├── Norm_count_ Set12_20-6plex_T.csv
@@ -194,11 +217,16 @@ output_folder/
 |           |          └──  Raw_count_Set12_20-6plex_T.csv                
 |           |
 |           |
-|           └──  Box_plot
+|           └── Box Plots
+|               ├── box_plot_comparison_Normalized.jpeg
+|               └── box_plot_comparison_Rw.jpeg
+                
 
 ```
 
 ### 4. Distances calculation + statistical analysis
+
+
 
 ### 5. Imaging
 
