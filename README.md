@@ -64,7 +64,7 @@ Rscript installation_rpackages.R req.txt
 3. Build docker file
 ```
 cd <ALOA_folder_path>/ALOA
-docker build -t aloa
+docker build -t aloa .
 ```
 4. Run docker in interactive mode
 ```
