@@ -224,11 +224,52 @@ output_folder/
 
 ```
 
-### 4. Distances calculation + statistical analysis
+### 4. Distances calculation
+
+### 5. Satistical on distances
+
+In this section a statistical analysis is performed to see if there are any significant differences, among the groups present, of the distributions of distances for the markers.
+If *"pheno_from"* and *"pheno-to"* are specified in the configuration file, in , the analysis will be performed only for that type of distance. On the other hand, if **no** *"pheno_from"* and/or *"pheno-to"* is specified, the analysis is performed by permutation the different markers as "from" and "to".
+
+
+A *Distance_Statistical* folder is created to save all the results of this section.
+
+ <p align="center"><img src="Image_readme/distance_statistical.png" width=320> </p>
+
+⚠️ Distance values are calculated as Z-score. For more details see For more details see [functions](./functions.md)
 
 
 
-### 5. Imaging
+The results are: 
+- **boxplot** figure,with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved in box_plot folder
+- **csv** file with distance value for all patients for each group for a specific distance
+- **distance_curve** figure (optional), saved into distance_curve folder, where are plotted the distributions of the distances of comparative groups for a specific couple of marker
+
+
+```
+output_folder/
+|    ├── Distance_Statistical
+|         ├── box_plot
+|           |    ├── distances_box_plot_CD8+_to_CD68+.png
+|           |    ├── ...
+|           |    └── distances_box_plot_FoxP3+_to_CK+.png
+|           ├── csv
+|           |    ├── df_statistical_distance_CD8+_to_CD68+.csv
+|           |    ├── ...
+|           |    └── df_statistical_distance_FoxP3+_to_CK+.csv
+|           |
+|           ├── distance_curve
+|           |    ├── plot_statistical_distance_CD8+_to_CD68+.png
+|           |    ├── ...
+|           |    └── plot_statistical_distance_FoxP3+_to_CK+.png
+|           |
+|           └── summary_statistical.csv
+
+```
+
+### 6. Clustering
+
+### 7. Imaging
 
 
 ## Launch ALOA main
