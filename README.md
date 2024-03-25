@@ -98,31 +98,50 @@ The first step to start using ALOA is to correctly set the configuration file *c
 * **cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify specific markers, *k* if you want to specify the number of clusters, *cluster_method* to choose the clustering method (spectral or kmeans)
 
 #INSERIRE WORFLOW
-### 1. Merge cell seg data
+### 1. Merge Cell Seg Data
 In this section the cell_seg_data.txt files, for each patient, are merged into a single file.
 The single cell_seg_data are in patient specific folder into data_test/raw_data.
 ```
-data_test/
+data_test
 ├── img_match
-│   ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
-│   ├── Set4_1-6plex_[11472,51360]_composite_image.jpeg
-|   ├── ...
-|   ├── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
-│   └── Set12_20-6plex_[17241,54367]_composite_image.jpeg
-|
+│   ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
+│   ├── Set12_20-6plex_[14146,53503]_composite_image.jpg
+│   ├── ...
+│   ├── Set8_11-6plex_[14996,59221]_composite_image.jpg
+│   ├── Set8_11-6plex_[17130,56449]_cell_seg_data.txt
+│   └── Set8_11-6plex_[17130,56449]_composite_image.jpg
 ├── raw_data
-│   ├── Set4_1-6plex_S
-|       ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
-|       ├── ...
-|       └──  Set4_1-6plex_[16142,55840]_cell_seg_data.txt
-|   ├── ...
-│   └── Set12_20-6plex_S
-|       ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
-|       ├── ...
-|       └──  Set12_20-6plex_[17241,54367]_cell_seg_data.txt
-
-|
-└──  sample_sheet.xlsx
+│   ├── Set12_20-6plex_S
+│   │   ├── Merge_cell_seg_data.txt
+│   │   ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
+│   │   ├── Set12_20-6plex_[15491,58698]_cell_seg_data.txt
+│   │   └── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+│   ├── Set12_20-6plex_T
+│   │   ├── Merge_cell_seg_data.txt
+│   │   ├── Set12_20-6plex_[14146,53503]_cell_seg_data.txt
+│   │   ├── Set12_20-6plex_[15491,58698]_cell_seg_data.txt
+│   │   └── Set12_20-6plex_[17241,54367]_cell_seg_data.txt
+│   ├── Set4_1-6plex_S
+│   │   ├── Merge_cell_seg_data.txt
+│   │   ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
+│   │   ├── Set4_1-6plex_[15206,60541]_cell_seg_data.txt
+│   │   └── Set4_1-6plex_[16142,55840]_cell_seg_data.txt
+│   ├── Set4_1-6plex_T
+│   │   ├── Merge_cell_seg_data.txt
+│   │   ├── Set4_1-6plex_[11472,51360]_cell_seg_data.txt
+│   │   ├── Set4_1-6plex_[15206,60541]_cell_seg_data.txt
+│   │   └── Set4_1-6plex_[16142,55840]_cell_seg_data.txt
+│   ├── Set8_11-6plex_S
+│   │   ├── Merge_cell_seg_data.txt
+│   │   ├── Set8_11-6plex_[13394,50883]_cell_seg_data.txt
+│   │   ├── Set8_11-6plex_[14996,59221]_cell_seg_data.txt
+│   │   └── Set8_11-6plex_[17130,56449]_cell_seg_data.txt
+│   └── Set8_11-6plex_T
+│       ├── Merge_cell_seg_data.txt
+│       ├── Set8_11-6plex_[13394,50883]_cell_seg_data.txt
+│       ├── Set8_11-6plex_[14996,59221]_cell_seg_data.txt
+│       └── Set8_11-6plex_[17130,56449]_cell_seg_data.txt
+└── sample_sheet.xlsx
 
 ```
 All ALOA results are saved into a folder output whose path is specified in *config.json* file.
@@ -136,37 +155,36 @@ For the merge, two types of files are genetared:
 If there are two groups, into *Merged* and *Merged_clean*, will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
 
 ```
-output_folder/
+output_folder
 ├── Log
-|   ├── aloa_year_month_day_hour_minute_seconds.log
-|   ├── clean_data_year_month_day_hour_minute_seconds.log
-|   └── Merge_year_month_day_hour_minute_seconds.log
-|
+│   ├── Merge_2024-03-18_12-03-26.log
+│   ├── aloa_2024-03-18_12-03-26.log
+│   └── clean_data_2024-03-18_12-03-34.log
 ├── Merged
-|   ├── Stroma
-|   |   ├── Merge_cell_seg_data_Set4_1-6plex_S.txt
-|   |   ├── ...
-|   |    └──  Merge_cell_seg_data_Set12_20-6plex_S.txt
-|   |
-|   └──  Tumor
-|       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
-|       ├── ...
-|       └──  Merge_cell_seg_data_Set12_20-6plex_T.txt
-|
-├── Merged_clean
-|   ├── Stroma
-|   |     ├── Merge_cell_seg_data_Set4_1-6plex_S.txt
-|   |   ├── ...
-|   |   └──  Merge_cell_seg_data_Set12_20-6plex_S.txt
-|   |
-|   └──  Tumor
-|       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
-|       ├── ...
-|       └──  Merge_cell_seg_data_Set12_20-6plex_T.txt
-
+│   ├── Stroma
+│   │   ├── Merge_cell_seg_data_Set12_20-6plex_S.txt
+│   │   ├── Merge_cell_seg_data_Set4_1-6plex_S.txt
+│   │   └── Merge_cell_seg_data_Set8_11-6plex_S.txt
+│   └── Tumor
+│       ├── Merge_cell_seg_data_Set12_20-6plex_T.txt
+│       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
+│       └── Merge_cell_seg_data_Set8_11-6plex_T.txt
+└── Merged_clean
+    ├── Stroma
+    │   ├── Merge_cell_seg_data_clean_Set12_20-6plex_S.txt
+    │   ├── Merge_cell_seg_data_clean_Set4_1-6plex_S.txt
+    │   └── Merge_cell_seg_data_clean_Set8_11-6plex_S.txt
+    └── Tumor
+        ├── Merge_cell_seg_data_clean_Set12_20-6plex_T.txt
+        ├── Merge_cell_seg_data_clean_Set4_1-6plex_T.txt
+        └── Merge_cell_seg_data_clean_Set8_11-6plex_T.txt
 
 ```
-
+Example:
+To generate the merged clean file and merged files into the *output folder* specified in json file
+```
+python aloa.py -m 
+```
 
 ### 2. Map Plots
 
@@ -184,49 +202,66 @@ A *Descriptive* folder is created to save all the results of this section.
 From raw/normalized counts, if there are two or more groups, a statistical comparison is made to understand if there are significance difference for markers count. The comparison is viewed through a **box plots** figure, with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *box_plot* folder
 
 ```
-output_folder/
-|    ├── Descriptive
-|           ├── Stroma
-|           |    ├── Bar_plot
-|           |    |     ├── Bar_Plot_Normalized.jpeg
-|           |    |     └── Bar_Plot_Raw.jpeg
-|           |    └── csv
-|           |          ├── all_norm_count_Set4_1-6plex_S.csv
-|           |          ├── ...
-|           |          ├── all_norm_count_Set12_20-6plex_S.csv
-|           |          ├── Norm_count_Set4_1-6plex_S.csv
-|           |          ├── ...
-|           |          ├── Norm_count_Set12_20-6plex_S.csv
-|           |          ├── Raw_count_Set4_1-6plex_S.csv
-|           |          ├── ...
-|           |          └── Raw_count_Set12_20-6plex_S.csv
-|           |
-|           ├── Tumor
-|           |    ├── Bar_plot
-|           |          ├── Bar_Plot_Normalized.jpeg
-|           |          └── Bar_Plot_Raw.jpeg
-|           |    ├── csv
-|           |          ├── all_norm_count_Set4_1-6plex_T.csv
-|           |          ├── ...
-|           |          ├── all_norm_count_Set12_20-6plex_T.csv
-|           |          ├── Norm_count_Set4_1-6plex_T.csv
-|           |          ├── ...
-|           |          ├── Norm_count_ Set12_20-6plex_T.csv
-|           |          ├── Raw_count_Set4_1-6plex_T.csv
-|           |          ├── ...
-|           |          └──  Raw_count_Set12_20-6plex_T.csv                
-|           |
-|           |
-|           └── Box Plots
-|               ├── box_plot_comparison_Normalized.jpeg
-|               └── box_plot_comparison_Rw.jpeg
-                
+output_folder
+├── Descriptive
+    ├── Box Plots
+    │   ├── box_plot_comparison_Normalized.jpeg
+    │   └── box_plot_comparison_Raw.jpeg
+    ├── Stroma
+    │   ├── Bar_plot
+    │   │   ├── Bar_Plot_Normalized.jpeg
+    │   │   └── Bar_Plot_Raw.jpeg
+    │   └── csv
+    │       ├── Norm_count_Set12_20-6plex_S.csv
+    │       ├── Norm_count_Set4_1-6plex_S.csv
+    │       ├── Norm_count_Set8_11-6plex_S.csv
+    │       ├── Raw_count_Set12_20-6plex_S.csv
+    │       ├── Raw_count_Set4_1-6plex_S.csv
+    │       ├── Raw_count_Set8_11-6plex_S.csv
+    │       ├── all_norm_count_Set12_20-6plex_S.csv
+    │       ├── all_norm_count_Set4_1-6plex_S.csv
+    │       └── all_norm_count_Set8_11-6plex_S.csv
+    └── Tumor
+        ├── Bar_plot
+        │   ├── Bar_Plot_Normalized.jpeg
+        │   └── Bar_Plot_Raw.jpeg
+        └── csv
+            ├── Norm_count_Set12_20-6plex_T.csv
+            ├── Norm_count_Set4_1-6plex_T.csv
+            ├── Norm_count_Set8_11-6plex_T.csv
+            ├── Raw_count_Set12_20-6plex_T.csv
+            ├── Raw_count_Set4_1-6plex_T.csv
+            ├── Raw_count_Set8_11-6plex_T.csv
+            ├── all_norm_count_Set12_20-6plex_T.csv
+            ├── all_norm_count_Set4_1-6plex_T.csv
+            └── all_norm_count_Set8_11-6plex_T.csv
+            
+```
+Example:
 
 ```
+python aloa.py -m -o
+```
+### 4. Distances Calculation
 
-### 4. Distances calculation
+```
+Distance
+├── Stroma
+│   ├── Set12_20-6plex_S_Distance.txt
+│   ├── Set4_1-6plex_S_Distance.txt
+│   └── Set8_11-6plex_S_Distance.txt
+└── Tumor
+    ├── Set12_20-6plex_T_Distance.txt
+    ├── Set4_1-6plex_T_Distance.txt
+    └── Set8_11-6plex_T_Distance.txt
 
-### 5. Satistical on distances
+```
+Example:
+```
+python aloa.py -m -d
+```
+
+### 5. Satistical on Distances
 
 In this section a statistical analysis is performed to see if there are any significant differences, among the groups present, of the distributions of distances for the markers.
 If *"pheno_from"* and *"pheno-to"* are specified in the configuration file, in , the analysis will be performed only for that type of distance. On the other hand, if **no** *"pheno_from"* and/or *"pheno-to"* is specified, the analysis is performed by permutation the different markers as "from" and "to".
@@ -247,26 +282,34 @@ The results are:
 
 
 ```
-output_folder/
-|    ├── Distance_Statistical
-|         ├── box_plot
-|           |    ├── distances_box_plot_CD8+_to_CD68+.png
-|           |    ├── ...
-|           |    └── distances_box_plot_FoxP3+_to_CK+.png
-|           ├── csv
-|           |    ├── df_statistical_distance_CD8+_to_CD68+.csv
-|           |    ├── ...
-|           |    └── df_statistical_distance_FoxP3+_to_CK+.csv
-|           |
-|           ├── distance_curve
-|           |    ├── plot_statistical_distance_CD8+_to_CD68+.png
-|           |    ├── ...
-|           |    └── plot_statistical_distance_FoxP3+_to_CK+.png
-|           |
-|           └── summary_statistical.csv
+Distance_Statistical
+├── box_plot
+│   ├── distances_box_plot_CD68+_to_CD8+.png
+│   ├── distances_box_plot_CD68+_to_CK+.png
+│   ├── ...
+│   ├── distances_box_plot_FoxP3+_to_CD8+.png
+│   └── distances_box_plot_FoxP3+_to_CK+.png
+├── csv
+│   ├── df_statistical_distance_CD68+_to_CD8+.csv
+│   ├── df_statistical_distance_CD68+_to_CK+.csv
+│   ├── df_statistical_distance_CD68+_to_FoxP3+.csv
+│   ├── ...
+│   ├── df_statistical_distance_FoxP3+_to_CD8+.csv
+│   └── df_statistical_distance_FoxP3+_to_CK+.csv
+├── distance_curve
+│   ├── plot_statistical_distance_CD68+_to_CD8+.png
+│   ├── plot_statistical_distance_CD68+_to_CK+.png
+│   ├── ...
+│   ├── plot_statistical_distance_FoxP3+_to_CD8+.png
+│   └── plot_statistical_distance_FoxP3+_to_CK+.png
+└── summary_statistical.csv
 
 ```
-
+Example:
+```
+python aloa.py -m -s
+```
+⚠️ To perform this analysis is required distance calculation, for each patients for each group, saved in *Distance* folder
 ### 6. Clustering
 
 ### 7. Imaging
