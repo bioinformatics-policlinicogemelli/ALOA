@@ -8,6 +8,6 @@ readxl
 colorRamp2
 data.table
 logr
-pak 
-textshaping 
+pak
+textshaping
 BiocManager
