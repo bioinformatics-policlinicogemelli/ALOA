@@ -1,0 +1,158 @@
+2024-03-25_08-54-43.64 | INFO | Welcome to ALOA
+2024-03-25_08-54-43.64 | INFO | aloa.py args: [merge:True, mapping:False, distance:True, img_match:False, dst_match:False, overview:True, stats:True, cluster:False, all:False]
+2024-03-25_08-54-43.64 | INFO | |-> Merge step starting now
+2024-03-25_08-54-52.46 | INFO | |-> Clean step starting now
+2024-03-25_08-54-57.25 | INFO | |-> Descriptive step starting now
+
+2024-03-25_08-54-57.25 | INFO | Start overview process: This step will give a description of input data and, if more than one group is involved, will also provide a statistical comparison for all the listed phenotypes
+
+2024-03-25_08-54-57.25 | INFO | Reading configuration file
+2024-03-25_08-54-57.25 | INFO | Merge data found in ./output/Merged_clean
+2024-03-25_08-54-57.25 | INFO | Descriptive output will be stored in ./output/Descriptive
+2024-03-25_08-54-57.25 | INFO | The following phenotypes will be considered: ['CD68+', 'CD8+', 'FoxP3+', 'CK+']
+2024-03-25_08-54-57.25 | INFO | Start raw count calculation:
+2024-03-25_08-54-57.25 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-54-57.31 | INFO | Reading File ./output/Merged_clean/Tumor/Merge_cell_seg_data_clean_Set8_11-6plex_T.txt
+2024-03-25_08-54-57.31 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-54-57.37 | INFO | Reading File ./output/Merged_clean/Tumor/Merge_cell_seg_data_clean_Set4_1-6plex_T.txt
+2024-03-25_08-54-57.37 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-54-57.46 | INFO | Reading File ./output/Merged_clean/Tumor/Merge_cell_seg_data_clean_Set12_20-6plex_T.txt
+2024-03-25_08-54-57.46 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-54-57.49 | INFO | Reading File ./output/Merged_clean/Stroma/Merge_cell_seg_data_clean_Set4_1-6plex_S.txt
+2024-03-25_08-54-57.49 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-54-57.52 | INFO | Reading File ./output/Merged_clean/Stroma/Merge_cell_seg_data_clean_Set8_11-6plex_S.txt
+2024-03-25_08-54-57.52 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-54-57.54 | INFO | Reading File ./output/Merged_clean/Stroma/Merge_cell_seg_data_clean_Set12_20-6plex_S.txt
+2024-03-25_08-54-57.54 | INFO | End raw count calculation
+2024-03-25_08-54-57.54 | INFO | 2 group(s) found: ['Tumor', 'Stroma']
+2024-03-25_08-54-57.54 | INFO |  Created folder ./output/Descriptive/Tumor
+2024-03-25_08-54-57.54 | INFO |  Created folder ./output/Descriptive/Stroma
+2024-03-25_08-54-57.54 | INFO | writing csv file with count info for each patient
+2024-03-25_08-54-57.54 | INFO | Group: Tumor
+2024-03-25_08-54-57.54 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-54-57.54 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.54 | INFO | End Writing ./output/Descriptive/Tumor/csv/Raw_count_Set8_11-6plex_T.csv file for Set8_11-6plex_T patient
+2024-03-25_08-54-57.54 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-54-57.54 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.54 | INFO | End Writing ./output/Descriptive/Tumor/csv/Raw_count_Set4_1-6plex_T.csv file for Set4_1-6plex_T patient
+2024-03-25_08-54-57.54 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-54-57.54 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.54 | INFO | End Writing ./output/Descriptive/Tumor/csv/Raw_count_Set12_20-6plex_T.csv file for Set12_20-6plex_T patient
+2024-03-25_08-54-57.54 | INFO | Group: Stroma
+2024-03-25_08-54-57.54 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-54-57.54 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.54 | INFO | End Writing ./output/Descriptive/Stroma/csv/Raw_count_Set4_1-6plex_S.csv file for Set4_1-6plex_S patient
+2024-03-25_08-54-57.55 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-54-57.55 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.55 | INFO | End Writing ./output/Descriptive/Stroma/csv/Raw_count_Set8_11-6plex_S.csv file for Set8_11-6plex_S patient
+2024-03-25_08-54-57.55 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-54-57.55 | INFO | Start Writing csv file...
+2024-03-25_08-54-57.55 | INFO | End Writing ./output/Descriptive/Stroma/csv/Raw_count_Set12_20-6plex_S.csv file for Set12_20-6plex_S patient
+2024-03-25_08-54-57.55 | INFO | Barplot creation for Raw count
+2024-03-25_08-54-57.55 | INFO | Group: Tumor
+2024-03-25_08-54-57.55 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-54-57.56 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-54-57.56 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-55-00.39 | INFO | Group: Stroma
+2024-03-25_08-55-00.39 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-55-00.39 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-55-00.39 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-55-00.53 | INFO | Box Plot creation on Raw count
+2024-03-25_08-55-00.53 | INFO | Found 2 groups: Start Mann-Whitney Test
+2024-03-25_08-55-01.00 | INFO | Mann-Whitney Test done successfully!
+2024-03-25_08-55-01.00 | INFO | Start normalized count calculation
+2024-03-25_08-55-01.00 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-55-01.00 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-55-01.00 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-55-01.00 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-55-01.00 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-55-01.00 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-55-01.00 | INFO | End normalized count calculation
+2024-03-25_08-55-01.00 | INFO | writing csv file with count info for each patient
+2024-03-25_08-55-01.00 | INFO | Group: Tumor
+2024-03-25_08-55-01.00 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Tumor/csv/Norm_count_Set8_11-6plex_T.csv file for Set8_11-6plex_T patient
+2024-03-25_08-55-01.00 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Tumor/csv/Norm_count_Set4_1-6plex_T.csv file for Set4_1-6plex_T patient
+2024-03-25_08-55-01.00 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Tumor/csv/Norm_count_Set12_20-6plex_T.csv file for Set12_20-6plex_T patient
+2024-03-25_08-55-01.00 | INFO | Group: Stroma
+2024-03-25_08-55-01.00 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Stroma/csv/Norm_count_Set4_1-6plex_S.csv file for Set4_1-6plex_S patient
+2024-03-25_08-55-01.00 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Stroma/csv/Norm_count_Set8_11-6plex_S.csv file for Set8_11-6plex_S patient
+2024-03-25_08-55-01.00 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-55-01.00 | INFO | Start Writing csv file...
+2024-03-25_08-55-01.00 | INFO | End Writing ./output/Descriptive/Stroma/csv/Norm_count_Set12_20-6plex_S.csv file for Set12_20-6plex_S patient
+2024-03-25_08-55-01.00 | INFO | Barplot creation for Normalized count
+2024-03-25_08-55-01.00 | INFO | Group: Tumor
+2024-03-25_08-55-01.00 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-55-01.00 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-55-01.00 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-55-01.14 | INFO | Group: Stroma
+2024-03-25_08-55-01.14 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-55-01.14 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-55-01.14 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-55-01.32 | INFO | Starting normalized count on all groups
+2024-03-25_08-55-01.32 | INFO | Group: Tumor
+2024-03-25_08-55-01.32 | INFO | Subject: Set8_11-6plex_T
+2024-03-25_08-55-01.32 | INFO | Subject: Set4_1-6plex_T
+2024-03-25_08-55-01.32 | INFO | Subject: Set12_20-6plex_T
+2024-03-25_08-55-01.32 | INFO | Group: Stroma
+2024-03-25_08-55-01.32 | INFO | Subject: Set4_1-6plex_S
+2024-03-25_08-55-01.32 | INFO | Subject: Set8_11-6plex_S
+2024-03-25_08-55-01.32 | INFO | Subject: Set12_20-6plex_S
+2024-03-25_08-55-01.32 | INFO | End normalized count on all groups
+2024-03-25_08-55-01.32 | INFO | Start normalized count calculatin on all groups
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set8_11-6plex_T
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set4_1-6plex_T
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set12_20-6plex_T
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set4_1-6plex_S
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set8_11-6plex_S
+2024-03-25_08-55-01.32 | INFO | Writing normalized count file on all groups for patient Set12_20-6plex_S
+2024-03-25_08-55-01.32 | INFO | End normalized count calculation on all groups
+2024-03-25_08-55-01.32 | INFO | Box Plot creation on Normalized count
+2024-03-25_08-55-01.32 | INFO | Found 2 groups: Start Mann-Whitney Test
+2024-03-25_08-55-01.48 | INFO | Mann-Whitney Test done successfully!
+2024-03-25_08-55-01.48 | INFO | End descriptive analysis!
+
+2024-03-25_08-55-01.48 | INFO | |-> Distance evaluation step starting now
+2024-03-25_08-55-06.50 | INFO | |-> Distance statistical evaluation step starting now
+2024-03-25_08-55-06.50 | INFO | Start statistical distance analysis process: This step will provide, if more than one group is involved, a full statistical evaluation between all of the inter-phenotypes distances
+
+2024-03-25_08-55-06.50 | INFO | Reading configuration file
+2024-03-25_08-55-06.50 | INFO | Statistical distancs output will be stored in ./output/Distance_Statistical
+2024-03-25_08-55-06.50 | INFO | Created folder ./output/Distance_Statistical
+2024-03-25_08-55-06.50 | INFO | 2 group(s) found!
+2024-03-25_08-55-06.50 | INFO | No specific phenotype was selected. Proceding to evaluate every combination of the phenotypes ['CD68+', 'CD8+', 'FoxP3+', 'CK+']
+2024-03-25_08-55-06.50 | INFO | Analysis for distance from CD68+ to CD8+
+2024-03-25_08-55-06.72 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-06.98 | INFO | Analysis for distance from CD68+ to FoxP3+
+2024-03-25_08-55-07.17 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-07.37 | INFO | Analysis for distance from CD68+ to CK+
+2024-03-25_08-55-07.59 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-07.86 | INFO | Analysis for distance from CD8+ to CD68+
+2024-03-25_08-55-08.02 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-08.27 | INFO | Analysis for distance from CD8+ to FoxP3+
+2024-03-25_08-55-08.45 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-08.73 | INFO | Analysis for distance from CD8+ to CK+
+2024-03-25_08-55-08.88 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-09.16 | INFO | Analysis for distance from FoxP3+ to CD68+
+2024-03-25_08-55-09.32 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-09.56 | INFO | Analysis for distance from FoxP3+ to CD8+
+2024-03-25_08-55-09.74 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-09.99 | INFO | Analysis for distance from FoxP3+ to CK+
+2024-03-25_08-55-10.17 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-10.42 | INFO | Analysis for distance from CK+ to CD68+
+2024-03-25_08-55-10.72 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-11.06 | INFO | Analysis for distance from CK+ to CD8+
+2024-03-25_08-55-11.32 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-11.60 | INFO | Analysis for distance from CK+ to FoxP3+
+2024-03-25_08-55-11.91 | INFO | Running Mann-Whitney test
+2024-03-25_08-55-12.18 | INFO | End statistical analysis!
+2024-03-25_08-55-12.18 | INFO | ALOA script completed with 0 warnings, 0 errors and 0 critical!

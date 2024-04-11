@@ -289,16 +289,13 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
 #*****************************************************************
 #*****************************************************************
         
-def main():
+def main(data):
     
     print("\n######################## STATISTICAL ANALYSIS DISTANCE #########################\n")
 
     logger.info("Start statistical distance analysis process: This step will provide, if more than one group is involved, a full statistical evaluation between all of the inter-phenotypes distances\n")
     
     logger.info("Reading configuration file")
-    with open("config.json") as f:
-        data=json.load(f)
-    
     #path folder with distance
     root_folder=os.path.join(data["Paths"]["output_folder"],"Distance")
 

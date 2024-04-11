@@ -96,7 +96,7 @@ def aloa(args, data, logfile):
         
         if args.overview:
             logger.info("|-> Descriptive step starting now\n")
-            descriptive()
+            descriptive(data)
         
         #########################################
         #             MAPPING PHENO             #
@@ -132,7 +132,7 @@ def aloa(args, data, logfile):
             
             if args.stats:
                 logger.info("|-> Distance statistical evaluation step starting now")
-                stat_dist()
+                stat_dist(data)
                 
         #########################################
         #             CLUSTERING                #

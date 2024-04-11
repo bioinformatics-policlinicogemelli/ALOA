@@ -1,0 +1,6 @@
+Patient	Pheno	Count_Raw
+Set12_20-6plex_T	Total_Cells	8532
+Set12_20-6plex_T	CD68+	136
+Set12_20-6plex_T	CD8+	76
+Set12_20-6plex_T	FoxP3+	42
+Set12_20-6plex_T	CK+	8278
