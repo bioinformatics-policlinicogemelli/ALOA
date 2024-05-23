@@ -14,10 +14,47 @@ from sklearn.cluster import SpectralClustering
 from sklearn.preprocessing import StandardScaler
 from loguru import logger
 
+from kmodes.kprototypes import KPrototypes
+from kneed import KneeLocator
+
 import warnings
 warnings.filterwarnings("ignore")
 
-def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
+def plot_elbow_analysis(df, k_number, idx, output_path):
+    logger.info("Creating the output folder " + os.path.join(output_path, "elbow_scores"))
+    os.makedirs(os.path.join(output_path, "elbow_scores"), exist_ok=True)
+
+    df_sample = df[['Cell.X.Position' , 'Cell.Y.Position']]
+
+    logger.info("Starting elbow analysis")
+    inertia_values = []
+    K_range = range(2, k_number)
+
+    for k in K_range:
+        #logger.debug(k)
+        print(f"Calcolo del grafico per k={k}")
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(df_sample.values)
+        inertia_values.append(kmeans.inertia_)
+
+    knee_locator = KneeLocator(list(K_range), inertia_values, curve="convex", direction="decreasing")
+    n_opt_cluster = knee_locator.knee
+    knee_locator.plot_knee()
+
+    logger.info("Creating optimal cluster number graph") 
+    # Visualizing inertia plot
+    plt.plot(K_range, inertia_values, marker='o')
+    plt.xlabel('N Cluster')
+    plt.ylabel('Inertia')
+    plt.title('Elbow method to find optimal number of cluster')
+    plt.savefig(os.path.join(os.path.join(output_path, "elbow_scores"),idx+".tiff"), dpi=300, bbox_inches = "tight")
+    plt.close()
+
+    logger.info(f"Optimal cluster Number: {n_opt_cluster}")
+
+    return df_sample, n_opt_cluster
+
+def plot_silhouette_analysis(df, output_path, idx, k_number):
 
     logger.info("Creating the output folder " + os.path.join(output_path, "silhoutte_scores"))
     os.makedirs(os.path.join(output_path, "silhoutte_scores"), exist_ok=True)
@@ -30,8 +67,9 @@ def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
     K_range = range(2, k_number)
     for k in K_range:
         logger.info(f"Check for {k} clusters")
-        kmeans = KMeans(n_clusters=k)
-        etichette_cluster[k] = kmeans.fit_predict(df_sample.values)
+        spectral = SpectralClustering(n_clusters=k, affinity='nearest_neighbors', random_state=42)
+        #kmeans = KMeans(n_clusters=k)
+        etichette_cluster[k] = spectral.fit_predict(df_sample.values)
         silhouette_avg = silhouette_score(df_sample.values, etichette_cluster[k])
         silhouette_scores.append(silhouette_avg)
 
@@ -46,26 +84,36 @@ def plot_silhouette_analysis(df, output_path, idx, k_number, clust_alg):
     n_opt_cluster = K_range[silhouette_scores.index(max(silhouette_scores))]
     logger.info(f"Optimal cluster Number: {n_opt_cluster}")
     
-    km = KMeans(n_clusters=n_opt_cluster)
+    return n_opt_cluster
+
+def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
     
+    if not len(clust_alg.lower().replace("k","").replace("s","").replace("p",""))==0:
+        logger.critical(f"No valid clustering algorithm selected. Clust_alg '{clust_alg}' were selected but only 'kmeans' (k), 'spectral' (s) and 'prototype' (p) are currently supported! Check your cluster section in your config.json file!")
+        exit()
+        
     if "k" in clust_alg.lower():
+        km = KMeans(n_clusters=n_opt_cluster)
         logger.info("kmeans algorithm selected!")
         df_sample['kmeans'] = km.fit_predict(df_sample.values)
 
     if "s" in clust_alg.lower():
         logger.info("spectral algorithm selected!")
+        
         scaler= StandardScaler()
         spatial_data_normalizer = scaler.fit_transform(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
         spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42)
         df_sample['spectral']= spectral.fit_predict(spatial_data_normalizer)
     
-    else:
-        logger.critical(f"ERROR: wrong clustering algorithm selected. '{clust_alg}' were selected but only 'kmeans' (k) and 'spectral' (s) are currently supported! Check your cluster section in your config.json file!")
-        exit(1)
+    if "p" in clust_alg.lower():
+        logger.info("k-prototype algoritm selected!")
+        cat_cols= df_sample["Pheno"]
+        kproto = KPrototypes(n_clusters=n_opt_cluster, init='Cao', verbose=2)
+        df_sample['prototype'] = kproto.fit_predict(df_sample, categorical=cat_cols)
 
     df_sample["Pheno"]= df["Pheno"]
     
-    return df_sample, n_opt_cluster
+    return n_opt_cluster, df_sample
 
 def plot_convex_hull(df_plot, n_opt_cluster, idx, output_path, clust_alg):
    
@@ -140,7 +188,7 @@ def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
 
     df_stacked = df_plot.groupby([clust_alg, 'Pheno']).size().unstack(fill_value=0)
 
-    # Calcolo delle percentuali per ogni Pheno nei vari cluster
+    # Percentage evaluation for each phenotype in each cluster
     cluster_percentages = df_stacked.div(df_stacked.sum(axis=1), axis=0)
 
     # stacked barplot creation
@@ -209,30 +257,46 @@ def main():
             df = pd.read_csv(os.path.join(input_path,g,pzt), sep='\t')
             df_filt = pheno_filt(df, pheno_list)
             if len(df_filt)==0:
-                print("No Phenotyoe(s) found. Check the phenotype list and Phenotype columns of your data!")
+                print("No Phenotype(s) found. Check the phenotype list and Phenotype columns of your data!")
                 print("Skip to next subject")
                 continue
 
             idx=df["Sample.Name"][0].split(" ")[0]
             
-            # silhouette analysis
+            logger.warning(f"The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both.")
+            
+            number_alg=data["cluster"]["algo_method"].lower()
             k=data["cluster"]["k"]
-            df_sample_tmp, n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k, clust_alg)
+            
+            if number_alg=="e":
+                #elbow method
+                df_sample, n_cluster_opt= plot_elbow_analysis(df_filt, k, idx, output_path_g)
+            if number_alg =="s":
+                # silhouette analysis
+                n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k)
+
+            if number_alg not in ('e', 's'):
+                    logger.critical(f"ERROR: wrong clustering algoritm for optimal number of cluster. '{number_alg}' were selected but only 'elbow method' (e) or 'silhouette analysis' (s) are currently supported! Check your method section in your config.json file!")
+                    exit(1)
+
+            n_opt_cluster, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df)
 
             cluster_type=list(clust_alg)
-
+            
             for cl in cluster_type:
 
-                if cl=="k":
-                    cl="kmeans"
-                if cl=="s":
-                    cl="spectral"
+                    if cl=="k":
+                        cl="kmeans"
+                    if cl=="s":
+                        cl="spectral"
+                    if cl=="p":
+                        cl=="prototype"
+                    
+                    # Convex Hull plot
+                    output_res=plot_convex_hull(df_sample, n_cluster_opt, idx, output_path_g, cl)
 
-                # Convex Hull plot
-                output_res=plot_convex_hull(df_sample_tmp, n_cluster_opt, idx, output_path_g, cl)
-
-                # stacked barplot and percentage csv 
-                plot_stacked_bar_chart(df_sample_tmp, output_res, idx, cl)
+                    # stacked barplot and percentage csv 
+                    plot_stacked_bar_chart(df_sample, output_res, idx, cl)
     
     logger.info("End clustering analysis!\n")
     return ()
