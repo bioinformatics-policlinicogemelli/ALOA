@@ -50,5 +50,9 @@
       "algo_method":"e",
       "k":10,
       "cluster_method":"ks"
+   },
+   "pcf":{
+      "pheno_list":[]
+      
    }
 }
