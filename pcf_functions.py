@@ -3,24 +3,27 @@ import os
 import pathlib
 from image_proc_functions import pheno_filt
 import csv
-#from helperFunctions_mod import *
 import matplotlib 
 matplotlib.use('Agg')
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
-# from matplotlib import cm
-# from matplotlib.path import Path
-# from matplotlib.patches import PathPatch
-# from matplotlib.collections import PatchCollection
-# import matplotlib.colors as mcolors
-# import pandas as pd
 import seaborn as sns
 import random
 from shapely.geometry import Polygon
 from scipy.spatial.distance import cdist
 
 def add_celltype(df, celltype_list, pheno_list):
+    '''
+    Function to associate cell type label to Phenotype(s)
+    Args:
+        df : DataFrame
+        celltype_list : DataFrame
+        pheno_list : list
+
+    Returns:
+        df: DataFrame
+    '''
     pheno_df=pheno_filt(df, pheno_list)
     pheno_df=pheno_df[['Cell.ID', 'Cell.X.Position', 'Cell.Y.Position', 'Pheno']]
     pheno_df=pheno_df.loc[pheno_df['Pheno'].isin(celltype_list["Phenotype"])]
@@ -31,7 +34,16 @@ def add_celltype(df, celltype_list, pheno_list):
     return pheno_df.reset_index()
 
 def create_output_csv(output_path_csv, C_1, C_2):
-    
+    '''
+    Function to create tsv header for summary file
+    Args:
+        output_path_csv : string
+        C_1 : string
+        C_2 : string
+
+    Returns:
+        csv_path: string
+    '''
     pathlib.Path(output_path_csv).mkdir(parents=True, exist_ok=True)
 
     csv_path=os.path.join(output_path_csv, f'{C_1}-{C_2}.tsv')
@@ -44,7 +56,15 @@ def create_output_csv(output_path_csv, C_1, C_2):
     return csv_path
 
 def load_point_cloud(df, output_path):
-    
+    '''
+    Function to generate and plot pointcloud
+    Args:
+        df : DataFrame
+        output_path : string
+
+    Returns:
+        pc: pointcloud
+    '''
     points = np.asarray([df['Cell.X.Position'],df['Cell.Y.Position']]).transpose()
     
     max_x=df['Cell.X.Position'].max() + 100
@@ -71,7 +91,19 @@ def load_point_cloud(df, output_path):
     return pc
 
 def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWidth=10):
+    '''
+    Function to evaluate and plot all pcf combination
+    Args:
+        pc : pointcloud
+        output_path : string
+        roi_name : string
+        maxR : int, optional (Defaults to 150)
+        annulusStep : int, optional (Defaults to 10)
+        annulusWidth : int, optional (Defaults to 10)
 
+    Returns:
+        pc: pointcloud
+    '''   
     outpath=os.path.join(output_path, "All_PCF")
     pathlib.Path(outpath).mkdir(parents=True, exist_ok=True)
     #calculation of all PCFs and plotting them
@@ -80,7 +112,7 @@ def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWi
     pcfs = []
     for a in pc.labels['Celltype']['categories']:
         for b in pc.labels['Celltype']['categories']:
-            logger.info(a + " - " +b)
+            #logger.info(a + " - " +b)
             r, pcf,_ = pairCorrelationFunction(pc, 'Celltype', [a,b], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
             avals.append(a)
             bvals.append(b)
@@ -106,7 +138,23 @@ def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWi
     return pc
 
 def selected_PCF(C_1, C_2, pc, output_path, radiusOfInterest, maxR=150, annulusStep=10, annulusWidth=10):
+    '''
+    Function to evaluate and plot a specific pcf combination 
+    Args:
+        C_1 : string
+        C_2 : string
+        pc : pointcloud
+        output_path : string
+        radiusOfInterest : int
+        maxR : int, optional (Defaults to 150)
+        annulusStep : int, optional (Defaults to 10)
+        annulusWidth : int, optional (Defaults to 10)
 
+    Returns:
+        pc : pointcloud
+        pcf_value_at_radius : float
+
+    '''
     sns.set(font_scale=2)
     
     r, pcf,_ = pairCorrelationFunction(pc, 'Celltype', [C_1,C_2], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
@@ -131,7 +179,16 @@ def selected_PCF(C_1, C_2, pc, output_path, radiusOfInterest, maxR=150, annulusS
     return pc, pcf_value_at_radius
 
 def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
+    '''
+    Function to evaluate and plot TCM 
+    Args:
+        C_1 : string
+        C_2 : string
+        radiusOfInterest : int
+        pc : pointcloud
+        output_path : string
 
+    '''
     #computation of topographical correlation map 
     tcm = topographicalCorrelationMap(pc,'Celltype',C_1,'Celltype',C_2,radiusOfInterest,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
     #masked_tcm = np.ma.masked_where((tcm > -0.05) & (tcm < 0.05), tcm)
@@ -151,13 +208,28 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
     plt.savefig(os.path.join(output_path, f"TCM.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
 
-def append_to_csv(output_csv, codice_pz, numero_ROI, pcf_value_at_radius, count_C1, count_C2):
-    # Aggiungere i risultati al file CSV
+def append_to_csv(output_csv, codice_pz, roi_name, pcf_value_at_radius, count_C1, count_C2):
+    '''
+    Function to fill summary tsv
+    Args:
+        output_csv : string
+        codice_pz : string
+        numero_ROI : string
+        pcf_value_at_radius : float
+        count_C1 : string
+        count_C2 : string
+    '''
     with open(output_csv, mode='a', newline='') as file:
         writer = csv.writer(file, delimiter='\t')
-        pcf_value = pcf_value_at_radius[1].item()  # Converti l'array numpy in un valore numerico
-        row = [codice_pz, numero_ROI, pcf_value, count_C1, count_C2]
+        pcf_value = pcf_value_at_radius[1].item() 
+        row = [codice_pz, roi_name, pcf_value, count_C1, count_C2]
         writer.writerow(row)
+
+
+### Algorithm for mathematical PCF evaluation
+# Author: Bull, Joshua A., et al
+# Work: "Extended correlation functions for spatial analysis of multiplex imaging data." Biological Imaging 4 (2024): e2.
+# Git Repository: https://github.com/JABull1066/ExtendedCorrelationFunctions
 
 class pointcloud:
     def __init__(self, 
