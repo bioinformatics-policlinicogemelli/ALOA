@@ -46,13 +46,20 @@
       "save_csv_zetascore":true
    },
    "cluster":{
-      "pheno_list":[],
+      "pheno_list":[
+
+      ],
       "algo_method":"e",
       "k":10,
       "cluster_method":"ks"
    },
    "pcf":{
-      "pheno_list":[]
-      
+      "pheno_list":[
+      ],
+      "radiusOfInterest":50,
+      "all_pcf":true, 
+      "maxR":150,
+      "annulusStep":10,
+      "annulusWidth":10
    }
 }
