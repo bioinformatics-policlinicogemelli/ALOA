@@ -1,4 +1,3 @@
-from loguru import logger
 import os
 import pathlib
 from image_proc_functions import pheno_filt
