@@ -60,6 +60,7 @@
       "all_pcf":true, 
       "maxR":150,
       "annulusStep":10,
-      "annulusWidth":10
+      "annulusWidth":10,
+      "on_roi":true
    }
 }

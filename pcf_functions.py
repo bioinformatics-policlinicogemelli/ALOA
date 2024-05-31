@@ -11,6 +11,11 @@ import seaborn as sns
 import random
 from shapely.geometry import Polygon
 from scipy.spatial.distance import cdist
+from scipy.stats import mannwhitneyu, kruskal
+from loguru import logger
+
+### Function for PCF
+# Authors: Chiara P., Beatrice C.
 
 def add_celltype(df, celltype_list, pheno_list):
     '''
@@ -46,7 +51,7 @@ def create_output_csv(output_path_csv, C_1, C_2):
     pathlib.Path(output_path_csv).mkdir(parents=True, exist_ok=True)
 
     csv_path=os.path.join(output_path_csv, f'{C_1}-{C_2}.tsv')
-    # Creare il file CSV e scrivere l'intestazione
+
     with open(csv_path, mode='w', newline='') as file:
         writer = csv.writer(file, delimiter='\t')
         header = ['Subject', 'ROI', 'PCF_r', 'Counts_C1', 'Counts_C2']
@@ -223,6 +228,89 @@ def append_to_csv(output_csv, codice_pz, roi_name, pcf_value_at_radius, count_C1
         pcf_value = pcf_value_at_radius[1].item() 
         row = [codice_pz, roi_name, pcf_value, count_C1, count_C2]
         writer.writerow(row)
+
+def stats_eval(df, groups):
+    '''
+    Function for statistical analysis between groups
+    Args:
+        df : Dataframe
+        groups : list
+
+    Returns:
+        pvalue: float
+    '''
+    col=df.columns
+    #Case 1 groups---> Mann-Whitney test
+    if len(groups)==2:
+        logger.info(f"Running Mann-Whitney test")
+        _, p_value = mannwhitneyu(df[col[0]], df[col[0]])
+
+    #Case more than 2 groups---> Kruskal test
+    elif len(groups)>2:
+        logger.info(f"Running Kruskal test")
+        _, p_value = kruskal(*[v for v in df.values.T])
+    
+    return p_value
+
+def create_stats_file(groups, outpath):
+    """
+    Function to create stats file header
+    Args:
+        groups : list
+        outpath : string
+    """
+    name_stats=[]
+    name_stats.append("C1")
+    name_stats.append("C2")
+    for g in groups:
+        name_stats.append(f"Mean_count_C1_{g}")
+        name_stats.append(f"Mean_count_C2_{g}")
+        name_stats.append(f"Mean_PCF_r_{g}")
+        name_stats.append(f"Mean_PCF_r_{g}")
+        name_stats.append(f"Median_PCF_r_{g}")
+        name_stats.append(f"Median_PCF_r_{g}")
+        name_stats.append(f"std_PCF_r_{g}")
+        name_stats.append(f"std_PCF_r_{g}")
+        
+    name_stats.append("Pvalue")
+        
+    with open(outpath, mode='w', newline='') as file:
+        writer = csv.writer(file, delimiter='\t')
+        header = name_stats
+        writer.writerow(header)
+
+def fill_stats_file(results, df, pval, stats_file, groups):
+    """
+    Function to fill stats file
+
+    Args:
+        results : list
+        df : Dataframe
+        pval : int
+        stats_file : string
+        groups : list
+    """
+    col_sort=[]
+    for g in groups:
+        tmp_cols = [col for col in df.columns if g in col]
+        col_sort.append(tmp_cols)
+    col_sort=sum(col_sort, [])
+    
+    df = df[col_sort]
+    
+    #append mean counts, mean pcf, median pcf, std pcf
+    results=results+list(df.mean().values.flatten()) \
+        +list(df.mean().values.flatten()) \
+        +list(df.median().values.flatten()) \
+        +list(df.std().values.flatten())
+    #append pvalue
+    results.append(pval)
+
+    #write file
+    with open(stats_file, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter='\t')
+        writer.writerow(results)
+
 
 
 ### Algorithm for mathematical PCF evaluation

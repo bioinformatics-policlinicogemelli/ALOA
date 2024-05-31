@@ -7,10 +7,42 @@ import os
 import re
 import pathlib
 from pcf_functions import *
+import glob
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
- 
+
+def tcm_on_roi(roi, tcm):
+
+    for ext in ["jpg","tif","png"]:
+        if os.path.isfile(roi+ext):
+            roi=roi+ext
+            continue
+      
+    try:
+        background = Image.open(roi)
+    except Exception:
+        logger.error(f"Something went wrong while opening {roi} file. Skip this plot!")
+        return()
+    try:
+        tcm = Image.open(tcm)
+    except Exception:
+        logger.error(f"Something went wrong while opening {tcm} file. Skip this plot!")
+        return()
+
+    background = background.convert("RGBA")
+    tcm = tcm.convert("RGBA")
+
+    new_img = Image.blend(background, tcm, 0.5)
+    new_img.save("new.png","PNG")
+
+    print("")
+
+
 def main():
     print("\n################################## CROSS PCF ##################################\n")
     
@@ -31,6 +63,11 @@ def main():
     
     logger.info(f"{len(groups)} Group(s) found!")
 
+    #set radius of interest
+    radiusOfInterest = data["pcf"]["radiusOfInterest"]
+    logger.info(f"Radius={radiusOfInterest} micron was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
+        
+
     for g in groups:
         logger.info(f"Analyzing group: {g}")
         g_output=os.path.join(output_folder, g)
@@ -39,24 +76,20 @@ def main():
         data_g=data_list[data_list["Group"].isin([g])]
         
         combinations=list(itertools.combinations(celltype_list["Cell_Type"], 2))
-        logger.info(f"{len(combinations)} cell type combination(s) found: {combinations}")
         
-        #set radius of interest
-        radiusOfInterest = data["pcf"]["radiusOfInterest"]
-        logger.info(f"Radius {radiusOfInterest} was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
+        logger.info(f"{len(combinations)} cell type combination(s) found: {combinations}")
         
         for C_1, C_2 in combinations:
 
             logger.info(f"Analyzing combination: {C_1} - {C_2}")
-            output_csv= create_output_csv(os.path.join(g_output,'csv'), C_1.replace(" ","_"), C_2.replace(" ","_"))
-            #comb_output=os.path.join(g_output,C_1.replace(" ","_")+"-"+C_2.replace(" ","_"))
+            output_csv= create_output_csv(os.path.join(g_output,'summary'), C_1.replace(" ","_"), C_2.replace(" ","_"))
 
             for pzt in data_g["sbj_ID"]:
                 logger.info(f"Analyzing subject: {pzt}")
 
                 pzt_output=os.path.join(g_output, pzt)
                 pathlib.Path(pzt_output).mkdir(parents=True, exist_ok=True)
-                logger.info(f"output subject folder created in {pzt_output} path")
+                logger.info(f"\noutput subject folder created in {pzt_output} path")
 
                 comb_output=os.path.join(pzt_output,C_1.replace(" ","_")+"-"+C_2.replace(" ","_"))
                 pathlib.Path(comb_output).mkdir(parents=True, exist_ok=True)
@@ -89,12 +122,52 @@ def main():
                     pcf_value_at_radius =selected_PCF(C_1, C_2, pc, roi_output, radiusOfInterest, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
                     
                     TCM(C_1, C_2, radiusOfInterest, pc, roi_output)
+                    
+                    if data["pcf"]["on_roi"]:
+                        input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image."))
+                        
+                        tcm_on_roi(input_roi, os.path.join(roi_output,"TCM.tif"))
 
                     count_C1 = len(pheno_df[pheno_df['Celltype'] == C_1])
                     count_C2 = len(pheno_df[pheno_df['Celltype'] == C_2])
 
                     append_to_csv(output_csv, pzt, roi_name, pcf_value_at_radius, count_C1, count_C2)
+
+    #statistical analysis
     
+    if len(groups)<=1:
+        logger.info("No Statistical analysis will be conducted: Not enough groups!")
+    
+    else:
+        stat_folder=os.path.join(output_folder,"stats")
+        pathlib.Path(stat_folder).mkdir(parents=True, exist_ok=True)
+
+        stats_file=os.path.join(stat_folder,"stat_analysis.tsv")
+        create_stats_file(groups, stats_file)
+
+        for C_1, C_2 in combinations:
+
+            logger.info ("\nStart statistical analysis for combination" + C_1 + " - " + C_2)
+            df_comb=pd.DataFrame()
+            df_counts=pd.DataFrame()
+            results=[C_1, C_2]
+            for g in groups:
+                summary_path=os.path.join(output_folder, g, "summary")
+                try:
+                    sum_comb=pd.read_csv(os.path.join(summary_path, C_1.replace(" ","_")+"-"+C_2.replace(" ","_")+".tsv"), sep="\t")
+                    df_comb[f"PCF_{g}"]=sum_comb["PCF_r"]
+                    df_counts[f"C1_{g}"]=sum_comb["Counts_C1"]
+                    df_counts[f"C2_{g}"]=sum_comb["Counts_C2"]
+                except NameError:
+                    logger.warning(f"No summary combination file found in group {g}!")
+                    continue
+            
+            if len(df_comb.columns)>=2:
+                pval=stats_eval(df_comb, groups)
+            
+                fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), pval, stats_file, groups)
+            
+
     logger.info("End PCF evaluation!\n")
 
 if __name__ == '__main__':
