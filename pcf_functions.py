@@ -4,6 +4,7 @@ from image_proc_functions import pheno_filt
 import csv
 import matplotlib 
 matplotlib.use('Agg')
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -192,6 +193,8 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
         pc : pointcloud
         output_path : string
 
+    Returns:
+        tcm: numpy array
     '''
     #computation of topographical correlation map 
     tcm = topographicalCorrelationMap(pc,'Celltype',C_1,'Celltype',C_2,radiusOfInterest,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
@@ -210,6 +213,42 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
     plt.yticks([], [])
 
     plt.savefig(os.path.join(output_path, f"TCM.tif"), dpi=300, format="tiff", bbox_inches='tight')
+    plt.close()
+
+    return tcm
+
+def tcm_on_roi(roi, tcm, r, outpath):
+    '''
+    Function to plot tcm termic plot on roi image
+    Args:
+        roi : string
+        tcm : array
+        r : float
+        outpath : string
+    '''
+
+    for ext in ["jpg","tif","png","tiff"]:
+        if os.path.isfile(roi+ext):
+            roi=roi+ext
+            continue
+    try:
+        pix=cv2.imread(roi)
+    except Exception:
+        logger.error(f"Something went wrong while opening {roi} file: check if the file exists. Skip this step!")
+        return()
+    
+    background = cv2.cvtColor(pix, cv2.COLOR_BGR2RGB)
+    plt.figure(figsize=(16,16))
+    plt.imshow(background)
+    #plt.imshow(np.rot90())
+    
+    tcm_res = cv2.resize(tcm, (pix.shape[1], pix.shape[0]))
+    plt.imshow(tcm_res, cmap='RdBu_r',alpha=.5)
+
+    plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
+    plt.title(f"PCF r={r}")
+    plt.grid(None)
+    plt.savefig(os.path.join(outpath, f"TCM_on_ROI.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
 
 def append_to_csv(output_csv, codice_pz, roi_name, pcf_value_at_radius, count_C1, count_C2):

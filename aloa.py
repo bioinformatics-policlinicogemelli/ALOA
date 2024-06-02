@@ -16,6 +16,7 @@ from functions_statistical_distance import main as stat_dist
 from clustering import main as clust
 from img_match import img_match
 from distance_match import distance_match
+from cross_PCF import main as pcf
 
 @logger.catch()
 
@@ -135,13 +136,13 @@ def aloa(args, data, logfile):
                 stat_dist()
                 
         #########################################
-        #             CLUSTERING                #
+        #              CLUSTERING               #
         ######################################### 
         
         if args.clustering:
             logger.info("|-> Clustering step starting now")
             clust()
-            
+           
     #########################################
     #               IMAGING                 #
     #########################################        
@@ -153,6 +154,14 @@ def aloa(args, data, logfile):
     if args.dstMatch: 
         logger.info("|-> Distance matching step starting now")
         distance_match()
+    
+    #########################################
+    #                  PCF                  #
+    #########################################
+
+    if args.pcf:
+        logger.info("|-> PCF step starting now")
+        pcf()
     
     n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, logfile)
     logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
@@ -199,6 +208,9 @@ def main():
     
     # CLUSTERING BLOCK
     parser.add_argument('-c', '--clustering', required=False, action='store_true', help='cluster data')
+
+    # PCF BLOCK
+    parser.add_argument('-p', '--pcf', required=False, action='store_true', help='cluster data')
         
     # IMAGING BLOCK
     parser.add_argument('-I', '--imgMatch', required=False, action='store_true', help='create phenotypes image match')
@@ -216,8 +228,8 @@ def main():
     if args.all:
         all_true(args)
         
-    if (not args.imgMatch and not args.dstMatch) and not args.merge:
-        logger.critical("This pipeline requires the merge (-m) option to proceed with the total analysis. If not setted, at least one of the single image options (-I or -D) must be select. Check your input options")
+    if (not args.imgMatch and not args.dstMatch and not args.pcf) and not args.merge:
+        logger.critical("This pipeline requires the merge (-m) option to proceed with the total analysis. If not setted, at least one of the single image options (-I, -D or -p) must be select. Check your input options")
         exit(1)
     
     if args.stats and not args.distance:

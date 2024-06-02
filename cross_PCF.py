@@ -7,41 +7,9 @@ import os
 import re
 import pathlib
 from pcf_functions import *
-import glob
-try:
-    from PIL import Image
-except ImportError:
-    import Image
 
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
-def tcm_on_roi(roi, tcm):
-
-    for ext in ["jpg","tif","png"]:
-        if os.path.isfile(roi+ext):
-            roi=roi+ext
-            continue
-      
-    try:
-        background = Image.open(roi)
-    except Exception:
-        logger.error(f"Something went wrong while opening {roi} file. Skip this plot!")
-        return()
-    try:
-        tcm = Image.open(tcm)
-    except Exception:
-        logger.error(f"Something went wrong while opening {tcm} file. Skip this plot!")
-        return()
-
-    background = background.convert("RGBA")
-    tcm = tcm.convert("RGBA")
-
-    new_img = Image.blend(background, tcm, 0.5)
-    new_img.save("new.png","PNG")
-
-    print("")
-
 
 def main():
     print("\n################################## CROSS PCF ##################################\n")
@@ -119,14 +87,17 @@ def main():
                     if data["pcf"]["all_pcf"]:
                         pc = all_cross_pcf(pc, pzt_output, roi_name, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
                     
-                    pcf_value_at_radius =selected_PCF(C_1, C_2, pc, roi_output, radiusOfInterest, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
+                    rad_folder=os.path.join(roi_output,"r_"+str(radiusOfInterest))
+                    pathlib.Path(rad_folder).mkdir(parents=True, exist_ok=True)
                     
-                    TCM(C_1, C_2, radiusOfInterest, pc, roi_output)
+                    pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
+                    
+                    tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
                     
                     if data["pcf"]["on_roi"]:
                         input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image."))
                         
-                        tcm_on_roi(input_roi, os.path.join(roi_output,"TCM.tif"))
+                        tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder)
 
                     count_C1 = len(pheno_df[pheno_df['Celltype'] == C_1])
                     count_C2 = len(pheno_df[pheno_df['Celltype'] == C_2])
@@ -142,8 +113,8 @@ def main():
         stat_folder=os.path.join(output_folder,"stats")
         pathlib.Path(stat_folder).mkdir(parents=True, exist_ok=True)
 
-        stats_file=os.path.join(stat_folder,"stat_analysis.tsv")
-        create_stats_file(groups, stats_file)
+        stats_file=os.path.join(stat_folder,"stat_analysis_r_"+radiusOfInterest+".tsv")
+        create_stats_file(groups, rad_folder)
 
         for C_1, C_2 in combinations:
 
