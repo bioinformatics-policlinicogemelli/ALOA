@@ -24,18 +24,30 @@ def main():
     pathlib.Path(data["Paths"]["output_folder"]).mkdir(parents=True, exist_ok=True)
     output_folder = os.path.join(data["Paths"]["output_folder"],"Cross_PCF")
     pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
+        
+    celltype_list=load_df(data["Paths"]["data_input_folder"], "cellType_dict.tsv")
+    if celltype_list.isnull().values.any():
+        logger.critical("One or more Nan found in df. Check cellType_dict.tsv. This error could be due to the presence of double tabs between occurence inside the tsv file")
+        return()
+
+    if not celltype_list.columns.isin(["Phenotype", "Cell_Type"]).all():
+        logger.critical("It seems that one or more column names of cellType_dict.tsv is not correct. Check that the columns are named as 'Phenotype' and 'Cell_Type'")
+        raise(Exception("Error while reading cellType_dict.tsv"))
     
-    celltype_list=pd.read_csv(os.path.join(data["Paths"]["data_input_folder"], "cellType_dict.tsv"), sep="\t")
-    data_list=pd.read_csv(os.path.join(data["Paths"]["data_input_folder"], "sample_sheet.tsv"), sep="\t")
+    data_list=load_df(data["Paths"]["data_input_folder"], "sample_sheet.tsv")
+    
+    if not data_list.columns.isin(["sbj_ID", "Group"]).all():
+        logger.critical("It seems that one or more column names of cellType_dict.tsv is not correct. Check that the columns are named as 'sbj_ID' and 'Group'")
+        raise(Exception("Error while reading sample_sheet.tsv"))
+    
     groups=data_list["Group"].unique()
     
     logger.info(f"{len(groups)} Group(s) found!")
 
     #set radius of interest
     radiusOfInterest = data["pcf"]["radiusOfInterest"]
-    logger.info(f"Radius={radiusOfInterest} micron was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
+    logger.info(f"Radius={radiusOfInterest} $\mu$ was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
         
-
     for g in groups:
         logger.info(f"Analyzing group: {g}")
         g_output=os.path.join(output_folder, g)
@@ -64,6 +76,7 @@ def main():
                 
                 pzt_path=os.path.join(input_folder, pzt)
                 pzt_roi=[f for f in os.listdir(pzt_path) if f.endswith('cell_seg_data.txt') and not f.startswith('Merge')]
+
                 pzt_roi=list(map(lambda x: os.path.join(pzt_path,x), pzt_roi))
                 
                 for ff in pzt_roi:
@@ -82,13 +95,13 @@ def main():
                     roi_output=os.path.join(comb_output, "ROI_"+roi_name)
                     pathlib.Path(roi_output).mkdir(parents=True, exist_ok=True)
 
-                    pc = load_point_cloud(pheno_df, roi_output)
+                    rad_folder=os.path.join(roi_output,"r_"+str(radiusOfInterest))
+                    pathlib.Path(rad_folder).mkdir(parents=True, exist_ok=True)
+                    
+                    pc = load_point_cloud(pheno_df, rad_folder, C_1, C_2)
                     
                     if data["pcf"]["all_pcf"]:
                         pc = all_cross_pcf(pc, pzt_output, roi_name, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
-                    
-                    rad_folder=os.path.join(roi_output,"r_"+str(radiusOfInterest))
-                    pathlib.Path(rad_folder).mkdir(parents=True, exist_ok=True)
                     
                     pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
                     
@@ -97,7 +110,7 @@ def main():
                     if data["pcf"]["on_roi"]:
                         input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image."))
                         
-                        tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder)
+                        tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder, C_1, C_2)
 
                     count_C1 = len(pheno_df[pheno_df['Celltype'] == C_1])
                     count_C2 = len(pheno_df[pheno_df['Celltype'] == C_2])
@@ -113,8 +126,8 @@ def main():
         stat_folder=os.path.join(output_folder,"stats")
         pathlib.Path(stat_folder).mkdir(parents=True, exist_ok=True)
 
-        stats_file=os.path.join(stat_folder,"stat_analysis_r_"+radiusOfInterest+".tsv")
-        create_stats_file(groups, rad_folder)
+        stats_file=os.path.join(stat_folder,"stat_analysis_r_"+str(radiusOfInterest)+".tsv")
+        create_stats_file(groups, stats_file)
 
         for C_1, C_2 in combinations:
 

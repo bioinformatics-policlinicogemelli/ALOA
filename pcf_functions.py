@@ -1,5 +1,6 @@
 import os
 import pathlib
+import pandas as pd
 from image_proc_functions import pheno_filt
 import csv
 import matplotlib 
@@ -18,6 +19,26 @@ from loguru import logger
 ### Function for PCF
 # Authors: Chiara P., Beatrice C.
 
+def load_df(input_path, filename):
+    '''
+    Function to load tsv file 
+    Args:
+        input_path : string
+        filename : string
+    
+    Returns:
+        df: Dataframe
+    '''
+    try:
+        df=pd.read_csv(os.path.join(input_path, filename), sep="\t")
+    except FileNotFoundError:
+        logger.critical(f"No {filename} found in {input_path}! Check if file is named properly as {filename} and if is inside input folder.")
+        exit(1)
+    except Exception:
+        logger.critical(f"Something went wrong while reading {filename}!")
+        exit(1)
+    return(df)
+
 def add_celltype(df, celltype_list, pheno_list):
     '''
     Function to associate cell type label to Phenotype(s)
@@ -30,6 +51,7 @@ def add_celltype(df, celltype_list, pheno_list):
         df: DataFrame
     '''
     pheno_df=pheno_filt(df, pheno_list)
+    pheno_df.columns=list(map(lambda x: x.replace(" ",".") ,pheno_df.columns))
     pheno_df=pheno_df[['Cell.ID', 'Cell.X.Position', 'Cell.Y.Position', 'Pheno']]
     pheno_df=pheno_df.loc[pheno_df['Pheno'].isin(celltype_list["Phenotype"])]
     
@@ -60,7 +82,7 @@ def create_output_csv(output_path_csv, C_1, C_2):
 
     return csv_path
 
-def load_point_cloud(df, output_path):
+def load_point_cloud(df, output_path, C_1, C_2):
     '''
     Function to generate and plot pointcloud
     Args:
@@ -70,6 +92,9 @@ def load_point_cloud(df, output_path):
     Returns:
         pc: pointcloud
     '''
+    #filter df on C1 and C2
+    df=df.loc[df['Celltype'].isin([C_1,C_2])].reset_index()
+    
     points = np.asarray([df['Cell.X.Position'],df['Cell.Y.Position']]).transpose()
     
     max_x=df['Cell.X.Position'].max() + 100
@@ -89,7 +114,8 @@ def load_point_cloud(df, output_path):
             pass
 
     visualisePointCloud(pc, 'Celltype', cmap='tab20',markerSize=100)
-
+    plt.title("Point Cloud")
+    
     plt.savefig(os.path.join( output_path, f"point_cloud.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
     
@@ -198,13 +224,12 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
     '''
     #computation of topographical correlation map 
     tcm = topographicalCorrelationMap(pc,'Celltype',C_1,'Celltype',C_2,radiusOfInterest,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
-    #masked_tcm = np.ma.masked_where((tcm > -0.05) & (tcm < 0.05), tcm)
 
     #plot of the TCM
-    plt.figure(figsize=(24,18), facecolor='none')
+    plt.figure(figsize=(24,18))
     l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
     plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
-    plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$(r={radiusOfInterest})')
+    plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
     ax = plt.gca()
     ax.grid(False)
 
@@ -212,12 +237,14 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
     plt.xticks([], [])
     plt.yticks([], [])
 
+    plt.title(f"{C_1} - {C_1} (r={radiusOfInterest} $\mu$m)")
+    
     plt.savefig(os.path.join(output_path, f"TCM.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
 
     return tcm
-
-def tcm_on_roi(roi, tcm, r, outpath):
+    
+def tcm_on_roi(roi, tcm, r, outpath, C_1, C_2):
     '''
     Function to plot tcm termic plot on roi image
     Args:
@@ -230,23 +257,27 @@ def tcm_on_roi(roi, tcm, r, outpath):
     for ext in ["jpg","tif","png","tiff"]:
         if os.path.isfile(roi+ext):
             roi=roi+ext
-            continue
+            break
     try:
         pix=cv2.imread(roi)
     except Exception:
         logger.error(f"Something went wrong while opening {roi} file: check if the file exists. Skip this step!")
         return()
     
+    if pix is None:
+        logger.error(f"Something went wrong while opening {roi} file: check if the file exists. Skip this step!")
+        return()
+    
     background = cv2.cvtColor(pix, cv2.COLOR_BGR2RGB)
+    background = np.flip(background, axis=0)
     plt.figure(figsize=(16,16))
     plt.imshow(background)
-    #plt.imshow(np.rot90())
     
     tcm_res = cv2.resize(tcm, (pix.shape[1], pix.shape[0]))
     plt.imshow(tcm_res, cmap='RdBu_r',alpha=.5)
 
     plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
-    plt.title(f"PCF r={r}")
+    plt.title(f"{C_1} - {C_1} (r={r} $\mu$m)")
     plt.grid(None)
     plt.savefig(os.path.join(outpath, f"TCM_on_ROI.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
@@ -349,7 +380,6 @@ def fill_stats_file(results, df, pval, stats_file, groups):
     with open(stats_file, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
         writer.writerow(results)
-
 
 
 ### Algorithm for mathematical PCF evaluation
