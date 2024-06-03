@@ -1,4 +1,3 @@
-library(readxl)
 library(tidyverse)
 library(rjson)
 library(phenoptr)
@@ -31,9 +30,8 @@ merge=function(){
   #### Input parsing
   data_input_folder=file.path(myData$Paths["data_input_folder"][[1]],"raw_data")
   output_folder=myData$Paths["output_folder"][[1]]
-  sample_sheet=file.path(myData$Paths["data_input_folder"][[1]],"sample_sheet.xlsx")
-  
-  data_input=read_xlsx(sample_sheet)
+  sample_sheet=file.path(myData$Paths["data_input_folder"][[1]],"sample_sheet.tsv")
+  data_input=read.table(file = sample_sheet, sep = '\t', header = TRUE)
   
   #### Output organization folder
   dir.create(output_folder)
