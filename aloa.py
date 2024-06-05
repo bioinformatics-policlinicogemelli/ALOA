@@ -10,6 +10,7 @@ from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
 from datetime import datetime
 import glob
+import pandas as pd
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -39,6 +40,15 @@ def check_output(output,fun):
         return("")
     check=glob.glob(path_to_find)
     return(check)
+
+#*****************************************************************
+
+def merge_log(log_list):
+    import pdb; pdb.set_trace()
+    log_new = pd.concat((pd.read_csv(file) for file in log_list), ignore_index=True)
+    
+    log_new.to_csv("/Users/chiaraparrillo/Desktop/Progetti/ALOA_pub/ALOA/prova.txt")#log_list[0]) 
+    #return(data_new)
 
 #*****************************************************************
 
@@ -87,6 +97,8 @@ def aloa(args, data, logfile):
             n_err+=1
             logger.info(f"ALOA script exited with {n_err} error(s)!")
             return()
+        
+        merge_log([logfile,merge,clean])
         
         n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_merge)
         n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_clean)
@@ -240,3 +252,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+    
