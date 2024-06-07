@@ -44,15 +44,14 @@ def check_output(output,fun):
 #*****************************************************************
 
 def merge_log(log_list):
-    import pdb; pdb.set_trace()
-    log_new = pd.concat((pd.read_csv(file) for file in log_list), ignore_index=True)
-    
-    log_new.to_csv("/Users/chiaraparrillo/Desktop/Progetti/ALOA_pub/ALOA/prova.txt")#log_list[0]) 
-    #return(data_new)
 
+    os.system("cat " + log_list[1] + " >> " + log_list[0])
+    os.system("rm " + log_list[1])
+    
 #*****************************************************************
 
-def check_log(n_warn, n_err, n_crit, log):
+def check_log(log, n_warn=0, n_err=0, n_crit=0):
+    
     log_txt=open(log, 'r').read()
     n_warn+=int(log_txt.count("WARNING"))
     n_err+= int(log_txt.count("ERROR"))
@@ -86,23 +85,14 @@ def aloa(args, data, logfile):
         ro.r['source']('merge.R')
         merge = ro.globalenv['merge']
         log_name_merge=merge()[0]
+        merge_log([logfile,log_name_merge])
         
         logger.info("|-> Clean step starting now")
         ro.r['source']('clean_data.R')
         clean = ro.globalenv['clean']
         log_name_clean=clean()[0]
-        
-        if len(check_output(os.path.join(output,'Merged_clean'),"merge"))==0:
-            logger.critical(f"Something went wrong in the Merging step. Check {log_name_merge} and {log_name_clean} files for more info.")
-            n_err+=1
-            logger.info(f"ALOA script exited with {n_err} error(s)!")
-            return()
-        
-        merge_log([logfile,merge,clean])
-        
-        n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_merge)
-        n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit,log_name_clean)
-                
+        merge_log([logfile,log_name_clean])
+                                
         #########################################
         #             DESCRIPTIVE               #
         #########################################
@@ -120,12 +110,7 @@ def aloa(args, data, logfile):
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
             log_name=maps()[0]
-
-            if len(check_output(os.path.join(output,'Maps_plot'),"maps"))==0 or "ERROR" in open(f"{log_name}", 'r').read():
-                logger.error(f"Something went wrong in the Maps plot step. Check {log_name} for more info.")
-                n_err+=1
-
-            n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, log_name)
+            merge_log([logfile,log_name])
             
         #########################################
         #               DISTANCE                #
@@ -136,12 +121,7 @@ def aloa(args, data, logfile):
             ro.r['source']('distance_eval.R')
             distance = ro.globalenv['distance']
             log_name=distance()[0]
-            
-            if len(check_output(os.path.join(output,'Distance'),"dist"))==0 or "ERROR" in open(f"{log_name}", 'r').read():
-                logger.error(f"Something went wrong in the Distance step. Check {log_name} for more info.")
-                n_err+=1
-
-            n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, log_name)
+            merge_log([logfile,log_name])
             
             if args.stats:
                 logger.info("|-> Distance statistical evaluation step starting now")
@@ -162,7 +142,6 @@ def aloa(args, data, logfile):
         logger.info("|-> Image matching step starting now")
         img_match()
                        
-         
     if args.dstMatch: 
         logger.info("|-> Distance matching step starting now")
         distance_match()
@@ -175,7 +154,7 @@ def aloa(args, data, logfile):
         logger.info("|-> PCF step starting now")
         pcf()
     
-    n_warn, n_err, n_crit=check_log(n_warn, n_err, n_crit, logfile)
+    n_warn, n_err, n_crit=check_log(logfile)
     logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
     
 #### 
@@ -236,7 +215,7 @@ def main():
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
-    
+            
     if args.all:
         all_true(args)
         
