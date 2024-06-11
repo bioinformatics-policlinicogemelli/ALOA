@@ -21,6 +21,18 @@ from cross_PCF import main as pcf
 
 @logger.catch()
 
+#*****************************************************************
+
+def log_settings(logout):
+    logfile="aloa_"+datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+".log"
+    logger.level("INFO", color="<green>")
+    logger.add(sys.stderr, format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",colorize=True, catch=True, backtrace=True, diagnose=True)
+    logger.add(os.path.join(logout,logfile),format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",mode="w", backtrace=True, diagnose=True)
+    
+    return(os.path.join(logout,logfile))
+    
+#*****************************************************************
+
 def all_true(args):
     for arg in vars(args):
         if arg=="all":
@@ -47,6 +59,8 @@ def merge_log(log_list):
 
     os.system("cat " + log_list[1] + " >> " + log_list[0])
     os.system("rm " + log_list[1])
+    logger.remove()
+    logger.add(log_list[0],format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",mode="a", backtrace=True, diagnose=True)        
     
 #*****************************************************************
 
@@ -92,7 +106,7 @@ def aloa(args, data, logfile):
         clean = ro.globalenv['clean']
         log_name_clean=clean()[0]
         merge_log([logfile,log_name_clean])
-                                
+                           
         #########################################
         #             DESCRIPTIVE               #
         #########################################
@@ -175,10 +189,8 @@ def main():
     pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
 
     logger.remove()
-    logfile="aloa_"+datetime.now().strftime('%Y-%m-%d_%H-%M-%S')+".log"
-    logger.level("INFO", color="<green>")
-    logger.add(sys.stderr, format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",colorize=True, catch=True, backtrace=True, diagnose=True)
-    logger.add(os.path.join(log_path,logfile),format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",mode="w", backtrace=True, diagnose=True)
+    
+    logfile=log_settings(log_path)
     
     logger.info("Welcome to ALOA")
          
@@ -215,7 +227,9 @@ def main():
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
-            
+    args.merge=True
+    args.maps=True
+    args.distance=True     
     if args.all:
         all_true(args)
         
@@ -227,8 +241,8 @@ def main():
         logger.critical(f"It seems that stats (-s) option is provided without the distance (-d) one. That is not possible beacause statistical evaluation requires distance evaluation. Try launch the command again setting -d and -s concurrently.")
         exit(1)
             
-    aloa(args, data, os.path.join(log_path,logfile))
-    
+    aloa(args, data, logfile)
+
 if __name__ == '__main__':
     main()
     

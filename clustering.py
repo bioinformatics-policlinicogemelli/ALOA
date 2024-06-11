@@ -37,6 +37,7 @@ def plot_elbow_analysis(df, k_number, idx, output_path):
         kmeans.fit(df_sample.values)
         inertia_values.append(kmeans.inertia_)
 
+    df_sample["Pheno"]=df["Pheno"]
     knee_locator = KneeLocator(list(K_range), inertia_values, curve="convex", direction="decreasing")
     n_opt_cluster = knee_locator.knee
     knee_locator.plot_knee()
@@ -51,7 +52,7 @@ def plot_elbow_analysis(df, k_number, idx, output_path):
     plt.close()
 
     logger.info(f"Optimal cluster Number: {n_opt_cluster}")
-
+    
     return df_sample, n_opt_cluster
 
 def plot_silhouette_analysis(df, output_path, idx, k_number):
@@ -73,6 +74,7 @@ def plot_silhouette_analysis(df, output_path, idx, k_number):
         silhouette_avg = silhouette_score(df_sample.values, etichette_cluster[k])
         silhouette_scores.append(silhouette_avg)
 
+    df_sample["Pheno"]=df["Pheno"]
     logger.info("Creating optimal cluster number graph")
     plt.plot(K_range, silhouette_scores, marker='o')
     plt.xlabel('N cluster')
@@ -84,7 +86,7 @@ def plot_silhouette_analysis(df, output_path, idx, k_number):
     n_opt_cluster = K_range[silhouette_scores.index(max(silhouette_scores))]
     logger.info(f"Optimal cluster Number: {n_opt_cluster}")
     
-    return n_opt_cluster
+    return df_sample, n_opt_cluster
 
 def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
     
@@ -95,7 +97,7 @@ def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
     if "k" in clust_alg.lower():
         km = KMeans(n_clusters=n_opt_cluster)
         logger.info("kmeans algorithm selected!")
-        df_sample['kmeans'] = km.fit_predict(df_sample.values)
+        df_sample['kmeans'] = km.fit_predict(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
 
     if "s" in clust_alg.lower():
         logger.info("spectral algorithm selected!")
@@ -107,7 +109,7 @@ def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
     
     if "p" in clust_alg.lower():
         logger.info("k-prototype algoritm selected!")
-        cat_cols= df_sample["Pheno"]
+        cat_cols= [2]
         kproto = KPrototypes(n_clusters=n_opt_cluster, init='Cao', verbose=2)
         df_sample['prototype'] = kproto.fit_predict(df_sample, categorical=cat_cols)
 
@@ -273,30 +275,30 @@ def main():
                 df_sample, n_cluster_opt= plot_elbow_analysis(df_filt, k, idx, output_path_g)
             if number_alg =="s":
                 # silhouette analysis
-                n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k)
+                df_sample, n_cluster_opt = plot_silhouette_analysis(df_filt, output_path_g, idx, k)
 
             if number_alg not in ('e', 's'):
                     logger.critical(f"ERROR: wrong clustering algoritm for optimal number of cluster. '{number_alg}' were selected but only 'elbow method' (e) or 'silhouette analysis' (s) are currently supported! Check your method section in your config.json file!")
                     exit(1)
 
-            n_opt_cluster, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df)
+            _, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df)
 
             cluster_type=list(clust_alg)
             
             for cl in cluster_type:
 
                     if cl=="k":
-                        cl="kmeans"
+                        cl_name="kmeans"
                     if cl=="s":
-                        cl="spectral"
+                        cl_name="spectral"
                     if cl=="p":
-                        cl=="prototype"
+                        cl_name="prototype"
                     
                     # Convex Hull plot
-                    output_res=plot_convex_hull(df_sample, n_cluster_opt, idx, output_path_g, cl)
+                    output_res=plot_convex_hull(df_sample, n_cluster_opt, idx, output_path_g, cl_name)
 
                     # stacked barplot and percentage csv 
-                    plot_stacked_bar_chart(df_sample, output_res, idx, cl)
+                    plot_stacked_bar_chart(df_sample, output_res, idx, cl_name)
     
     logger.info("End clustering analysis!\n")
     return ()
