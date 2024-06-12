@@ -551,15 +551,13 @@ def create_comparison_box_plot(path_output_result,data_all,type_data):
 
 #*****************************************************************
 #*****************************************************************
-def main():
+def main(data):
     
     print("\n############################# DESCRIPTIVE ANALYSIS #############################\n")
     
     logger.info("Start overview process: This step will give a description of input data and, if more than one group is involved, will also provide a statistical comparison for all the listed phenotypes\n")
     
     logger.info("Reading configuration file")
-    with open("config.json") as f:
-        data=json.load(f)
     
     path_merge_folder=os.path.join(data["Paths"]["output_folder"],"Merged_clean")
     logger.info(f"Merge data found in {path_merge_folder}")
