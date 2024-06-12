@@ -257,6 +257,7 @@ def main():
             
             # Load and filter data
             df = pd.read_csv(os.path.join(input_path,g,pzt), sep='\t')
+            df.columns = df.columns.str.replace(' ', '.')
             df_filt = pheno_filt(df, pheno_list)
             if len(df_filt)==0:
                 print("No Phenotype(s) found. Check the phenotype list and Phenotype columns of your data!")

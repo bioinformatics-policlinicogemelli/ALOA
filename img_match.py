@@ -1,23 +1,23 @@
 from image_proc_functions import pheno_filt, img_filt, crop_img, norm_values, plot_pheno, plot_interactive
 import cv2
 import pandas as pd
-import json
 import os
 import pathlib
 from loguru import logger
+import json
+import re
 
-def img_match():
+def img_match(data):
     
     print("\n################################# IMAGE MATCH ##################################\n")
     
     logger.info("Start image match process: This step will provide the plot of the phenotype(s) on the tiff image(s)\n")
-
-    with open("config.json") as f:
-        data=json.load(f)
-    
+     
     output=data["Paths"]["output_folder"]
             
-    input_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
+    img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
+    csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
+    
     if len(data["distance_match"]["pheno_list"])==0:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
@@ -26,30 +26,28 @@ def img_match():
     output_f=os.path.join(output,"Img_match")
     pathlib.Path(output_f).mkdir(parents=True, exist_ok=True)
     
-    dir=[f for f in os.listdir(input_folder) if not f.startswith('.')]
-    dir=list(set(list(map(lambda x: os.path.join(input_folder,x.split(']_')[0]+"]"), dir))))
+    dir=[f for f in os.listdir(img_folder) if not f.startswith('.')]
+    img=list(set(list(map(lambda x: os.path.join(img_folder,x), dir))))
+    csv=list(set(list(map(lambda x: os.path.join(csv_folder,x.split("_[")[0],re.search('.*?\]', x).group(0) +"_cell_seg_data.txt"), dir))))
     
-    for d in dir:
+    img.sort()
+    csv.sort()
+    
+    for i,c in zip(img,csv):
         
-        logger.info("Analyzing data "+ d)
+        logger.info(f"Analyzing data {c}")
         
         #dataframe section
-        df=pd.read_csv(d+"_cell_seg_data.txt",sep="\t")
+        try:
+            df=pd.read_csv(c,sep="\t")
+        except FileNotFoundError:
+            logger.warning(f"No image matched file found in {c}. Skip to the next image!")
+            continue
+            
+        df.columns = df.columns.str.replace(' ', '.')
         
-        # image 
-        img_filename=d+"_composite_image"
-
-        if os.path.isfile(img_filename+".tif"):
-            img_filename=img_filename+".tif"
-        elif os.path.isfile(img_filename+".png"):
-            img_filename=img_filename+".tif"
-        elif os.path.isfile(img_filename+".jpg"):
-            img_filename=img_filename+".jpg"
-        else:
-            logger.critical("Image not found! Exiting img match script!")
-            return()
-        
-        img = cv2.imread(img_filename)
+        # image section
+        img = cv2.imread(i)
         masked_img=img_filt(img)
         crop=crop_img(masked_img,50)
 
@@ -68,11 +66,11 @@ def img_match():
         pheno_df=pheno_filt(pheno_df,pheno_list)
         
         if len(pheno_df)==0:
-            logger.warning("Data " + d + "has no match with requested Phenotype list. Skip to the next one!")
+            logger.warning(f"Data {c} has no match with requested Phenotype list. Skip to the next one!")
             continue
         
         #plot
-        filename=(d+"_composite_image.tif").split("\\")[-1].split("/")[-1].replace(".tif","_match_") + ''.join(map(str, pheno_list))
+        filename=i.split("/")[-1].split("/")[-1].replace(os.path.splitext(i)[-1],"_match_") + ''.join(map(str, pheno_list))
         plot_pheno(crop, pheno_df, os.path.join(output_f, filename))
         
         if data["image_match"]["interactive"]:

@@ -19,6 +19,13 @@ from img_match import img_match
 from distance_match import distance_match
 from cross_PCF import main as pcf
 
+#### 
+class MyArgumentParser(argparse.ArgumentParser):
+  """An argument parser that raises an error, instead of quits"""
+  def error(self, message):
+    raise ValueError(message)
+#### 
+
 @logger.catch()
 
 #*****************************************************************
@@ -154,11 +161,11 @@ def aloa(args, data, logfile):
     #########################################        
     if args.imgMatch:          
         logger.info("|-> Image matching step starting now")
-        img_match()
+        img_match(data)
                        
     if args.dstMatch: 
         logger.info("|-> Distance matching step starting now")
-        distance_match()
+        distance_match(data)
     
     #########################################
     #                  PCF                  #
@@ -166,18 +173,11 @@ def aloa(args, data, logfile):
 
     if args.pcf:
         logger.info("|-> PCF step starting now")
-        pcf()
+        pcf(data)
     
     n_warn, n_err, n_crit=check_log(logfile)
     logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
     
-#### 
-class MyArgumentParser(argparse.ArgumentParser):
-  """An argument parser that raises an error, instead of quits"""
-  def error(self, message):
-    raise ValueError(message)
-#### 
-
 def main(): 
     
     with open("config.json") as f:
@@ -227,9 +227,7 @@ def main():
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
-    args.merge=True
-    args.maps=True
-    args.distance=True     
+  
     if args.all:
         all_true(args)
         

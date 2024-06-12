@@ -1,6 +1,5 @@
 import pandas as pd 
 import itertools
-import json
 from loguru import logger
 import warnings
 import os
@@ -11,13 +10,10 @@ from pcf_functions import *
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def main():
+def main(data):
     print("\n################################## CROSS PCF ##################################\n")
     
     logger.info("Start cross PCF analysis: This step will provide the cross PCF evaluation for each ROI\n")
-    
-    with open("config.json") as f:
-        data=json.load(f)
     
     input_folder = os.path.join(data["Paths"]["data_input_folder"],"raw_data")
     

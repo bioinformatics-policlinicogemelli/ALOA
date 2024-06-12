@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
+import matplotlib
 from matplotlib import pyplot as plt
+matplotlib.use('Agg')
 import pandas as pd
 pd.DataFrame.iteritems = pd.DataFrame.items
 from loguru import logger
@@ -153,13 +155,13 @@ def norm_values(pheno_df, crop):
     '''
         
     pheno_df["Cell X Position Norm"]=(
-        (pheno_df["Cell X Position"]-min(pheno_df["Cell X Position"]))/
-        (max(pheno_df["Cell X Position"])-min(pheno_df["Cell X Position"]))
+        (pheno_df["Cell.X.Position"]-min(pheno_df["Cell.X.Position"]))/
+        (max(pheno_df["Cell.X.Position"])-min(pheno_df["Cell.X.Position"]))
         )*crop.shape[1]
 
     pheno_df["Cell Y Position Norm"]=(
-        (pheno_df["Cell Y Position"]-min(pheno_df["Cell Y Position"]))/
-        (max(pheno_df["Cell Y Position"])-min(pheno_df["Cell Y Position"]))
+        (pheno_df["Cell.Y.Position"]-min(pheno_df["Cell.Y.Position"]))/
+        (max(pheno_df["Cell.Y.Position"])-min(pheno_df["Cell.Y.Position"]))
         )*crop.shape[0]
 
     return pheno_df
