@@ -13,7 +13,7 @@ import seaborn as sns
 import random
 from shapely.geometry import Polygon
 from scipy.spatial.distance import cdist
-from scipy.stats import mannwhitneyu, kruskal
+from scipy.stats import mannwhitneyu, kruskal, wilcoxon
 from loguru import logger
 
 ### Function for PCF
@@ -110,7 +110,7 @@ def load_point_cloud(df, output_path, C_1, C_2):
         try:
             pc.changeIndividualLabelColor('Celltype', label, plt.cm.tab20(i))
         except:
-            print(f'label {label} not found!')
+            logger.warning(f'label {label} not found!')
             pass
 
     visualisePointCloud(pc, 'Celltype', cmap='tab20',markerSize=100)
@@ -253,11 +253,18 @@ def tcm_on_roi(roi, tcm, r, outpath, C_1, C_2):
         r : float
         outpath : string
     '''
-
-    for ext in ["jpg","tif","png","tiff"]:
+    count=0
+    for ext in [".jpg",".tif",".png",".tiff"]:
         if os.path.isfile(roi+ext):
+            count=1
             roi=roi+ext
             break
+    
+    if count==0:
+        roi_n=os.path.basename(roi)
+        logger.warning(f"No image {roi_n} found in 'img_match' folder. Skip this step!")
+        return()
+        
     try:
         pix=cv2.imread(roi)
     except Exception:
@@ -277,7 +284,7 @@ def tcm_on_roi(roi, tcm, r, outpath, C_1, C_2):
     plt.imshow(tcm_res, cmap='RdBu_r',alpha=.5)
 
     plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
-    plt.title(f"{C_1} - {C_1} (r={r} $\mu$m)")
+    plt.title(f"{C_1} - {C_2} (r={r} $\mu$m)")
     plt.grid(None)
     plt.savefig(os.path.join(outpath, f"TCM_on_ROI.tif"), dpi=300, format="tiff", bbox_inches='tight')
     plt.close()
@@ -299,7 +306,7 @@ def append_to_csv(output_csv, codice_pz, roi_name, pcf_value_at_radius, count_C1
         row = [codice_pz, roi_name, pcf_value, count_C1, count_C2]
         writer.writerow(row)
 
-def stats_eval(df, groups):
+def stats_eval(df, groups, test):
     '''
     Function for statistical analysis between groups
     Args:
@@ -311,10 +318,15 @@ def stats_eval(df, groups):
     '''
     col=df.columns
     #Case 1 groups---> Mann-Whitney test
-    if len(groups)==2:
+    if len(groups)==2 and test != "paired":
         logger.info(f"Running Mann-Whitney test")
-        _, p_value = mannwhitneyu(df[col[0]], df[col[0]])
-
+        _, p_value = mannwhitneyu(df[col[0]], df[col[1]])
+        
+    #Case 1 groups---> Wilcoxon test (paired test)
+    elif len(groups)==2 and test == "paired":
+        logger.info(f"Running Wilcoxon test")
+        _, p_value = wilcoxon(df[col[0]], df[col[1]])
+    
     #Case more than 2 groups---> Kruskal test
     elif len(groups)>2:
         logger.info(f"Running Kruskal test")
@@ -645,8 +657,7 @@ def plotTopographicalCorrelationMap(pc,topographicalCorrelationMap,ax=None,cmap=
         colorbarLimit = int(np.ceil(np.max([topographicalCorrelationMap.min(),topographicalCorrelationMap.max()])))
     
     transparent_mask = np.ma.masked_where((topographicalCorrelationMap > -1) & (topographicalCorrelationMap<1), topographicalCorrelationMap)
-    print(transparent_mask)
-
+    #print(transparent_mask)
 
     extent = [pc.domain[0,0],pc.domain[0,1],pc.domain[1,0],pc.domain[1,1]]
     im = ax.imshow(topographicalCorrelationMap,origin='lower',cmap=cmap,extent=extent,vmin=-colorbarLimit,vmax=colorbarLimit, alpha=transparent_mask)

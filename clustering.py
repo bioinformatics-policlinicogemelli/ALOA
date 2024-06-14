@@ -6,10 +6,9 @@ from scipy.spatial import ConvexHull
 import os
 import numpy as np
 from image_proc_functions import pheno_filt
-import json
+import re
 import pathlib
 import random
-from datetime import datetime
 from sklearn.cluster import SpectralClustering
 from sklearn.preprocessing import StandardScaler
 from loguru import logger
@@ -31,8 +30,7 @@ def plot_elbow_analysis(df, k_number, idx, output_path):
     K_range = range(2, k_number)
 
     for k in K_range:
-        #logger.debug(k)
-        print(f"Calcolo del grafico per k={k}")
+
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(df_sample.values)
         inertia_values.append(kmeans.inertia_)
@@ -69,7 +67,6 @@ def plot_silhouette_analysis(df, output_path, idx, k_number):
     for k in K_range:
         logger.info(f"Check for {k} clusters")
         spectral = SpectralClustering(n_clusters=k, affinity='nearest_neighbors', random_state=42)
-        #kmeans = KMeans(n_clusters=k)
         etichette_cluster[k] = spectral.fit_predict(df_sample.values)
         silhouette_avg = silhouette_score(df_sample.values, etichette_cluster[k])
         silhouette_scores.append(silhouette_avg)
@@ -220,15 +217,11 @@ def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
     cluster_percentages=cluster_percentages * 100
     cluster_percentages.to_csv(os.path.join(output_barplot,"cluster_percentage_"+idx+".csv"), sep=",")
 
-def main():
+def main(data):
     
-    print("\n############################### CLUSTER ANALYSIS ###############################\n")
+    logger.info("\n############################### CLUSTER ANALYSIS ###############################\n")
     
     logger.info("Start clustering process: This step will produce a spatial clustering\n")
-
-    logger.info("Reading configuration file")
-    with open("config.json") as f:
-        data=json.load(f)
         
     input_path = os.path.join(data["Paths"]["output_folder"],"Merged_clean")
    
@@ -253,18 +246,18 @@ def main():
         
         for pzt in pzt_list:
             
-            print("sbj: "+pzt)
+            logger.info("sbj: "+pzt)
             
             # Load and filter data
             df = pd.read_csv(os.path.join(input_path,g,pzt), sep='\t')
             df.columns = df.columns.str.replace(' ', '.')
             df_filt = pheno_filt(df, pheno_list)
             if len(df_filt)==0:
-                print("No Phenotype(s) found. Check the phenotype list and Phenotype columns of your data!")
-                print("Skip to next subject")
+                logger.warning("No Phenotype(s) found. Check the phenotype list and Phenotype columns of your data!")
+                logger.info("Skip to next subject")
                 continue
 
-            idx=df["Sample.Name"][0].split(" ")[0]
+            idx=idx=re.search('.*?\]', df["Sample.Name"][0]).group(0)
             
             logger.warning(f"The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both.")
             

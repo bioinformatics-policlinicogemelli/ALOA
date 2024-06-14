@@ -5,7 +5,6 @@ import pandas as pd
 import os
 import pathlib
 import itertools
-import json
 import re
 from loguru import logger
 
@@ -28,14 +27,18 @@ def distance_match(data):
         pheno_list=data["distance_match"]["pheno_list"]
     
     dir=[f for f in os.listdir(img_folder) if not f.startswith('.')]
-    img=list(set(list(map(lambda x: os.path.join(img_folder,x), dir))))
-    csv=list(set(list(map(lambda x: os.path.join(csv_folder,x.split("_[")[0],re.search('.*?\]', x).group(0) +"_cell_seg_data.txt"), dir))))
+    img_path=list(set(list(map(lambda x: os.path.join(img_folder,x), dir))))
+    csv_path=list(set(list(map(lambda x: os.path.join(csv_folder,x.split("_[")[0],re.search('.*?\]', x).group(0) +"_cell_seg_data.txt"), dir))))
     
-    img.sort()
-    csv.sort()
+    img_path.sort()
+    csv_path.sort()
     
-    for i,c in zip(img,csv):
-        logger.info(f"Analyzing file c")
+    for i,c in zip(img_path,csv_path):
+        
+        print(i)
+        print(c)
+
+        logger.info(f"Analyzing file {c}")
         
         #dataframe section
         try:

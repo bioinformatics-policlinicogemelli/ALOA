@@ -10,7 +10,6 @@ from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
 from datetime import datetime
 import glob
-import pandas as pd
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -44,9 +43,7 @@ def all_true(args):
     for arg in vars(args):
         if arg=="all":
             continue
-        print(arg, getattr(args, arg))
         setattr(args, arg,True)
-        print(arg, getattr(args, arg))
 
 #*****************************************************************
         
@@ -67,6 +64,7 @@ def merge_log(log_list):
     os.system("cat " + log_list[1] + " >> " + log_list[0])
     os.system("rm " + log_list[1])
     logger.remove()
+    logger.add(sys.stderr, format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",colorize=True, catch=True, backtrace=True, diagnose=True)
     logger.add(log_list[0],format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",mode="a", backtrace=True, diagnose=True)        
     
 #*****************************************************************
@@ -154,7 +152,7 @@ def aloa(args, data, logfile):
         
         if args.clustering:
             logger.info("|-> Clustering step starting now")
-            clust()
+            clust(data)
            
     #########################################
     #               IMAGING                 #
@@ -227,7 +225,7 @@ def main():
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
-  
+   
     if args.all:
         all_true(args)
         

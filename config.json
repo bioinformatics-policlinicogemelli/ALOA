@@ -43,24 +43,25 @@
       "pheno_from":"",
       "pheno_to":"",
       "plot_distance":true,
-      "save_csv_zetascore":true
+      "save_csv_zetascore":true,
+      "test":""
    },
    "cluster":{
       "pheno_list":[
-
       ],
       "algo_method":"e",
       "k":10,
-      "cluster_method":"ks"
+      "cluster_method":"ksp"
    },
    "pcf":{
       "pheno_list":[
       ],
       "radiusOfInterest":50,
-      "all_pcf":true, 
+      "all_pcf":false, 
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
-      "on_roi":true
+      "on_roi":false,
+      "test":"paired"
    }
 }

@@ -225,7 +225,7 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
 
 #*****************************************************************
         
-def statistical_test(df):
+def statistical_test(df, test):
   
     groups=list(df["GROUP"].unique())
 
@@ -242,9 +242,14 @@ def statistical_test(df):
         logger.warning("Only One Group - not statistical is possible")
     
     #Case 2 groups---> Mann-Whitney test
-    elif len(df["GROUP"].unique())==2:
+    elif len(df["GROUP"].unique())==2 and test != "paired":
         logger.info("Running Mann-Whitney test")
         _, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
+    
+    #Case 2 groups---> Wilcoxon test (paired test)
+    elif len(df["GROUP"].unique())==2 and test == "paired":
+        logger.info("Running Wilcoxon test")
+        _, p_value = stats.wilcoxon(values_distance[0], values_distance[1])
     
     #Case more than 2 groups---> Kruskal test
     elif len(df["GROUP"].unique())>2:
@@ -367,7 +372,7 @@ def main(data):
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue=statistical_test(df_distance)
+            pvalue=statistical_test(df_distance, data["statistical_distance"]["test"])
 
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major

@@ -11,7 +11,8 @@ pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def main(data):
-    print("\n################################## CROSS PCF ##################################\n")
+    
+    logger.info("\n################################## CROSS PCF ##################################\n")
     
     logger.info("Start cross PCF analysis: This step will provide the cross PCF evaluation for each ROI\n")
     
@@ -65,7 +66,7 @@ def main(data):
 
                 pzt_output=os.path.join(g_output, pzt)
                 pathlib.Path(pzt_output).mkdir(parents=True, exist_ok=True)
-                logger.info(f"\noutput subject folder created in {pzt_output} path")
+                logger.info(f"output subject folder created in '{pzt_output}' path")
 
                 comb_output=os.path.join(pzt_output,C_1.replace(" ","_")+"-"+C_2.replace(" ","_"))
                 pathlib.Path(comb_output).mkdir(parents=True, exist_ok=True)
@@ -85,7 +86,7 @@ def main(data):
                     pheno_df=add_celltype(df, celltype_list, data["pcf"]["pheno_list"])
                     
                     if C_1 not in pheno_df['Celltype'].values or C_2 not in pheno_df['Celltype'].values:
-                        print(f"{C_1} o {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
+                        logger.warning(f"{C_1} o {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
                         continue
 
                     roi_output=os.path.join(comb_output, "ROI_"+roi_name)
@@ -104,7 +105,7 @@ def main(data):
                     tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
                     
                     if data["pcf"]["on_roi"]:
-                        input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image."))
+                        input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image"))
                         
                         tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder, C_1, C_2)
 
@@ -143,7 +144,7 @@ def main(data):
                     continue
             
             if len(df_comb.columns)>=2:
-                pval=stats_eval(df_comb, groups)
+                pval=stats_eval(df_comb, groups, data["pcf"]["test"])
             
                 fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), pval, stats_file, groups)
             

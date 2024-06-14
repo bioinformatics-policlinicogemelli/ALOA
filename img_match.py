@@ -4,7 +4,6 @@ import pandas as pd
 import os
 import pathlib
 from loguru import logger
-import json
 import re
 
 def img_match(data):
