@@ -89,7 +89,8 @@ def distance_match(data):
                 logger.info("skip to the next couple oh phenotypes")
                 continue
             
-            filename=i.split("/")[-1].split("/")[-1].replace(os.path.splitext(i)[-1],"_dist_match_") + ''.join(map(str, list(cb)))
+            filename=os.path.splitext(os.path.basename(i))[0]+"_dist_match_" + ''.join(map(str, list(cb)))
+            #filename=i.split("/")[-1].split("/")[-1].replace(os.path.splitext(i)[-1],"_dist_match_") + ''.join(map(str, list(cb)))
             
             # nearest ph2 cell for each ph1
             ph1_to_ph2=pd.merge(ph1, ph2, left_on='Cell ID ' + cb[1], right_on='Cell ID', suffixes=[None, "."+cb[1]])

@@ -69,7 +69,7 @@ def img_match(data):
             continue
         
         #plot
-        filename=i.split("/")[-1].split("/")[-1].replace(os.path.splitext(i)[-1],"_match_") + ''.join(map(str, pheno_list))
+        filename=os.path.splitext(os.path.basename(i))[0]+"_match_" + ''.join(map(str, pheno_list))
         plot_pheno(crop, pheno_df, os.path.join(output_f, filename))
         
         if data["image_match"]["interactive"]:
