@@ -155,11 +155,321 @@ For the merge, two types of files are genetared:
 If there are two groups, into *Merged* and *Merged_clean*, will be created as many folders as groups present, containing merged files for each patient in the group. Each merged file is named as *patientnames.txt*
 
 ```
-output_folder
+output
+├── Clustering
+│   ├── Stroma
+│   │   ├── elbow_scores
+│   │   │   ├── Set12_20-6plex_[14146,53503].tiff
+│   │   │   ├── Set4_1-6plex_[11472,51360].tiff
+│   │   │   └── Set8_11-6plex_[13394,50883].tiff
+│   │   ├── kmeans
+│   │   │   ├── percentage
+│   │   │   │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│   │   │   │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│   │   │   │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│   │   │   ├── scatter_plot
+│   │   │   │   ├── Set12_20-6plex_[14146,53503].tiff
+│   │   │   │   ├── Set4_1-6plex_[11472,51360].tiff
+│   │   │   │   └── Set8_11-6plex_[13394,50883].tiff
+│   │   │   └── stacked_barplot
+│   │   │       ├── Set12_20-6plex_[14146,53503].tiff
+│   │   │       ├── Set4_1-6plex_[11472,51360].tiff
+│   │   │       └── Set8_11-6plex_[13394,50883].tiff
+│   │   ├── prototype
+│   │   │   ├── percentage
+│   │   │   │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│   │   │   │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│   │   │   │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│   │   │   ├── scatter_plot
+│   │   │   │   ├── Set12_20-6plex_[14146,53503].tiff
+│   │   │   │   ├── Set4_1-6plex_[11472,51360].tiff
+│   │   │   │   └── Set8_11-6plex_[13394,50883].tiff
+│   │   │   └── stacked_barplot
+│   │   │       ├── Set12_20-6plex_[14146,53503].tiff
+│   │   │       ├── Set4_1-6plex_[11472,51360].tiff
+│   │   │       └── Set8_11-6plex_[13394,50883].tiff
+│   │   └── spectral
+│   │       ├── percentage
+│   │       │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│   │       │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│   │       │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│   │       ├── scatter_plot
+│   │       │   ├── Set12_20-6plex_[14146,53503].tiff
+│   │       │   ├── Set4_1-6plex_[11472,51360].tiff
+│   │       │   └── Set8_11-6plex_[13394,50883].tiff
+│   │       └── stacked_barplot
+│   │           ├── Set12_20-6plex_[14146,53503].tiff
+│   │           ├── Set4_1-6plex_[11472,51360].tiff
+│   │           └── Set8_11-6plex_[13394,50883].tiff
+│   └── Tumor
+│       ├── elbow_scores
+│       │   ├── Set12_20-6plex_[14146,53503].tiff
+│       │   ├── Set4_1-6plex_[11472,51360].tiff
+│       │   └── Set8_11-6plex_[13394,50883].tiff
+│       ├── kmeans
+│       │   ├── percentage
+│       │   │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│       │   │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│       │   │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│       │   ├── scatter_plot
+│       │   │   ├── Set12_20-6plex_[14146,53503].tiff
+│       │   │   ├── Set4_1-6plex_[11472,51360].tiff
+│       │   │   └── Set8_11-6plex_[13394,50883].tiff
+│       │   └── stacked_barplot
+│       │       ├── Set12_20-6plex_[14146,53503].tiff
+│       │       ├── Set4_1-6plex_[11472,51360].tiff
+│       │       └── Set8_11-6plex_[13394,50883].tiff
+│       ├── prototype
+│       │   ├── percentage
+│       │   │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│       │   │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│       │   │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│       │   ├── scatter_plot
+│       │   │   ├── Set12_20-6plex_[14146,53503].tiff
+│       │   │   ├── Set4_1-6plex_[11472,51360].tiff
+│       │   │   └── Set8_11-6plex_[13394,50883].tiff
+│       │   └── stacked_barplot
+│       │       ├── Set12_20-6plex_[14146,53503].tiff
+│       │       ├── Set4_1-6plex_[11472,51360].tiff
+│       │       └── Set8_11-6plex_[13394,50883].tiff
+│       └── spectral
+│           ├── percentage
+│           │   ├── cluster_percentage_Set12_20-6plex_[14146,53503].csv
+│           │   ├── cluster_percentage_Set4_1-6plex_[11472,51360].csv
+│           │   └── cluster_percentage_Set8_11-6plex_[13394,50883].csv
+│           ├── scatter_plot
+│           │   ├── Set12_20-6plex_[14146,53503].tiff
+│           │   ├── Set4_1-6plex_[11472,51360].tiff
+│           │   └── Set8_11-6plex_[13394,50883].tiff
+│           └── stacked_barplot
+│               ├── Set12_20-6plex_[14146,53503].tiff
+│               ├── Set4_1-6plex_[11472,51360].tiff
+│               └── Set8_11-6plex_[13394,50883].tiff
+│
+├── Cross_PCF
+│   ├── Stroma
+│   │   ├── Set12_20-6plex_S
+│   │   │   ├── Macrophages-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_14146,53503
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_17241,54367
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   ├── Regulatory_T_cell-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_14146,53503
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_17241,54367
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   └── Regulatory_T_cell-Macrophages
+│   │   │       ├── ROI_14146,53503
+│   │   │       │   └── r_50
+│   │   │       │       ├── PCF_function.tif
+│   │   │       │       ├── TCM.tif
+│   │   │       │       └── point_cloud.tif
+│   │   │       ├── ...
+│   │   │       └── ROI_17241,54367
+│   │   │           └── r_50
+│   │   │               ├── PCF_function.tif
+│   │   │               ├── TCM.tif
+│   │   │               └── point_cloud.tif
+│   │   ├── Set4_1-6plex_S
+│   │   │   ├── Macrophages-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_11472,51360
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_16142,55840
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   ├── Regulatory_T_cell-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_11472,51360
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_16142,55840
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   └── Regulatory_T_cell-Macrophages
+│   │   │       ├── ROI_11472,51360
+│   │   │       │   └── r_50
+│   │   │       │       ├── PCF_function.tif
+│   │   │       │       ├── TCM.tif
+│   │   │       │       └── point_cloud.tif
+│   │   │       ├── ...
+│   │   │       └── ROI_16142,55840
+│   │   │           └── r_50
+│   │   │               ├── PCF_function.tif
+│   │   │               ├── TCM.tif
+│   │   │               └── point_cloud.tif
+│   │   ├── Set8_11-6plex_S
+│   │   │   ├── Macrophages-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_13394,50883
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_17130,56449
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   ├── Regulatory_T_cell-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_13394,50883
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_17130,56449
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   └── Regulatory_T_cell-Macrophages
+│   │   │       ├── ROI_13394,50883
+│   │   │       │   └── r_50
+│   │   │       │       ├── PCF_function.tif
+│   │   │       │       ├── TCM.tif
+│   │   │       │       └── point_cloud.tif
+│   │   │       ├── ...
+│   │   │       └── ROI_17130,56449
+│   │   │           └── r_50
+│   │   │               ├── PCF_function.tif
+│   │   │               ├── TCM.tif
+│   │   │               └── point_cloud.tif
+│   │   └── summary
+│   │       ├── Macrophages-Cytotoxic_T_cell.tsv
+│   │       ├── Regulatory_T_cell-Cytotoxic_T_cell.tsv
+│   │       └── Regulatory_T_cell-Macrophages.tsv
+│   ├── Tumor
+│   │   ├── Set12_20-6plex_T
+│   │   │   ├── Macrophages-Cytotoxic_T_cell
+│   │   │   │   ├── ROI_14146,53503
+│   │   │   │   │   └── r_50
+│   │   │   │   │       ├── PCF_function.tif
+│   │   │   │   │       ├── TCM.tif
+│   │   │   │   │       └── point_cloud.tif
+│   │   │   │   ├── ...
+│   │   │   │   └── ROI_17241,54367
+│   │   │   │       └── r_50
+│   │   │   │           ├── PCF_function.tif
+│   │   │   │           ├── TCM.tif
+│   │   │   │           └── point_cloud.tif
+│   │   │   ├── ...
+│   │   │   └── Regulatory_T_cell-Macrophages
+│   │   │       ├── ROI_13394,50883
+│   │   │       │   └── r_50
+│   │   │       │       ├── PCF_function.tif
+│   │   │       │       ├── TCM.tif
+│   │   │       │       └── point_cloud.tif
+│   │   │       ├── ...
+│   │   │       └── ROI_17130,56449
+│   │   │           └── r_50
+│   │   │               ├── PCF_function.tif
+│   │   │               ├── TCM.tif
+│   │   │               └── point_cloud.tif
+│   │   └── summary
+│   │       ├── Macrophages-Cytotoxic_T_cell.tsv
+│   │       ├── Regulatory_T_cell-Cytotoxic_T_cell.tsv
+│   │       └── Regulatory_T_cell-Macrophages.tsv
+│   └── stats
+│       └── stat_analysis_r_50.tsv
+│
+├── Descriptive
+│   ├── Box Plots
+│   │   ├── box_plot_comparison_Normalized.jpeg
+│   │   └── box_plot_comparison_Raw.jpeg
+│   ├── Stroma
+│   │   ├── Bar_plot
+│   │   │   ├── Bar_Plot_Normalized.jpeg
+│   │   │   └── Bar_Plot_Raw.jpeg
+│   │   └── csv
+│   │       ├── Norm_count_Set12_20-6plex_S.csv
+│   │       │    ...
+│   │       └── all_norm_count_Set8_11-6plex_S.csv
+│   └── Tumor
+│       ├── Bar_plot
+│       │   ├── Bar_Plot_Normalized.jpeg
+│       │   └── Bar_Plot_Raw.jpeg
+│       └── csv
+│           ├── Norm_count_Set12_20-6plex_T.csv
+│           │    ...
+│           └── all_norm_count_Set8_11-6plex_T.csv
+│
+├── Distance
+│   ├── Stroma
+│   │   ├── Set12_20-6plex_S_Distance.txt
+│   │   ├── Set4_1-6plex_S_Distance.txt
+│   │   └── Set8_11-6plex_S_Distance.txt
+│   └── Tumor
+│       ├── Set12_20-6plex_T_Distance.txt
+│       ├── Set4_1-6plex_T_Distance.txt
+│       └── Set8_11-6plex_T_Distance.txt
+│
+├── Distance_Statistical
+│   ├── box_plot
+│   │   ├── distances_box_plot_CD68+_to_CD8+.png
+│   │   │   ...
+│   │   └── distances_box_plot_FoxP3+_to_CK+.png
+│   ├── csv
+│   │   ├── df_statistical_distance_CD68+_to_CD8+.csv
+│   │   │    ...
+│   │   └── df_statistical_distance_FoxP3+_to_CK+.csv
+│   ├── distance_curve
+│   │   ├── plot_statistical_distance_CD68+_to_CD8+.png
+│   │   │    ...
+│   │   └── plot_statistical_distance_FoxP3+_to_CK+.png
+│   └── summary_statistical.csv
+│
+├── Distance_match
+│   ├── Set12_20-6plex_S_[14146,53503]_composite_image_dist_match_CD68+CD8+_Nearest_CD68+_to_each_CD8+.tif
+│   │    ...
+│   └── Set8_11-6plex_T_[13394,50883]_composite_image_dist_match_FoxP3+CK+_Nearest_FoxP3+_to_each_CK+.tif
+│
+├── Img_match
+│   ├── Interactive_plots
+│   │   ├── Set12_20-6plex_S_[14146,53503]_composite_image_match_CD68+CD8+FoxP3+CK+.html
+│   │   │   ...
+│   │   └── Set8_11-6plex_T_[13394,50883]_composite_image_match_CD68+CD8+FoxP3+CK+.html
+│   ├── Set12_20-6plex_S_[14146,53503]_composite_image_match_CD68+CD8+FoxP3+CK+.tif
+│   │   ...
+│   └── Set8_11-6plex_T_[13394,50883]_composite_image_match_CD68+CD8+FoxP3+CK+.tif
+│
 ├── Log
-│   ├── Merge_2024-03-18_12-03-26.log
-│   ├── aloa_2024-03-18_12-03-26.log
-│   └── clean_data_2024-03-18_12-03-34.log
+│   └── aloa_2024-06-14_17-07-19.log
+│
+├── Maps_plot
+│   ├── Stroma
+│   │   ├── clean_Set12_20-6plex_S_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│   │   ├── clean_Set4_1-6plex_S_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│   │   └── clean_Set8_11-6plex_S_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│   └── Tumor
+│       ├── clean_Set12_20-6plex_T_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│       ├── clean_Set4_1-6plex_T_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│       └── clean_Set8_11-6plex_T_All_Pheno_CD68+CD8+FoxP3+CK+.pdf
+│
 ├── Merged
 │   ├── Stroma
 │   │   ├── Merge_cell_seg_data_Set12_20-6plex_S.txt
@@ -169,6 +479,7 @@ output_folder
 │       ├── Merge_cell_seg_data_Set12_20-6plex_T.txt
 │       ├── Merge_cell_seg_data_Set4_1-6plex_T.txt
 │       └── Merge_cell_seg_data_Set8_11-6plex_T.txt
+│
 └── Merged_clean
     ├── Stroma
     │   ├── Merge_cell_seg_data_clean_Set12_20-6plex_S.txt
