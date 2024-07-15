@@ -11,9 +11,11 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import seaborn as sns
 import random
+import itertools
 from shapely.geometry import Polygon
 from scipy.spatial.distance import cdist
 from scipy.stats import mannwhitneyu, kruskal, wilcoxon
+from scikit_posthocs import posthoc_dunn
 from loguru import logger
 
 ### Function for PCF
@@ -306,7 +308,7 @@ def append_to_csv(output_csv, codice_pz, roi_name, pcf_value_at_radius, count_C1
         row = [codice_pz, roi_name, pcf_value, count_C1, count_C2]
         writer.writerow(row)
 
-def stats_eval(df, groups, test):
+def stats_eval(df, groups, test, p_adj):
     '''
     Function for statistical analysis between groups
     Args:
@@ -317,22 +319,32 @@ def stats_eval(df, groups, test):
         pvalue: float
     '''
     col=df.columns
+    p_vals=["nc"] * len(groups)
     #Case 1 groups---> Mann-Whitney test
     if len(groups)==2 and test != "paired":
         logger.info(f"Running Mann-Whitney test")
-        _, p_value = mannwhitneyu(df[col[0]], df[col[1]])
+        _, p_value = mannwhitneyu(df[col[0]], df[col[1]], nan_policy='omit')
         
     #Case 1 groups---> Wilcoxon test (paired test)
     elif len(groups)==2 and test == "paired":
         logger.info(f"Running Wilcoxon test")
-        _, p_value = wilcoxon(df[col[0]], df[col[1]])
+        _, p_value = wilcoxon(df[col[0]], df[col[1]], nan_policy='omit')
     
     #Case more than 2 groups---> Kruskal test
     elif len(groups)>2:
         logger.info(f"Running Kruskal test")
-        _, p_value = kruskal(*[v for v in df.values.T])
+        _, p_value = kruskal(*[v for v in df.values.T], nan_policy='omit')
     
-    return p_value
+            #post-hoc test
+        if p_value<.05:
+            logger.info("Running Dull post-hoc test")
+            #data=[v for v in values_distance]
+            p_vals = posthoc_dunn([v for v in df.values.T], p_adjust=p_adj)
+            p_mask=p_vals.mask(np.tril(np.ones(p_vals.shape, dtype=np.bool_)))
+            p_mask.where(np.stack(p_mask.notnull().values.nonzero()).T.tolist())
+            p_vals=p_mask.stack().values
+
+    return p_value, p_vals
 
 def create_stats_file(groups, outpath):
     """
@@ -353,15 +365,20 @@ def create_stats_file(groups, outpath):
         name_stats.append(f"Median_PCF_r_{g}")
         name_stats.append(f"std_PCF_r_{g}")
         name_stats.append(f"std_PCF_r_{g}")
-        
+    
     name_stats.append("Pvalue")
-        
+    
+    if len(groups)>2:
+        comb_g=list(itertools.combinations(groups,2))
+        for c1,c2 in comb_g:
+            name_stats.append("Pvalue_"+c1+"-vs-"+c2)
+
     with open(outpath, mode='w', newline='') as file:
         writer = csv.writer(file, delimiter='\t')
         header = name_stats
         writer.writerow(header)
 
-def fill_stats_file(results, df, pval, stats_file, groups):
+def fill_stats_file(results, df, stats_file, groups, pval, pvals):
     """
     Function to fill stats file
 
@@ -374,7 +391,7 @@ def fill_stats_file(results, df, pval, stats_file, groups):
     """
     col_sort=[]
     for g in groups:
-        tmp_cols = [col for col in df.columns if g in col]
+        tmp_cols = [col for col in df.columns if g in "_".join(df.columns[10].split("_")[1::])]
         col_sort.append(tmp_cols)
     col_sort=sum(col_sort, [])
     
@@ -387,6 +404,8 @@ def fill_stats_file(results, df, pval, stats_file, groups):
         +list(df.std().values.flatten())
     #append pvalue
     results.append(pval)
+    if len(groups)>2:
+        results = results +  pvals
 
     #write file
     with open(stats_file, 'a', newline='') as csvfile:

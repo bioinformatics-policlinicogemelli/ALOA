@@ -2,6 +2,7 @@ import pandas as pd
 import itertools
 from loguru import logger
 import warnings
+import json
 import os
 import re
 import pathlib
@@ -10,8 +11,11 @@ from pcf_functions import *
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def main(data):
+def main(data=[]):
     
+    with open("config.json") as f:
+        data=json.load(f)
+
     logger.info("\n################################## CROSS PCF ##################################\n")
     
     logger.info("Start cross PCF analysis: This step will provide the cross PCF evaluation for each ROI\n")
@@ -42,8 +46,8 @@ def main(data):
     logger.info(f"{len(groups)} Group(s) found!")
 
     #set radius of interest
-    radiusOfInterest = data["pcf"]["radiusOfInterest"]
-    logger.info(f"Radius={radiusOfInterest} $\mu$ was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
+    radiusOfInterest = data["Cross_pcf"]["radiusOfInterest"]
+    logger.info(f"Radius={radiusOfInterest} micron was selected. It is recommended to choose an r value at least equal to or greater than 2 or 3 times the diameter of the cells under consideration.")
         
     for g in groups:
         logger.info(f"Analyzing group: {g}")
@@ -83,7 +87,7 @@ def main(data):
                     df=pd.read_csv(ff, sep="\t")
 
                     #reorganize DB
-                    pheno_df=add_celltype(df, celltype_list, data["pcf"]["pheno_list"])
+                    pheno_df=add_celltype(df, celltype_list, data["Cross_pcf"]["pheno_list"])
                     
                     if C_1 not in pheno_df['Celltype'].values or C_2 not in pheno_df['Celltype'].values:
                         logger.warning(f"{C_1} o {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
@@ -97,14 +101,14 @@ def main(data):
                     
                     pc = load_point_cloud(pheno_df, rad_folder, C_1, C_2)
                     
-                    if data["pcf"]["all_pcf"]:
-                        pc = all_cross_pcf(pc, pzt_output, roi_name, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
+                    if data["Cross_pcf"]["all_pcf"]:
+                        pc = all_cross_pcf(pc, pzt_output, roi_name, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
                     
-                    pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["pcf"]["maxR"], data["pcf"]["annulusStep"], data["pcf"]["annulusWidth"])
+                    pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
                     
                     tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
                     
-                    if data["pcf"]["on_roi"]:
+                    if data["Cross_pcf"]["on_roi"]:
                         input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image"))
                         
                         tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder, C_1, C_2)
@@ -144,9 +148,9 @@ def main(data):
                     continue
             
             if len(df_comb.columns)>=2:
-                pval=stats_eval(df_comb, groups, data["pcf"]["test"])
+                pval, pvals=stats_eval(df_comb, groups, data["Stats"]["sample_type"], data["Stats"]["p_adj"])
             
-                fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), pval, stats_file, groups)
+                fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), stats_file, groups, pval, pvals)
             
 
     logger.info("End PCF evaluation!\n")

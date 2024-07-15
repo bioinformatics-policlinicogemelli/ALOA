@@ -1,7 +1,7 @@
 {
    "Paths":{
       "data_input_folder":"./data_test",
-      "output_folder":"./output"
+      "output_folder":"./output3"
    },
    "Phenotypes":{
       "pheno_list":[
@@ -11,7 +11,7 @@
          "CK+"
       ]
    },
-    "Descriptive":{
+   "Descriptive":{
       "raw":true,
       "normalized":true
    },
@@ -24,9 +24,13 @@
       "save_csv":true,
       "save_img":false,
       "pheno_list":[
-      ]
+      ],
+      "pheno_from":"",
+      "pheno_to":"",
+      "plot_distance":true,
+      "save_csv_zetascore":true
    },
-   "image_match":{
+   "Image_match":{
       "pheno_list":[
       ],
       "interactive":true,
@@ -35,25 +39,18 @@
       "layout_xsize":1200,
       "layout_ysize":900
    },
-   "distance_match":{
+   "Distance_match":{
       "pheno_list":[
       ]
    },
-   "statistical_distance":{
-      "pheno_from":"",
-      "pheno_to":"",
-      "plot_distance":true,
-      "save_csv_zetascore":true,
-      "test":""
-   },
-   "cluster":{
+   "Cluster":{
       "pheno_list":[
       ],
       "algo_method":"e",
       "k":10,
       "cluster_method":"ksp"
    },
-   "pcf":{
+   "Cross_pcf":{
       "pheno_list":[
       ],
       "radiusOfInterest":50,
@@ -61,7 +58,10 @@
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
-      "on_roi":false,
-      "test":"paired"
+      "on_roi":false
+   },
+   "Stats":{
+      "sample_type":"",
+      "p_adj":""
    }
 }

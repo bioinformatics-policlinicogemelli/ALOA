@@ -1,6 +1,5 @@
 from loguru import logger
 import os
-import json
 import numpy as np
 import polars as pl
 import math
@@ -218,14 +217,15 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
         dire=os.path.join(path_ouput_results,"box_plot")
         if not os.path.exists(dire):
             os.makedirs(dire)
-        tap.plot_stats(df,x="GROUP",y="DISTANCE",filename=f'{dire}/distances_box_plot_{pheno_from}_to_{pheno_to}.png',kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+        filename=os.path.join(dire,"distances_box_plot_"+pheno_from+"_to_"+pheno_to+".png")
+        tap.plot_stats(df,x="GROUP",y="DISTANCE",filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                      "DISTANCE": r'$Distance_{z}$',
                      "GROUP": 'Group'
                  }})
 
 #*****************************************************************
         
-def statistical_test(df, test):
+def statistical_test(df, test, p_adj):
   
     groups=list(df["GROUP"].unique())
 
@@ -244,17 +244,18 @@ def statistical_test(df, test):
     #Case 2 groups---> Mann-Whitney test
     elif len(df["GROUP"].unique())==2 and test != "paired":
         logger.info("Running Mann-Whitney test")
-        _, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
+        _, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1], nan_policy='omit')
     
     #Case 2 groups---> Wilcoxon test (paired test)
     elif len(df["GROUP"].unique())==2 and test == "paired":
         logger.info("Running Wilcoxon test")
-        _, p_value = stats.wilcoxon(values_distance[0], values_distance[1])
+        _, p_value = stats.wilcoxon(values_distance[0], values_distance[1], nan_policy='omit')
     
     #Case more than 2 groups---> Kruskal test
     elif len(df["GROUP"].unique())>2:
-        _, p_value = stats.kruskal(*[v for v in values_distance])
         logger.info("Running Kruskal test")
+        _, p_value = stats.kruskal(*[v for v in values_distance], nan_policy='omit')
+        
     return p_value
 
 #*****************************************************************
@@ -275,21 +276,22 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
         values_distance.append(temp)
     
     fig = ff.create_distplot(values_distance, groups,show_hist=False,show_rug=False)
-    
+    filename=os.path.join(dire,"plot_statistical_distance_"+pheno_from+"_to_"+pheno_to+".png")
+
     if p_value < 0.05 and p_value >= 0.001:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.05</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$"),xaxis=dict(title_text=r"$Distance_{z}$"),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
     
     elif p_value < 0.001:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.001</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
         
     elif p_value >= 0.05 and p_value<10:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:red;'>p value > 0.05</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
 
 #*****************************************************************
 #*****************************************************************
@@ -319,15 +321,15 @@ def main(data):
     pheno_interested=data["Phenotypes"]["pheno_list"]
 
     #pheno from if presents
-    pheno_from=data["statistical_distance"]["pheno_from"]
+    pheno_from=data["Distance"]["pheno_from"]
     #pheno_to if presents
-    pheno_to=data["statistical_distance"]["pheno_to"]
+    pheno_to=data["Distance"]["pheno_to"]
 
     #flag plot distance curve
-    plot_distance=data["statistical_distance"]["plot_distance"]
+    plot_distance=data["Distance"]["plot_distance"]
 
     #flag save csv of zeta score values
-    save_csv_zetascore=data["statistical_distance"]["save_csv_zetascore"]
+    save_csv_zetascore=data["Distance"]["save_csv_zetascore"]
 
     #groups of analysis
     groups=[f for f in os.listdir(root_folder) if not f.startswith('.')]
@@ -372,8 +374,8 @@ def main(data):
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue=statistical_test(df_distance, data["statistical_distance"]["test"])
-
+            pvalue=statistical_test(df_distance, data["Stats"]["sample_type"], data["Stats"]["p_adj"])
+        
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
@@ -383,7 +385,7 @@ def main(data):
 
 
         with open(path_stats_file,"w") as f:
-            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Median_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
             for pheno, stat in dict_statistical_result.items():
                 pheno=pheno.split("to")
                 pheno_from=pheno[0]
@@ -415,7 +417,7 @@ def main(data):
         if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-        pvalue=statistical_test(df_distance)
+        pvalue=statistical_test(df_distance, data["Stats"]["sample_type"], data["Stats"]["p_adj"])
 
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
