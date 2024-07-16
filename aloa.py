@@ -211,7 +211,7 @@ def main():
     parser.add_argument('-c', '--clustering', required=False, action='store_true', help='cluster data')
 
     # PCF BLOCK
-    parser.add_argument('-p', '--pcf', required=False, action='store_true', help='cluster data')
+    parser.add_argument('-p', '--pcf', required=False, action='store_true', help='pcf evaluation')
         
     # IMAGING BLOCK
     parser.add_argument('-I', '--imgMatch', required=False, action='store_true', help='create phenotypes image match')

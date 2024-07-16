@@ -643,7 +643,8 @@ These are the options that can be set for this block:
 |-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | No
 |-s <br> --stats| <p align="justify">create distance stats| boolean | No
 |-o <br> --overview| <p align="justify">create data overview | boolean | No
-|-C <br> --clustering| <p align="justify">cluster data| boolean | No
-|-I <br> --clustering| <p align="justify">create phenotypes image match| boolean | No
-|-D <br> --clustering| <p align="justify">create phenotypes distance match| boolean | No
-|-w <br> --clustering| <p align="justify">create data overview| boolean | No
+|-c <br> --clustering| <p align="justify">cluster data| boolean | No
+|-p <br> --pcf| <p align="justify">pcf analysis| boolean | No
+|-I <br> --imgMatch| <p align="justify">create phenotypes image match| boolean | No
+|-D <br> --dstMatch| <p align="justify">create phenotypes distance match| boolean | No
+|-a <br> --all| <p align="justify">do all the analysis| boolean | No
