@@ -16,3 +16,4 @@ Shapely==2.0.4
 tap==0.2
 kmodes
 kneed
+scikit_posthocs

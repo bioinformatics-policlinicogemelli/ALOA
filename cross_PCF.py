@@ -2,7 +2,6 @@ import pandas as pd
 import itertools
 from loguru import logger
 import warnings
-import json
 import os
 import re
 import pathlib
@@ -13,9 +12,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def main(data=[]):
     
-    with open("config.json") as f:
-        data=json.load(f)
-
     logger.info("\n################################## CROSS PCF ##################################\n")
     
     logger.info("Start cross PCF analysis: This step will provide the cross PCF evaluation for each ROI\n")
