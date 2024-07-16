@@ -150,7 +150,7 @@ def main(data=[]):
             if len(df_comb.columns)>=2:
                 pval, pvals=stats_eval(df_comb, groups, data["Stats"]["sample_type"], data["Stats"]["p_adj"])
             
-                fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), stats_file, groups, pval, pvals)
+            fill_stats_file(results, pd.concat([df_counts, df_comb], axis=1), stats_file, groups, pval, pvals)
             
 
     logger.info("End PCF evaluation!\n")

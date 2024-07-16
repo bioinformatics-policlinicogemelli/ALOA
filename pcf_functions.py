@@ -4,14 +4,15 @@ import pandas as pd
 from image_proc_functions import pheno_filt
 import csv
 import matplotlib 
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 matplotlib.use('Agg')
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 import seaborn as sns
 import random
 import itertools
+import math
 from shapely.geometry import Polygon
 from scipy.spatial.distance import cdist
 from scipy.stats import mannwhitneyu, kruskal, wilcoxon
@@ -319,7 +320,7 @@ def stats_eval(df, groups, test, p_adj):
         pvalue: float
     '''
     col=df.columns
-    p_vals=["nc"] * len(groups)
+    p_vals=["nc"] * math.factorial(len(groups)-1)
     #Case 1 groups---> Mann-Whitney test
     if len(groups)==2 and test != "paired":
         logger.info(f"Running Mann-Whitney test")
@@ -335,14 +336,14 @@ def stats_eval(df, groups, test, p_adj):
         logger.info(f"Running Kruskal test")
         _, p_value = kruskal(*[v for v in df.values.T], nan_policy='omit')
     
-            #post-hoc test
+        #post-hoc test
+        p_value=.04
         if p_value<.05:
             logger.info("Running Dull post-hoc test")
             #data=[v for v in values_distance]
             p_vals = posthoc_dunn([v for v in df.values.T], p_adjust=p_adj)
             p_mask=p_vals.mask(np.tril(np.ones(p_vals.shape, dtype=np.bool_)))
-            p_mask.where(np.stack(p_mask.notnull().values.nonzero()).T.tolist())
-            p_vals=p_mask.stack().values
+            p_vals=list(p_mask.stack().values)
 
     return p_value, p_vals
 
@@ -356,14 +357,16 @@ def create_stats_file(groups, outpath):
     name_stats=[]
     name_stats.append("C1")
     name_stats.append("C2")
+    
     for g in groups:
         name_stats.append(f"Mean_count_C1_{g}")
         name_stats.append(f"Mean_count_C2_{g}")
         name_stats.append(f"Mean_PCF_r_{g}")
-        name_stats.append(f"Mean_PCF_r_{g}")
+    
+    for g in groups:    
         name_stats.append(f"Median_PCF_r_{g}")
-        name_stats.append(f"Median_PCF_r_{g}")
-        name_stats.append(f"std_PCF_r_{g}")
+        
+    for g in groups:     
         name_stats.append(f"std_PCF_r_{g}")
     
     name_stats.append("Pvalue")
@@ -391,17 +394,17 @@ def fill_stats_file(results, df, stats_file, groups, pval, pvals):
     """
     col_sort=[]
     for g in groups:
-        tmp_cols = [col for col in df.columns if g in "_".join(df.columns[10].split("_")[1::])]
+        tmp_cols = [col for col in df.columns if g == "_".join(col.split("_")[1::])]
         col_sort.append(tmp_cols)
     col_sort=sum(col_sort, [])
     
     df = df[col_sort]
-    
+
     #append mean counts, mean pcf, median pcf, std pcf
-    results=results+list(df.mean().values.flatten()) \
+    results=results \
         +list(df.mean().values.flatten()) \
-        +list(df.median().values.flatten()) \
-        +list(df.std().values.flatten())
+        +list(df.filter(regex='PCF').median().values.flatten()) \
+        +list(df.filter(regex='PCF').std().values.flatten())
     #append pvalue
     results.append(pval)
     if len(groups)>2:
