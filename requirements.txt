@@ -3,12 +3,12 @@ kmodes==0.12.2
 kneed==0.8.5
 loguru==0.7.0
 matplotlib
-numpy
+numpy<2
 opencv_python==4.9.0.80
 pandas==1.4.0
 Pillow==10.3.0
 plotly==5.18.0
-polars==0.20.31
+polars-lts-cpu
 rpy2==3.5.12
 scikit_learn
 scipy
@@ -16,3 +16,6 @@ Shapely==2.0.4
 tap==0.2
 kmodes
 kneed
+statsmodels
+seaborn
+scikit-image
