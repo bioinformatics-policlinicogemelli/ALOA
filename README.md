@@ -67,12 +67,12 @@ docker build -t aloa .
 docker run -it aloa
 ```
 
-#### Local
+### Local
 
 #### Requirements:
 [Python ](https://www.python.org/)>= 3.10 <br>
 [R ](https://www.r-project.org/)>= 4.3 <br>
-⚠️ for Windows users it is strongly recommended [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+⚠️ for Windows users [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
 
 #### Procedure:
 
