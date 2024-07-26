@@ -13,7 +13,7 @@ rpy2==3.5.12
 scikit_learn
 scipy
 Shapely==2.0.4
-tap==0.2
+taplib
 kmodes
 kneed
 statsmodels

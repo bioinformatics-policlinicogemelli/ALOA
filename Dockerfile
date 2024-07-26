@@ -5,11 +5,11 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends curl gcc g++ gnupg unixodbc-dev openssl git \
+    apt-get install -y --no-install-recommends curl nano gcc g++ gnupg unixodbc-dev openssl git \
     software-properties-common ca-certificates build-essential libtiff-dev pandoc \
     libfontconfig1-dev libgdbm-dev libharfbuzz-dev libfribidi-dev zlib1g-dev \
     libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev wget libbz2-dev \
-    libsqlite3-dev libcurl4-openssl-dev libxml2-dev fftw3-dev && \
+    libsqlite3-dev libcurl4-openssl-dev libxml2-dev libfftw3-dev libfftw3-doc && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 

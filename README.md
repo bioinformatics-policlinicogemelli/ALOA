@@ -44,8 +44,37 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
     - **Cross-PCF Image Match**: This section provides a termic plot of Cross-PCF on ROI's composite image for all possible combination of couples of the selected phenotypes.
 
 
-## Installation
+## Installation and usage
 
+### Docker (recommended)
+
+#### Requirements:
+[Docker ](https://www.docker.com/)
+#### Procedure:
+
+1. Open a terminal
+2. Digit the following command to clone the repository folder:
+```
+git clone https://github.com/bioinformatics-policlinicogemelli/ALOA
+```
+3. Build docker file
+```
+cd <ALOA_folder_path>/ALOA
+docker build -t aloa .
+```
+4. Test installation
+```
+docker run -it aloa
+```
+
+#### Local
+
+#### Requirements:
+[Python ](https://www.python.org/)>= 3.10 <br>
+[R ](https://www.r-project.org/)>= 4.3 <br>
+⚠️ for Windows users it is strongly recommended [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
+#### Procedure:
 
 1. Open a terminal
 2. Digit the following command to clone the repository folder:
@@ -61,22 +90,29 @@ pip install -r requirements.txt
 Rscript installation_rpackages.R req.txt
 ```
 
-#### Docker
-
-3. Build docker file
+4. Test installation
 ```
-cd <ALOA_folder_path>/ALOA
-docker build -t aloa .
-```
-4. Run docker in interactive mode
-```
-docker run -it -v <data_input_path>:./<data_input_folder_name> -v <output_data>:./output -v ./<path_to_config.json>:/config.json aloa
+python aloa.py -h
 ```
 
-⚠️ *data_input_folder* inside json file and the mounted input folder must be the same. *i.e.* if data_input_folder="./data_input", the docker run command will be:
-  ```
-docker run -it -v <data_input_path>:./data_input -v <output_data>:./output -v ./<path_to_config.json>:/config.json aloa
-```
+## Options
+
+These are the options that can be set by user:
+
+| Options | Input | Type | Required
+|----------------|----------------| :---:| :---:|
+|-m <br> --merge| <p align="justify">merge datasets from ROIs of the same patient| boolean | Yes*
+|-M <br> --maps| <p align="justify">create maps plot| boolean | No
+|-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | No
+|-s <br> --stats| <p align="justify">create distance stats| boolean | No
+|-o <br> --overview| <p align="justify">create data overview | boolean | No
+|-c <br> --clustering| <p align="justify">cluster data| boolean | No
+|-p <br> --pcf| <p align="justify">pcf analysis| boolean | No
+|-I <br> --imgMatch| <p align="justify">create phenotypes image match| boolean | No
+|-D <br> --dstMatch| <p align="justify">create phenotypes distance match| boolean | No
+|-a <br> --all| <p align="justify">do all the analysis| boolean | No
+
+*only for whole slide analysis
 
 ## Usage
 The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 10 subsessions:
@@ -633,20 +669,3 @@ python aloa.py -m -s
 
 ### 7. Imaging
 
-
-## Launch ALOA main
-
-These are the options that can be set for this block:
-
-| Options | Input | Type | Required
-|----------------|----------------| :---:| :---:|
-|-m <br> --merge| <p align="justify">merge datasets from ROIs of the same patient| boolean | No
-|-M <br> --maps| <p align="justify">create maps plot| boolean | No
-|-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | No
-|-s <br> --stats| <p align="justify">create distance stats| boolean | No
-|-o <br> --overview| <p align="justify">create data overview | boolean | No
-|-c <br> --clustering| <p align="justify">cluster data| boolean | No
-|-p <br> --pcf| <p align="justify">pcf analysis| boolean | No
-|-I <br> --imgMatch| <p align="justify">create phenotypes image match| boolean | No
-|-D <br> --dstMatch| <p align="justify">create phenotypes distance match| boolean | No
-|-a <br> --all| <p align="justify">do all the analysis| boolean | No
