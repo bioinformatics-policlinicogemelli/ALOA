@@ -53,12 +53,11 @@ filt_data_Pheno=function(data, id, gene_list){
   return(data[idx,])
 }
 
-multi_maps_plot=function(data, id, out_folder, interact=F){
+multi_maps_plot=function(data, id, out_folder){
   
   gene_list=unique(data$Pheno)
   
   pdf(file = file.path(out_folder,paste0(id,"_All_Pheno_",paste(gene_list, collapse=''),".pdf")))
-  #jpeg(file = file.path(out_folder,paste0(id,"_All_Pheno_",paste(gene_list, collapse=''),".jpeg")))
   print(ggplot(data)+
           geom_point(aes(`Cell.X.Position`,`Cell.Y.Position`, color=Pheno),size=2, alpha = 0.6)+
           xlab("X Position") +

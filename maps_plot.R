@@ -70,7 +70,7 @@ maps=function(){
         log4r_warn("No phenotype(s) found for subject! Skip to the next one")
         next
       }
-      multi_maps_plot(filt_data, id ,out_f_gr, myData$Map_plot["interactive"][[1]])
+      multi_maps_plot(filt_data, id ,out_f_gr)
   
     }
   }
