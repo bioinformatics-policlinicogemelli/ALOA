@@ -2,7 +2,7 @@ fitter==1.5.2
 kmodes==0.12.2
 kneed==0.8.5
 loguru==0.7.0
-matplotlib
+matplotlib==3.7.3
 numpy<2
 opencv_python==4.9.0.80
 pandas==1.4.0
