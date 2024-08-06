@@ -122,6 +122,11 @@ These are the options that can be set by user:
 
 *only for whole slide analysis (**NOT** required for pcf, imgMatch and dstMatch)
 
+## Workflow
+
+<br>
+<p align="center"><img src="Image_readme/workflow.png" width=600></p>
+
 
 ## Usage
 
@@ -148,8 +153,6 @@ The first step to start using ALOA is to correctly set the configuration file *c
 * **Cross_pcf**: here is possibile to specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
 
 * **Stats**: here is possible to set parameters for the statistical analysis like *sample_type* to define if the group is paired or unpaired and *p_adj* to set a p-value correction method.
-
-#INSERIRE WORFLOW
 
 ### Input Folder Structure
 
@@ -273,7 +276,6 @@ From merged file, this section produces raw and/or normalized markers counts, fo
 
 A *Descriptive* folder will be created to save all the results of this section.
 
-<p align="center"><img src="Image_readme/subfolder.png" width=320></p>
 
 From raw/normalized counts, if there are two or more groups, a statistical comparison is made to seek for significance difference between markers count. The comparison is shown through a **box plots** figure, with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *Box_Plot* folder
 
@@ -323,8 +325,6 @@ python3 aloa.py -m -d
 ```
 A statistical analysis can be also performed if two or more groups are reported.
 A *Distance_Statistical* folder is created to save all the results of this section.
-
- <p align="center"><img src="Image_readme/distance_statistical.png" width=320> </p>
 
 ⚠️ Distance values are calculated as Z-score. For more details see For more details see [functions](./functions.md)
 
