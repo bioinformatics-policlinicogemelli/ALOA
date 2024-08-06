@@ -148,7 +148,10 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
-* **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers, *algo_method* to select the method to find optimal k value, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral, kmeans and k-prototype)
+* **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. Two possible algorhytm can be selected inside config.json field *algo_method* for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e"). To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"kp")
+
+
+*algo_method* to select the method to find optimal k value, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral, kmeans and k-prototype)
 
 * **Cross_pcf**: here is possibile to specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
 
@@ -357,7 +360,7 @@ python3 aloa.py -m -d -s
 ```
 
 ### 5. Clustering
-From merged file clustering evaluation can be done. Two possible algorhytm can be selected inside config.json for the selection of k optimal: silouhette score *s* or elbow method *e*. To set the maximum number of clusters "k" field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p* (i.e. to use elbow method -> "algo_method":"e"). The setting can be done by add in "cluster_method" a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"kp")
+From merged file clustering evaluation can be done. 
 
 The output folder will be organized for each group as:
 - **k optimal** folder containing all of the method curves images
