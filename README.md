@@ -357,7 +357,9 @@ python3 aloa.py -m -d -s
 ```
 
 ### 5. Clustering
-From merged file clustering evaluation can be done. The output folder will be organized for each group as:
+From merged file clustering evaluation can be done. Two possible algorhytm can be selected inside config.json for the selection of k optimal: silouhette score *s* or elbow method *e*. To set the maximum number of clusters "k" field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p* (i.e. to use elbow method -> "algo_method":"e"). The setting can be done by add in "cluster_method" a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"kp")
+
+The output folder will be organized for each group as:
 - **k optimal** folder containing all of the method curves images
 - **cluster algorithm** folder containing *percentage* subfolder with all of the marker percentage in each cluster, *scatter_plot* containing a scatter for each subject and *stacked_barplot* with a stacked plot for each of the subject analyzed.
 ```
