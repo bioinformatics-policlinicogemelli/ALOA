@@ -82,11 +82,11 @@ def check_log(log, n_warn=0, n_err=0, n_crit=0):
 
 def aloa(args, data, logfile):
     
-    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, all:{args.all}]")
+    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all}]")
     
     output=data["Paths"]["output_folder"]
     
-    if not(len(os.listdir(output))==1 and os.listdir(output)[0]=="Log"):
+    if not(len(os.listdir(output))==1 or os.listdir(output)[0]=="Log"):
         logger.critical(f"It seems that {output} folder already exists! Delete the folder or change the output name in the config file!")
         return()
         

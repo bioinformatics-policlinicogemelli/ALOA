@@ -4,8 +4,6 @@
 
 ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCycler®-Fusion and inFormTM analysis ([Unlock the Power of Spatial Biology with phenoptrReports](https://www.akoyabio.com/wp-content/uploads/2022/01/Spatial-Biology-with-phentoprReports-TechNote.pdf)) into publication-ready results, thus advancing the accessibility and utility of spatial tissue analysis in cancer research.
 
-
-
 ## Features
 - Spatial **Data** Analysis 📈
 
@@ -64,8 +62,9 @@ docker build -t aloa .
 ```
 4. Test installation
 ```
-docker run -it -v <input_folder>:/input -v <output_folder>:/output aloa
-:/# python aloa.py -a 
+docker run -it -v ./data_test:/input -v ./output:/output -v ./config.json:/config.json aloa
+
+python3 aloa.py -a 
 ```
 
 ### Local
@@ -90,10 +89,18 @@ pip install -r requirements.txt
 
 Rscript installation_rpackages.R req.txt
 ```
+⚠️ Depending on the operating system it may be necessary to use *pip3* command instead of *pip*
 
 4. Test installation
 ```
-python aloa.py -a
+python3 aloa.py -a
+```
+⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
+
+## ⚠️ Recommendation
+ In the next section all the commands will be explained and an example will be reported for each one. Keep in mind that in case of using the docker version before the command is **<u>mandatory</u>** to launch this docker liek this:
+```
+docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa
 ```
 
 ## Options
@@ -117,6 +124,7 @@ These are the options that can be set by user:
 
 
 ## Usage
+
 The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 11 subsessions:
 
 * **Paths**: here is possible to specify the location of input data, the name of the output folder that will be created and the path of the sample sheet with *data_input_folder*, *output_folder* and *sample_sheet*  respectively.
@@ -237,7 +245,7 @@ Merged_clean
 
 Example:
 ```
-python aloa.py -m
+python3 aloa.py -m
 ```
 
 ### 2. Map Plots
@@ -254,7 +262,7 @@ Maps_plot
 ```
 Example:
 ```
-python aloa.py -m -M
+python3 aloa.py -m -M
 ```
 
 ### 3. Descriptive data + statistical analysis
@@ -292,7 +300,7 @@ Descriptive
 Example:
 
 ```
-python aloa.py -m -o
+python3 aloa.py -m -o
 ```
 ### 4. Distances Calculation
 
@@ -311,7 +319,7 @@ Distance
 Example:
 
 ```
-python aloa.py -m -d
+python3 aloa.py -m -d
 ```
 A statistical analysis can be also performed if two or more groups are reported.
 A *Distance_Statistical* folder is created to save all the results of this section.
@@ -345,7 +353,7 @@ Distance_Statistical
 ```
 Example:
 ```
-python aloa.py -m -d -s
+python3 aloa.py -m -d -s
 ```
 
 ### 5. Clustering
@@ -392,7 +400,7 @@ Clustering
 ```
 Example:
 ```
-python aloa.py -m -c
+python3 aloa.py -m -c
 ```
 
 ### 6. Cross-PCF
@@ -431,7 +439,7 @@ Cross_PCF
 ```
 Example:
 ```
-python aloa.py -p
+python3 aloa.py -p
 ```
 ### 7. Imaging
 The markers' position and their distances can be plot on single chosen ROIs images.
@@ -451,7 +459,7 @@ Img_match
 ```
 Example:
 ```
-python aloa.py -I
+python3 aloa.py -I
 ```
 For distances plot a tiff image of the distances on ROI will be create for each couple of markers.
 ```
@@ -462,5 +470,5 @@ Distance_match
 ```
 Example:
 ```
-python aloa.py -D
+python3 aloa.py -D
 ```
