@@ -172,8 +172,21 @@ input
 Where input is the main folder containing:
 * raw_data: this folder contains as many subfolders as the number of subjects analyzed. Each subject folder contains the segmentation data for each one of the ROIs. <br>⚠️ This folder is required when -I and -D options are selected!
 * img_match: this folder contains the ROIs on which plot markers and distances
-* sample_sheet.tsv: this file must be compiled by the user with the subjects IDs and the belonging group.
+* sample_sheet.tsv: this file must be compiled by the user with the subjects IDs and the belonging group. It's structure is shown below:
+
+    | sbj_ID | Group|
+    |----------------|----------------|
+    |sbj001| Group1|
+    |sbj002| Group1|
+    |...| ...|
+    |sbjN| GroupX|
 * cellType.tsv: this file must be compiled by the user with the cell type name corresponding to each one of the markers of interest. <br>⚠️ This file is required when -p option is selected!
+
+    | Phenotype | Cell_Type|
+    |----------------|----------------|
+    |FoxP3+| Regulatory T cell|
+    |...| ...|
+    |CD68+| Cytotoxic T cell|
 
 ### Output Folder Structure
 
