@@ -244,7 +244,7 @@ For the merge, two types of files are genetared:
 - files where **negative cellulas** for markers of interest haven't been deleted (saved into *Merged* folder)
 - files where **negative cellulas** for  markers of interest have been deleted (saved into *Merged_clean* folder)
 
-Into *Merged* and *Merged_clean* folders as many folders as groups will be created. These subfolders will contain merged files for each patient of each group. Each merged file will be named as *patientnames.txt*
+Into *Merged* and *Merged_clean* will be created as many sub-folders as the number of groups. These subfolders will contain merged files for each patient of each group. Each merged file will be named as *patientnames.txt*
 
 ```
 Merged
@@ -271,7 +271,7 @@ python3 aloa.py -m
 ```
 
 ### 2. Map Plots
-In this section a plot of all the markers of interest will be generate for each patient of each group as pdf images.
+In this section a plot of all markers of interest will be generate for each patient of each group as pdf images.
 
 ```
 Maps_plot
