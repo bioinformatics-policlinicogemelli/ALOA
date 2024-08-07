@@ -244,7 +244,7 @@ For the merge, two types of files are genetared:
 - files where **negative cellulas** for markers of interest haven't been deleted (saved into *Merged* folder)
 - files where **negative cellulas** for  markers of interest have been deleted (saved into *Merged_clean* folder)
 
-Into *Merged* and *Merged_clean* folders as many folders as groups will be created. These subfolders will contain merged files for each patient of each group. Each merged file will be named as *patientnames.txt*
+Into *Merged* and *Merged_clean* will be created as many sub-folders as the number of groups. These subfolders will contain merged files for each patient of each group. Each merged file will be named as *patientnames.txt*
 
 ```
 Merged
@@ -257,9 +257,9 @@ Merged
     └── ...
 Merged_clean
 ├── Group1
-│   ├── Merge_cell_seg_data_sbj001.txt
+│   ├── Merge_cell_seg_data_clean_sbj001.txt
 │   ├── ...
-│   └── Merge_cell_seg_data_sbjN.txt
+│   └── Merge_cell_seg_data_clean_sbjN.txt
 ├── ...
 └── GroupN
     └── ...
@@ -271,7 +271,7 @@ python3 aloa.py -m
 ```
 
 ### 2. Map Plots
-In this section a plot of all the markers of interest will be generate for each patient of each group as pdf images.
+In this section a plot of all markers of interest will be generate for each patient of each group as pdf images.
 
 ```
 Maps_plot
@@ -288,18 +288,17 @@ python3 aloa.py -m -M
 ```
 
 ### 3. Descriptive data + statistical analysis
-From merged file, this section produces raw and/or normalized markers counts, for each patient and for each group, saved into csv files (*csv* folder) and visualize through **barplot** figures saved into *Barplot* folder.
+This section produces raw and/or normalized markers counts for each patient and for each group. The input files are the merged files generated in the previous section. Counts are saved into csv files (*csv* folder) and visualized through **barplot** figures saved into *Barplot* folder.
 
 ⚠️ Two different formulas are used for normalized counts in barplots (*Norm_count_patientname.csv*) and in boxplots (*all_norm_count_patientsname*). For more details see [functions ](./functions.md) section.
 
 
-A *Descriptive* folder will be created to save all the results of this section.
+A *Descriptive* folder will be created to save all results of this section.
 
 
-From raw/normalized counts, if there are two or more groups, a statistical comparison is made to seek for significance difference between markers count. The comparison is shown through a **box plots** figure, with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved into *Box_Plot* folder
+When two or more groups are listed,a statistical comparison on markers count is made to seek for significance difference between groups. Statistics is computed on raw and normalized counts. Results, saved into *Box_Plot* folder, are shown on **box plot** figures and statistical annotation is made through [TAP ](https://github.com/Discovery-Circle/tap)library
 
 ```
-output_folder
 Descriptive
 ├── Box Plots
 │   ├── box_plot_comparison_Normalized.jpeg
