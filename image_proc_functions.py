@@ -44,8 +44,12 @@ def pheno_filt(pheno_df, pheno_list=[]):
     pheno_col=pheno_col.columns
     pheno_df.fillna('other', inplace=True)
     pheno_df.fillna("OTHER", inplace=True)
+    pheno_df.fillna('others', inplace=True)
+    pheno_df.fillna("OTHERS", inplace=True)
     pheno_df=pheno_df.apply(lambda x: x.replace("other",""))
     pheno_df=pheno_df.apply(lambda x: x.replace("OTHER",""))
+    pheno_df=pheno_df.apply(lambda x: x.replace("others",""))
+    pheno_df=pheno_df.apply(lambda x: x.replace("OTHERS",""))
     pheno_df["Pheno"]=pheno_df[pheno_col].sum(axis=1)
     pheno_df=pheno_df[pheno_df['Pheno']!=""]
     

@@ -78,12 +78,14 @@ clean=function(){
         
         seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
+        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("others",each=length(pheno_list)),collapse=","))
+        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
         
       }else if ((length(pheno_list)==1) & "Phenotype" %in% pheno_list){
         seg_data$Pheno=seg_data$Phenotype
         
-        seg_clean=subset(seg_data, seg_data$Pheno!="other" & seg_data$Pheno!="OTHER")
+        seg_clean=subset(seg_data, seg_data$Pheno!="other" & seg_data$Pheno!="OTHER" & seg_data$Pheno!="others" & seg_data$Pheno!="OTHERS")
       }
 
       log4r_info(paste0("All empty/only other Row removed: ", nrow(seg_data)-nrow(seg_clean), " of ", nrow(seg_data)))
