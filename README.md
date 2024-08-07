@@ -98,11 +98,11 @@ python3 aloa.py -a
 ⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
 
 ## ⚠️ Recommendation
- In the next section all the commands will be explained and an example will be reported for each one. Keep in mind that in case of using the docker version before the command is **<u>mandatory</u>** to launch this docker liek this:
+ In the next section all the commands will be explained and an example will be reported for each one. 
+ Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder:
 ```
 docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa
 ```
-
 ## Options
 
 These are the options that can be set by user:
