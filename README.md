@@ -98,11 +98,27 @@ python3 aloa.py -a
 ⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
 
 ## ⚠️ Recommendation
- In the next section all the commands will be explained and an example will be reported for each one. 
- Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder:
+In the next section all the commands will be explained and an example will be reported for each one. 
+Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder:
 ```
 docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa
 ```
+where -v docker option is necessary to mount local input and output folders and the user-modified configuration file.
+
+⚠️ input and output mounted folders must have the same name of the ones in config.json. i.e. before launch the command below:
+
+```
+docker run -it -v /Users/Desktop/project_data:/input -v /Users/Desktop/project_data_output:/output -v ./config.json:/config.json aloa
+```
+config.json path section must be compile like this:
+```
+"Paths":{
+    "data_input_folder":"./input",
+    "output_folder":"./output"
+}
+```
+⚠️ It's not necessary that the local output folder (i.e. project_data_output) exists before the starts of the analysis. The folder will be automatically created when aloa.py script is launched.
+
 ## Options
 
 These are the options that can be set by user:
