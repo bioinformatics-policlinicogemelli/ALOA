@@ -54,7 +54,7 @@ merge=function(){
     group_out_path=file.path(output_folder,"Merged",group)
     dir.create(group_out_path)
     
-    csv_file=list.files(data_input_folder, full.names = T)[grep(id, list.files(data_input_folder))]
+    csv_file=list.files(data_input_folder, full.names = T)[grep(paste0("^",id), list.files(data_input_folder))]
     
     log4r_info("Check for already existing Merge_cell_seg_data.txt")
     
