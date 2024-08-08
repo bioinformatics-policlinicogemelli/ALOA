@@ -18,6 +18,7 @@ from scipy.spatial.distance import cdist
 from scipy.stats import mannwhitneyu, kruskal, wilcoxon
 from scikit_posthocs import posthoc_dunn
 from loguru import logger
+from statsmodels.stats.multitest import multipletests
 
 ### Function for PCF
 # Authors: Chiara P., Beatrice C.
@@ -341,10 +342,21 @@ def stats_eval(df, groups, test, p_adj):
         if p_value<.05:
             logger.info("Running Dull post-hoc test")
             #data=[v for v in values_distance]
-            p_vals = posthoc_dunn([v for v in df.values.T], p_adjust=p_adj)
+            p_vals = posthoc_dunn([v for v in df.values.T])
             p_mask=p_vals.mask(np.tril(np.ones(p_vals.shape, dtype=np.bool_)))
             p_vals=list(p_mask.stack().values)
-
+            
+            if p_adj == "Bonferroni":
+                p_vals = multipletests(p_vals, method='bonferroni')
+            elif "Sidak":
+                p_vals = multipletests(p_vals, method='sidak')
+            elif "Holm-Sidak":
+                p_vals = multipletests(p_vals, method='holm-sidak')
+            elif "Benjamini-Hochberg":
+                p_vals = multipletests(p_vals, method='fdr_bh')
+            elif _:
+                raise Exception(f"Type correction {p_adj} does not exist, use one of [Bonferroni,Sidak,Holm-Sidak,Benjamini-Hochberg]")
+                
     return p_value, p_vals
 
 def create_stats_file(groups, outpath):
