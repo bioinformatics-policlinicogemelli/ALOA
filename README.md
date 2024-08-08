@@ -66,7 +66,10 @@ docker run -it -v ./data_test:/input -v ./output:/output -v ./config.json:/confi
 
 python3 aloa.py -a 
 ```
-
+⚠️ for Windows users: some problems with git bash (git for windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4): 
+```
+docker run -v .\output:/output -v .\data_test:/input -it aloa
+```
 ### Local
 
 #### Requirements:
@@ -110,7 +113,7 @@ where -v docker option is necessary to mount local input and output folders and 
 ```
 docker run -it -v /Users/Desktop/project_data:/input -v /Users/Desktop/project_data_output:/output -v ./config.json:/config.json aloa
 ```
-config.json path section must be compile like this:
+config.json path section must be compiled as follows:
 ```
 "Paths":{
     "data_input_folder":"./input",
