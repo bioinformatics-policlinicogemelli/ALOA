@@ -153,7 +153,7 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **Paths**: here is possible to specify the location of input data, the name of the output folder that will be created and the path of the sample sheet with *data_input_folder*, *output_folder* and *sample_sheet*  respectively.
 
-* **Phenotypes**: here the user should specify the markers of interest into *pheno_list*. Only the markers specified will be considered for the analysis. ⚠️ Inside *pheno_list* it is possible to select single phenotype ("PANCK+") or multipositivity markers separeted with comma ("PANCK+,BIRC5+").
+* **Phenotypes**: here the user should specify the markers of interest into *pheno_list*. Only the markers specified will be considered for the analysis. <br>⚠️ Inside *pheno_list* it is possible to select single phenotype ("PANCK+", "IBA1+") or multipositivity markers separeted with comma ("PANCK+,BIRC5+", "PANCK+,AURKA+,BIRC5+,MYB-B+"). <br>⚠️ Phenotype must always have "+" at the end (❌ PANCK;  ❌ PANCK+,BIRC5; ❌ PANCK,BIRC5; ✅ PANCK+;  ✅ PANCK+,BIRC5+)!
 
 * **Descriptive**: here is possibile to specify parameters for descriptive section, as *raw* and/or *normalized* count evaluation and, when possible, statistical confrontation.
 
@@ -167,7 +167,8 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
-* **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. Two possible algorhytm can be selected inside config.json field *algo_method* for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e"). To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"kp")
+* **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. Two possible algorhytm can be selected inside config.json field *algo_method* for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
+*  To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"kp"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both.
 
 
 *algo_method* to select the method to find optimal k value, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral, kmeans and k-prototype)
