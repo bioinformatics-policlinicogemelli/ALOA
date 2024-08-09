@@ -538,16 +538,15 @@ def create_comparison_box_plot(path_output_result,data_all,p_adjust,type_data):
             logger.error("Mann-Whitney Test Error-All numbers are identical")
             return()
         except Exception as e:
-            print(e)
             logger.error("Something went wrong during Mann-Whitneytest")
             return()
         
     elif len(hue_order)>2:
         logger.info(f"Found {len(hue_order)} groups: Start Kruskal-Wallis Test")
         try:
-            if p_adjust==None:
-                p_adjust="Bonferroni"
-            tap.plot_stats(data_all,x,y,type_test="Dunn",order=lables,subcategory=hue,filename=filename,type_correction=p_adjust,export_size=(1400, 950, 3),kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {','.join(hue_order)}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+            if p_adjust is None:
+                p_adjust="bonferroni"
+            tap.plot_stats(data_all,x,y,type_test="dunn",order=lables,subcategory=hue,filename=filename,type_correction=p_adjust,export_size=(1400, 950, 3),kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {','.join(hue_order)}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
             logger.info("Kruskal-Wallis Test done successfully!")
         except ValueError:
             logger.error("Kruskal-Wallis Test Error-All numbers are identical")
