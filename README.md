@@ -130,7 +130,7 @@ These are the options that can be set by user:
 |----------------|----------------| :---:| :---:|
 |-m <br> --merge| <p align="justify">merge datasets from ROIs of the same patient| boolean | Yes*
 |-M <br> --maps| <p align="justify">create maps plot| boolean | No
-|-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | No
+|-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | Yes**
 |-s <br> --stats| <p align="justify">create distance stats| boolean | No
 |-o <br> --overview| <p align="justify">create data overview | boolean | No
 |-c <br> --clustering| <p align="justify">cluster data| boolean | No
@@ -138,8 +138,13 @@ These are the options that can be set by user:
 |-I <br> --imgMatch| <p align="justify">create phenotypes image match| boolean | No
 |-D <br> --dstMatch| <p align="justify">create phenotypes distance match| boolean | No
 |-a <br> --all| <p align="justify">do all the analysis| boolean | No
+|-f <br> --force| <p align="justify">force the start of the analysis| boolean | No
 
 *only for whole slide analysis (**NOT** required for pcf, imgMatch and dstMatch)
+** -d is mandatory if -s option is set
+
+⚠️ If an already existing output folder is found, ALOA will exit with error
+⚠️ force option allow user to overcome some code restrictions as the one mentioned above or the required options to run specific analysis. This option may give problems if previous steps have failed or are incomplete...**use carefully!**
 
 ## Workflow
 

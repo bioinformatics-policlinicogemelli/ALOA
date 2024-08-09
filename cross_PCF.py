@@ -80,7 +80,14 @@ def main(data=[]):
                     
                     roi_name=re.search(r'\[(.*?)\]', ff).group(1)
                     logger.info(f"Analyzing ROI: {roi_name}")
-                    df=pd.read_csv(ff, sep="\t")
+
+                    try:
+                        df=pd.read_csv(ff, sep="\t")
+                        if not df["Cell X Position"][0].isnumeric():
+                            df=pd.read_csv(ff, sep="\t", decimal=",")
+                    except FileNotFoundError:
+                        logger.warning(f"No cell_segmentation file found in {ff}. Skip to the next one!")
+                        continue
 
                     #reorganize DB
                     pheno_df=add_celltype(df, celltype_list, data["Cross_pcf"]["pheno_list"])

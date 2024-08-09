@@ -39,6 +39,8 @@ def img_match(data):
         #dataframe section
         try:
             df=pd.read_csv(c,sep="\t")
+            if not df["Cell X Position"][0].isnumeric():
+                df=pd.read_csv(c, sep="\t", decimal=",")
         except FileNotFoundError:
             logger.warning(f"No image matched file found in {c}. Skip to the next image!")
             continue
