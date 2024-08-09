@@ -5,6 +5,7 @@ import os
 import pathlib
 from loguru import logger
 import re
+from pandas.api.types import is_numeric_dtype
 
 def img_match(data):
     
@@ -17,7 +18,7 @@ def img_match(data):
     img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
     csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
     
-    if len(data["distance_match"]["pheno_list"])==0:
+    if len(data["Distance_match"]["pheno_list"])==0:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
         pheno_list=data["Image_match"]["pheno_list"]
@@ -35,12 +36,13 @@ def img_match(data):
     for i,c in zip(img,csv):
         
         logger.info(f"Analyzing data {c}")
-        
         #dataframe section
         try:
             df=pd.read_csv(c,sep="\t")
-            if not df["Cell X Position"][0].isnumeric():
+            df.columns=list(map(lambda x: x.replace(" ",".") ,df.columns))
+            if not is_numeric_dtype(df["Cell.X.Position"]):
                 df=pd.read_csv(c, sep="\t", decimal=",")
+                df.columns=list(map(lambda x: x.replace(" ",".") ,df.columns))
         except FileNotFoundError:
             logger.warning(f"No image matched file found in {c}. Skip to the next image!")
             continue
