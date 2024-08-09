@@ -277,13 +277,15 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adju
 
     #BOXPLOT for 2 groups (Mann-Whitney annotation)
         if len(df["GROUP"].unique()) ==2 :
-            tap.plot_stats(df,x="GROUP",y="DISTANCE",filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
                     }})
         #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
         if len(df["GROUP"].unique()) > 2 and kruskal:
-            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="Dunn",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+            if p_adjust is None:
+                p_adjust="bonferroni"
+            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="dunn",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
                     }})
