@@ -20,7 +20,7 @@ def img_match(data):
     if len(data["distance_match"]["pheno_list"])==0:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
-        pheno_list=data["image_match"]["pheno_list"]
+        pheno_list=data["Image_match"]["pheno_list"]
 
     output_f=os.path.join(output,"Img_match")
     pathlib.Path(output_f).mkdir(parents=True, exist_ok=True)
@@ -72,12 +72,12 @@ def img_match(data):
         filename=os.path.splitext(os.path.basename(i))[0]+"_match_" + ''.join(map(str, pheno_list))
         plot_pheno(crop, pheno_df, os.path.join(output_f, filename))
         
-        if data["image_match"]["interactive"]:
+        if data["Image_match"]["interactive"]:
             pathlib.Path(os.path.join(output_f, "Interactive_plots")).mkdir(parents=True, exist_ok=True) 
             plot_interactive(crop, pheno_df, os.path.join(os.path.join(output_f, "Interactive_plots"), filename), 
-                             data["image_match"]["layout_marker_edge_col"], 
-                             data["image_match"]["layout_marker_size"], 
-                             data["image_match"]["layout_xsize"], data["image_match"]["layout_ysize"])
+                             data["Image_match"]["layout_marker_edge_col"], 
+                             data["Image_match"]["layout_marker_size"], 
+                             data["Image_match"]["layout_xsize"], data["Image_match"]["layout_ysize"])
         
     logger.info("End image match!\n")
     

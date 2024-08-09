@@ -228,12 +228,12 @@ def main(data):
     pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)
     logger.info(f"Clustering output will be stored in {output_path}")
     
-    clust_alg=data["cluster"]["cluster_method"]
-    
-    if not data["cluster"]["pheno_list"]:
+    clust_alg=data["Cluster"]["cluster_method"]
+
+    if not data["Cluster"]["pheno_list"]:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
-        pheno_list=data["cluster"]["pheno_list"]
+        pheno_list=data["Cluster"]["pheno_list"]
     
     groups=[f for f in os.listdir(input_path) if not f.startswith('.')] 
 
@@ -269,8 +269,8 @@ def main(data):
             
             logger.warning(f"The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both.")
             
-            number_alg=data["cluster"]["algo_method"].lower()
-            k=data["cluster"]["k"]
+            number_alg=data["Cluster"]["algo_method"].lower()
+            k=data["Cluster"]["k"]
             
             if number_alg=="e":
                 #elbow method

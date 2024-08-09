@@ -16,6 +16,7 @@ Shapely==2.0.4
 taplib
 kmodes
 kneed
+scikit_posthocs
 statsmodels
 seaborn
 scikit-image

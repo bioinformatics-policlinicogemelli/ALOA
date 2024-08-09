@@ -21,10 +21,10 @@ def distance_match(data):
     img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
     csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
     
-    if len(data["distance_match"]["pheno_list"])==0:
+    if len(data["Distance_match"]["pheno_list"])==0:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
-        pheno_list=data["distance_match"]["pheno_list"]
+        pheno_list=data["Distance_match"]["pheno_list"]
     
     dir=[f for f in os.listdir(img_folder) if not f.startswith('.')]
     img_path=list(set(list(map(lambda x: os.path.join(img_folder,x), dir))))

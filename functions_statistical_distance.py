@@ -1,6 +1,5 @@
 from loguru import logger
 import os
-import json
 import numpy as np
 import polars as pl
 import math
@@ -9,6 +8,7 @@ import tap
 from scipy import stats
 import itertools
 import plotly.figure_factory as ff
+import plotly.express as px
 
 def standardization_distance_all_image(values,paz):
     '''
@@ -210,23 +210,12 @@ def calculate_median_distribution(dictionary_group,groups):
         grade_major = max(valid_value, key=valid_value.get)
         return grade_major,dict_median
 
-#*****************************************************************
 
-def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to):
-   
-    if len(df["GROUP"].unique())!=1: 
-        dire=os.path.join(path_ouput_results,"box_plot")
-        if not os.path.exists(dire):
-            os.makedirs(dire)
-        tap.plot_stats(df,x="GROUP",y="DISTANCE",filename=f'{dire}/distances_box_plot_{pheno_from}_to_{pheno_to}.png',kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
-                     "DISTANCE": r'$Distance_{z}$',
-                     "GROUP": 'Group'
-                 }})
 
 #*****************************************************************
         
-def statistical_test(df, test):
-  
+def statistical_test(df,path_output_result, test, p_adj):
+
     groups=list(df["GROUP"].unique())
 
     #array containing distance values for each cella and each subject
@@ -237,6 +226,7 @@ def statistical_test(df, test):
         values_distance.append(temp)
 
     p_value=10
+    kruskal=False
 
     if len(df["GROUP"].unique())==1:
         logger.warning("Only One Group - not statistical is possible")
@@ -244,18 +234,67 @@ def statistical_test(df, test):
     #Case 2 groups---> Mann-Whitney test
     elif len(df["GROUP"].unique())==2 and test != "paired":
         logger.info("Running Mann-Whitney test")
-        _, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1])
+        _, p_value = stats.mannwhitneyu(values_distance[0], values_distance[1], nan_policy='omit')
     
     #Case 2 groups---> Wilcoxon test (paired test)
     elif len(df["GROUP"].unique())==2 and test == "paired":
         logger.info("Running Wilcoxon test")
-        _, p_value = stats.wilcoxon(values_distance[0], values_distance[1])
+        _, p_value = stats.wilcoxon(values_distance[0], values_distance[1], nan_policy='omit')
     
     #Case more than 2 groups---> Kruskal test
     elif len(df["GROUP"].unique())>2:
-        _, p_value = stats.kruskal(*[v for v in values_distance])
         logger.info("Running Kruskal test")
-    return p_value
+        _, p_value = stats.kruskal(*[v for v in values_distance], nan_policy='omit')
+
+    # Proceed with Dunn's test only if Kruskal-Wallis is significant   
+        if p_value <= 0.05:  
+            kruskal=True
+            print("Running Dunn's test")
+            if p_adj==None:
+                p_adj="bonferroni"
+            dunn_results = sp.posthoc_dunn([*[v for v in values_distance]],p_adjust=p_adj)
+           # Convert results to DataFrame
+            dunn_comparison_df = pd.DataFrame(dunn_results, columns=[i+1 for i in range(len(groups))], index=[i+1 for i in range(len(groups))])
+            new_columns = {i: groups[i-1] for i in dunn_comparison_df.columns}
+            new_index = {i: groups[i-1] for i in dunn_comparison_df.index}
+            dunn_comparison_df=dunn_comparison_df.rename(columns=new_columns, index=new_index)
+            dire =os.path.join(path_output_result,"distance_Dunn_Test")
+            if not os.path.exists(dire):
+                os.makedirs(dire)
+            dunn_comparison_df.to_csv(f"{dire}/Dunn_test_results.csv",sep="\t")
+        
+    return p_value,kruskal
+
+#*****************************************************************
+
+def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adjust):
+   
+    if len(df["GROUP"].unique())!=1: 
+        dire=os.path.join(path_ouput_results,"box_plot")
+        if not os.path.exists(dire):
+            os.makedirs(dire)
+        filename=os.path.join(dire,"distances_box_plot_"+pheno_from+"_to_"+pheno_to+".png")
+
+    #BOXPLOT for 2 groups (Mann-Whitney annotation)
+        if len(df["GROUP"].unique()) ==2 :
+            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+                        "DISTANCE": r'$Distance_{z}$',
+                        "GROUP": 'Group'
+                    }})
+        #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
+        if len(df["GROUP"].unique()) > 2 and kruskal:
+            if p_adjust is None:
+                p_adjust="bonferroni"
+            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="dunn",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+                        "DISTANCE": r'$Distance_{z}$',
+                        "GROUP": 'Group'
+                    }})
+        #Boxplot for 3 or more groups and Kruskal-Wallis not significant (only boxplot visualizzation)
+        if len(df["GROUP"].unique()) > 2 and not kruskal:
+            fig=px.box(df,x="GROUP",y="DISTANCE",color="GROUP",title=f'Distance from {pheno_from} to {pheno_to} (Kruskal-Wallis p_value > 0.05)')
+            fig.update_traces(quartilemethod="linear")
+            fig.write_image(filename)
+
 
 #*****************************************************************
 
@@ -275,21 +314,22 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
         values_distance.append(temp)
     
     fig = ff.create_distplot(values_distance, groups,show_hist=False,show_rug=False)
-    
+    filename=os.path.join(dire,"plot_statistical_distance_"+pheno_from+"_to_"+pheno_to+".png")
+
     if p_value < 0.05 and p_value >= 0.001:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.05</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$"),xaxis=dict(title_text=r"$Distance_{z}$"),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
     
     elif p_value < 0.001:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:green;'>p value < 0.001</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
         
     elif p_value >= 0.05 and p_value<10:
         fig.update_layout({'plot_bgcolor':'white'},title_text=f"Distance-Z score from {pheno_from} to {pheno_to}<br> <span style ='font-size: 10px;color:red;'>p value > 0.05</span>",
                         yaxis=dict(tickformat=".4f",title_text=r"$Density$",gridcolor='lightgrey'),xaxis=dict(title_text=r"$Distance_{z}$",gridcolor='lightgrey'),legend_title_text="Group")
-        fig.write_image(f'{dire}/plot_statistical_distance_{pheno_from}_to_{pheno_to}.png',scale=6)
+        fig.write_image(filename,scale=6)
 
 #*****************************************************************
 #*****************************************************************
@@ -319,15 +359,20 @@ def main(data):
     pheno_interested=data["Phenotypes"]["pheno_list"]
 
     #pheno from if presents
-    pheno_from=data["statistical_distance"]["pheno_from"]
+    pheno_from=data["Distance"]["pheno_from"]
     #pheno_to if presents
-    pheno_to=data["statistical_distance"]["pheno_to"]
+    pheno_to=data["Distance"]["pheno_to"]
 
     #flag plot distance curve
-    plot_distance=data["statistical_distance"]["plot_distance"]
+    plot_distance=data["Distance"]["plot_distance"]
 
     #flag save csv of zeta score values
-    save_csv_zetascore=data["statistical_distance"]["save_csv_zetascore"]
+    save_csv_zetascore=data["Distance"]["save_csv_zetascore"]
+
+    #p_adjust
+    p_adjust=data["Stats"]["p_adj"]
+    if p_adjust=="":
+        p_adjust=None
 
     #groups of analysis
     groups=[f for f in os.listdir(root_folder) if not f.startswith('.')]
@@ -367,13 +412,14 @@ def main(data):
                 logger.warning(f"No Distance for {pheno_from}--{pheno_to}")
                 continue
             
-            box_plots_distances(path_output,df_distance,pheno_from,pheno_to)
+            
             
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue=statistical_test(df_distance, data["statistical_distance"]["test"])
-
+            pvalue,kruskal=statistical_test(df_distance, path_output,data["Stats"]["sample_type"], data["Stats"]["p_adj"])
+            box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust)
+        
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
@@ -383,7 +429,7 @@ def main(data):
 
 
         with open(path_stats_file,"w") as f:
-            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Median_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
             for pheno, stat in dict_statistical_result.items():
                 pheno=pheno.split("to")
                 pheno_from=pheno[0]
@@ -410,12 +456,13 @@ def main(data):
             return()
             
         #df_distance=pd.read_csv(f"{path_output}/csv/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv",sep="\t")
-        box_plots_distances(path_output,df_distance,pheno_from,pheno_to)
+        
 
         if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-        pvalue=statistical_test(df_distance)
+        pvalue.kruskal=statistical_test(df_distance, path_output,data["Stats"]["sample_type"], data["Stats"]["p_adj"])
+        box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust)
 
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
