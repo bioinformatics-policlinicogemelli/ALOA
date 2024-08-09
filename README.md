@@ -1,5 +1,5 @@
 # ALOA (Analysis spatiaL prOfiling imAging)
-## Table of Contenents
+## Index
 1. [Introduction](#introduction)
 2. [Features](#features)
 3. [Installation and usage](#installation-and-usage)
