@@ -41,7 +41,7 @@ def log_settings(logout):
 
 def all_true(args):
     for arg in vars(args):
-        if arg=="all":
+        if arg=="all" or arg=="force":
             continue
         setattr(args, arg,True)
 
@@ -83,10 +83,10 @@ def check_log(log, n_warn=0, n_err=0, n_crit=0):
 def aloa(args, data, logfile):
     
     logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all}]")
-    
+
     output=data["Paths"]["output_folder"]
-    
-    if not(len(os.listdir(output))==1 or os.listdir(output)[0]=="Log"):
+
+    if not(len(os.listdir(output))==1 and os.listdir(output)[0]=="Log") and not args.force:
         logger.critical(f"It seems that {output} folder already exists! Delete the folder or change the output name in the config file!")
         return()
         
@@ -98,19 +98,22 @@ def aloa(args, data, logfile):
     #          DATA REORGANIZATION          #
     #########################################
     
-    if args.merge:
+    if args.merge or args.force:
         
-        logger.info("|-> Merge step starting now")
-        ro.r['source']('merge.R')
-        merge = ro.globalenv['merge']
-        log_name_merge=merge()[0]
-        merge_log([logfile,log_name_merge])
+        if args.merge:
+            logger.info("|-> Merge step starting now")
+            ro.r['source']('merge.R')
+            merge = ro.globalenv['merge']
+            log_name_merge=merge()[0]
+            merge_log([logfile,log_name_merge])
+            
+            logger.info("|-> Clean step starting now")
+            ro.r['source']('clean_data.R')
+            clean = ro.globalenv['clean']
+            log_name_clean=clean()[0]
+            merge_log([logfile,log_name_clean])
         
-        logger.info("|-> Clean step starting now")
-        ro.r['source']('clean_data.R')
-        clean = ro.globalenv['clean']
-        log_name_clean=clean()[0]
-        merge_log([logfile,log_name_clean])
+        # check if merge folder exists and if is full
                            
         #########################################
         #             DESCRIPTIVE               #
@@ -135,12 +138,13 @@ def aloa(args, data, logfile):
         #               DISTANCE                #
         #########################################
         
-        if args.distance:
-            logger.info("|-> Distance evaluation step starting now")
-            ro.r['source']('distance_eval.R')
-            distance = ro.globalenv['distance']
-            log_name=distance()[0]
-            merge_log([logfile,log_name])
+        if args.distance or args.force:
+            if args.distance:
+                logger.info("|-> Distance evaluation step starting now")
+                ro.r['source']('distance_eval.R')
+                distance = ro.globalenv['distance']
+                log_name=distance()[0]
+                merge_log([logfile,log_name])
             
             if args.stats:
                 logger.info("|-> Distance statistical evaluation step starting now")
@@ -220,21 +224,27 @@ def main():
     # ALL
     parser.add_argument('-a', '--all', required=False, action='store_true', help='do all analysis')
     
+    # FORCE
+    parser.add_argument('-f', '--force', required=False, action='store_true', help='force start')
+    
     try:
         args = parser.parse_args()  
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
-   
+
     if args.all:
         all_true(args)
         
-    if (not args.imgMatch and not args.dstMatch and not args.pcf) and not args.merge:
-        logger.critical("This pipeline requires the merge (-m) option to proceed with the total analysis. If not setted, at least one of the single image options (-I, -D or -p) must be select. Check your input options")
+    if args.force:
+        logger.warning("force setting on: this option can cause problem if some skipped step is not fully completed, use with caution!")
+        
+    if (not args.imgMatch and not args.dstMatch and not args.pcf and not args.force) and not args.merge:
+        logger.critical("This pipeline requires the merge (-m) option to proceed with the total analysis. If not setted, at least one of the single image options (-I, -D) or cross-PCF (-p) must be select. Alternatively to force the options selected -f option must be set. Check your input options")
         exit(1)
     
-    if args.stats and not args.distance:
-        logger.critical(f"It seems that stats (-s) option is provided without the distance (-d) one. That is not possible beacause statistical evaluation requires distance evaluation. Try launch the command again setting -d and -s concurrently.")
+    if args.stats and not args.distance and not args.force:
+        logger.critical(f"It seems that stats (-s) option is provided without the distance (-d) one. That is not possible beacause statistical evaluation requires distance evaluation. Try launch the command again setting -d and -s concurrently. Alternatively to force the options selected -f option must be set")
         exit(1)
             
     aloa(args, data, logfile)

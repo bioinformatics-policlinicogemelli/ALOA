@@ -72,14 +72,24 @@ merge=function(){
       log4r_warn(paste0("Something went wrong. Check the folder ",csv_file))
       next
       }
-  
+    
+    col=""
     seg_data=read.csv(file.path(csv_file,"Merge_cell_seg_data.txt"), sep="\t")
+    if (!is.numeric(seg_data$Cell.X.Position)){
+      seg_data=read.csv(file.path(csv_file,"Merge_cell_seg_data.txt"), sep="\t", dec = ",")
+    }
+    
     pheno_list=colnames(seg_data[ , grepl( "Phenotype" , names( seg_data ) ) ])
     if (is.null(pheno_list)){
+      col="Phenotype"
       pheno_list=seg_data[ , grepl( "Phenotype" , names( seg_data ) ) ]
     }
-    seg_data$Pheno=seg_data[ ,  "Phenotype"]
-    
+    if (col=="Phenotype"){
+      seg_data$Pheno=seg_data[ ,  "Phenotype"]
+    }else{
+      seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
+    }
+
     if (length(seg_data$Pheno)==0){
       log4r_warn("No Phenotypes found for this subject. Skip to the next one!")
       next
@@ -87,6 +97,11 @@ merge=function(){
     
     #write merged file
     cat("\n")
+    seg_data$Cell.X.Position <- sub(",",".",seg_data$Cell.X.Position)
+    seg_data$Cell.X.Position <- as.numeric(seg_data$Cell.X.Position)
+    seg_data$Cell.Y.Position <- sub(",",".",seg_data$Cell.Y.Position)
+    seg_data$Cell.Y.Position <- as.numeric(seg_data$Cell.Y.Position)
+    
     write.table(seg_data, file.path(group_out_path,paste0("Merge_cell_seg_data_",id,".txt")), sep="\t", row.names = F, quote = F)
     log4r_info(paste0("File ",file.path(group_out_path,paste0("Merge_cell_seg_data_",id,".txt")), " saved correctly!"))
   

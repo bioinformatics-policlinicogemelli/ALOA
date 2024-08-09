@@ -316,6 +316,10 @@ def stats_eval(df, groups, test):
     Returns:
         pvalue: float
     '''
+    
+    if test=="":
+        test="unpaired"
+    
     col=df.columns
     #Case 1 groups---> Mann-Whitney test
     if len(groups)==2 and test != "paired":

@@ -92,16 +92,15 @@ def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
         exit()
         
     if "k" in clust_alg.lower():
-        km = KMeans(n_clusters=n_opt_cluster)
         logger.info("kmeans algorithm selected!")
+        km = KMeans(n_clusters=n_opt_cluster, verbose=2)
         df_sample['kmeans'] = km.fit_predict(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
 
     if "s" in clust_alg.lower():
         logger.info("spectral algorithm selected!")
-        
         scaler= StandardScaler()
         spatial_data_normalizer = scaler.fit_transform(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
-        spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42)
+        spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42, verbose=2)
         df_sample['spectral']= spectral.fit_predict(spatial_data_normalizer)
     
     if "p" in clust_alg.lower():
@@ -191,7 +190,7 @@ def plot_stacked_bar_chart(df_plot, output_path, idx, clust_alg):
     cluster_percentages = df_stacked.div(df_stacked.sum(axis=1), axis=0)
 
     # stacked barplot creation
-    fig,ax=plt.subplots()
+    _,ax=plt.subplots()
 
     for i in range(df_stacked.values.shape[1]):
         ax.bar(
@@ -230,7 +229,7 @@ def main(data):
     logger.info(f"Clustering output will be stored in {output_path}")
     
     clust_alg=data["cluster"]["cluster_method"]
-
+    
     if not data["cluster"]["pheno_list"]:
         pheno_list=data["Phenotypes"]["pheno_list"]
     else:
@@ -256,8 +255,17 @@ def main(data):
                 logger.warning("No Phenotype(s) found. Check the phenotype list and Phenotype columns of your data!")
                 logger.info("Skip to next subject")
                 continue
-
-            idx=idx=re.search('.*?\]', df["Sample.Name"][0]).group(0)
+            
+            try:
+                idx=df["Slide.ID"][0]
+            except KeyError:
+                idx=re.search('.*?\]', df["Sample.Name"][0]).group(0)
+            except AttributeError:
+                idx=re.search('.*?\]', df["Annotation.ID"][0]).group(0)
+            except:
+                raise Exception("Something went wrong while reading clean merge file. \
+                    Check if at least one between 'Slide.ID', 'Sample.Name' or 'Annotation.ID' column is present and filled with the subject ID")
+                
             
             logger.warning(f"The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both.")
             
@@ -275,7 +283,7 @@ def main(data):
                     logger.critical(f"ERROR: wrong clustering algoritm for optimal number of cluster. '{number_alg}' were selected but only 'elbow method' (e) or 'silhouette analysis' (s) are currently supported! Check your method section in your config.json file!")
                     exit(1)
 
-            _, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df)
+            _, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df_filt)
 
             cluster_type=list(clust_alg)
             

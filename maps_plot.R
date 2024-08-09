@@ -35,7 +35,8 @@ maps=function(){
     output_f=file.path(myData$Paths["output_folder"][[1]],"Merged")
   }
   cat("\n")
-  if (length(myData$Map_plot["pheno_list"][[1]])==0){
+
+if (length(myData$Map_plot["pheno_list"][[1]])==0){
     log4r_info("The plot of all phenotypes was selected!")
     pheno_list=myData$Phenotypes["pheno_list"][[1]]
     log4r_info(paste0("The following phenotypes will be printed: ",paste(pheno_list, collapse = '; ')))
@@ -60,11 +61,11 @@ maps=function(){
       print("################################")
       cat("\n")
       print(paste0("Analyzing ",file, "..."))
-      id=gsub(".txt","",gsub("Merge_cell_seg_data_","",path_file(file)))
+      id=gsub(".txt","",gsub("Merge_cell_seg_data_clean_","",basename(file)))
       data<-read.delim(file)
       
       print("starting multi images plot")
-      
+
       filt_data=filt_data_Pheno(data, id, pheno_list)
       if (length(filt_data$Pheno)==0){
         log4r_warn("No phenotype(s) found for subject! Skip to the next one")

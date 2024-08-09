@@ -74,7 +74,7 @@ clean=function(){
       pheno_list=colnames(seg_data[ , grepl( "Pheno" , names( seg_data ) ) ])
       pheno_list=pheno_list[pheno_list != "Pheno"]
       if (length(pheno_list)>1){
-        seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
+        #seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
         
         seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
@@ -82,11 +82,25 @@ clean=function(){
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
         
+        seg_clean$Pheno=gsub("OTHERS","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub("others,","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub("OTHER","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub("other,","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub(",OTHERS","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub(",others","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub(",OTHER","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub(",other","",seg_clean$Pheno)
+        
+        seg_clean$Pheno=gsub(",","",seg_clean$Pheno, fixed = T)
+        seg_clean=seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno=="" | seg_clean$Pheno=="other"), ]
+        
       }else if ((length(pheno_list)==1) & "Phenotype" %in% pheno_list){
         seg_data$Pheno=seg_data$Phenotype
         
         seg_clean=subset(seg_data, seg_data$Pheno!="other" & seg_data$Pheno!="OTHER" & seg_data$Pheno!="others" & seg_data$Pheno!="OTHERS")
       }
+      
+      
 
       log4r_info(paste0("All empty/only other Row removed: ", nrow(seg_data)-nrow(seg_clean), " of ", nrow(seg_data)))
       

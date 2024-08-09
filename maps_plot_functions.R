@@ -12,9 +12,16 @@ library(data.table)
 filt_data_Pheno=function(data, id, gene_list){
   
   #clean "other" tag from data$Pheno column
+  data$Pheno=gsub("OTHERS","",data$Pheno)
+  data$Pheno=gsub("others,","",data$Pheno)
   data$Pheno=gsub("OTHER","",data$Pheno)
   data$Pheno=gsub("other,","",data$Pheno)
+  data$Pheno=gsub(",OTHERS","",data$Pheno)
+  data$Pheno=gsub(",others","",data$Pheno)
+  data$Pheno=gsub(",OTHER","",data$Pheno)
   data$Pheno=gsub(",other","",data$Pheno)
+  
+  
   data$Pheno=gsub(",","",data$Pheno, fixed = T)
   data=data[!(is.na(data$Pheno) | data$Pheno=="" | data$Pheno=="other"), ]
   
@@ -57,13 +64,15 @@ multi_maps_plot=function(data, id, out_folder){
   
   gene_list=unique(data$Pheno)
   
-  pdf(file = file.path(out_folder,paste0(id,"_All_Pheno_",paste(gene_list, collapse=''),".pdf")))
+  # pdf(file = file.path(out_folder,paste0(id,"_All_Pheno_",paste(gene_list, collapse=''),".pdf")))
+  pdf(file = file.path(out_folder,paste0(id,"_All_Pheno.pdf")))
   print(ggplot(data)+
           geom_point(aes(`Cell.X.Position`,`Cell.Y.Position`, color=Pheno),size=2, alpha = 0.6)+
           xlab("X Position") +
           ylab("Y Position") +
           guides(color = guide_legend("Phenotypes",override.aes = list(size = 5)))+
           theme(panel.background = element_rect(fill = 'white'),legend.text = element_text(size=10)))
+                # axis.text.x=element_blank(), axis.text.y=element_blank(),axis.ticks.x=element_blank(),axis.ticks.y=element_blank()))
   
   dev.off()
 }
