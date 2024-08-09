@@ -6,6 +6,7 @@ import os
 import re
 import pathlib
 from pcf_functions import *
+from pandas.api.types import is_numeric_dtype
 
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -83,8 +84,10 @@ def main(data=[]):
 
                     try:
                         df=pd.read_csv(ff, sep="\t")
-                        if not df["Cell X Position"][0].isnumeric():
+                        df.columns=list(map(lambda x: x.replace(" ",".") ,df.columns))
+                        if not is_numeric_dtype(df["Cell.X.Position"]):
                             df=pd.read_csv(ff, sep="\t", decimal=",")
+                            df.columns=list(map(lambda x: x.replace(" ",".") ,df.columns))
                     except FileNotFoundError:
                         logger.warning(f"No cell_segmentation file found in {ff}. Skip to the next one!")
                         continue
