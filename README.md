@@ -100,7 +100,7 @@ python3 aloa.py -a
 ```
 ⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
 
-## ⚠️ Recommendation
+## Recommendation
 In the next section all the commands will be explained and an example will be reported for each one. 
 Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder:
 ```
@@ -149,7 +149,94 @@ These are the options that can be set by user:
 
 ## Usage
 
-The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 11 subsessions:
+The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 10 subsessions:
+
+```
+{
+   "Paths":{
+      "data_input_folder":"<path_to_input_folder>",
+      "output_folder":"<path_to_output_folder>"
+   },
+   "Phenotypes":{
+      "pheno_list":[
+         "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ]
+   },
+   "Descriptive":{
+      "raw": [true, false],
+      "normalized": [true, false]
+   },
+   "Map_plot":{
+      "multi_plot":[true, false],
+      "pheno_list":[
+      	 "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ]
+   },
+   "Distance":{
+      "save_csv":[true, false],
+      "save_img":[true, false],
+      "pheno_list":[
+      	 "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ],
+      "pheno_from":"",
+      "pheno_to":"",
+      "plot_distance":[true, false],
+      "save_csv_zetascore":[true, false]
+   },
+   "Image_match":{
+      "pheno_list":[
+         "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ],
+      "interactive":[true, false],
+      "layout_marker_edge_col":"black",
+      "layout_marker_size":10,
+      "layout_xsize":1200,
+      "layout_ysize":900
+   },
+   "Distance_match":{
+      "pheno_list":[
+         "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ]
+   },
+   "Cluster":{
+      "pheno_list":[
+         "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ],
+      "algo_method":"e",
+      "k":10,
+      "cluster_method":"ksp"
+   },
+   "Cross_pcf":{
+      "pheno_list":[
+         "<Phenotype1>",
+         "<Phenotype2>",
+         "<Phenotype1,Phenotype3+>"
+      ],
+      "radiusOfInterest":50,
+      "all_pcf":false, 
+      "maxR":150,
+      "annulusStep":10,
+      "annulusWidth":10,
+      "on_roi":false
+   },
+   "Stats":{
+      "sample_type":["", "paired", "unpaired"],
+      "p_adj":["bonferroni", "sidak", "holm-sidak", "benjamini-hochberg"]
+   }
+}
+```
 
 * **Paths**: here is possible to specify the location of input data, the name of the output folder that will be created and the path of the sample sheet with *data_input_folder*, *output_folder* and *sample_sheet*  respectively.
 
@@ -168,14 +255,13 @@ The first step to start using ALOA is to correctly set the configuration file *c
 * **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
 * **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. Two possible algorhytm can be selected inside config.json field *algo_method* for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
-*  To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it's not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity).  
-
+*  To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it's not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity). 
 
 *algo_method* to select the method to find optimal k value, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral, kmeans and k-prototype)
 
 * **Cross_pcf**: here is possibile to specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
 
-* **Stats**: here is possible to set parameters for the statistical analysis like *sample_type* to define if the group is paired or unpaired and *p_adj* to set a p-value correction method.
+* **Stats**: here is possible to set parameters for the statistical analysis like *sample_type* to define if the group is paired or unpaired (Default:"unpaired") and *p_adj* to set a p-value correction method between Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg (Default:Bonferroni).
 
 ### Input Folder Structure
 
