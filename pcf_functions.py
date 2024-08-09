@@ -346,16 +346,19 @@ def stats_eval(df, groups, test, p_adj):
             p_mask=p_vals.mask(np.tril(np.ones(p_vals.shape, dtype=np.bool_)))
             p_vals=list(p_mask.stack().values)
             
-            if p_adj == "Bonferroni":
+            if p_adj == "":
+                p_adj == "bonferroni"
+            
+            if p_adj == "bonferroni":
                 p_vals = multipletests(p_vals, method='bonferroni')
-            elif "Sidak":
+            elif "sidak":
                 p_vals = multipletests(p_vals, method='sidak')
-            elif "Holm-Sidak":
+            elif "holm-sidak":
                 p_vals = multipletests(p_vals, method='holm-sidak')
-            elif "Benjamini-Hochberg":
+            elif "benjamini-hochberg":
                 p_vals = multipletests(p_vals, method='fdr_bh')
             elif _:
-                raise Exception(f"Type correction {p_adj} does not exist, use one of [Bonferroni,Sidak,Holm-Sidak,Benjamini-Hochberg]")
+                raise Exception(f"Type correction {p_adj} does not exist, use one of [Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg]")
                 
     return p_value, p_vals
 
