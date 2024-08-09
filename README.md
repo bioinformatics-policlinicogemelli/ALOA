@@ -153,7 +153,7 @@ The first step to start using ALOA is to correctly set the configuration file *c
 
 * **Paths**: here is possible to specify the location of input data, the name of the output folder that will be created and the path of the sample sheet with *data_input_folder*, *output_folder* and *sample_sheet*  respectively.
 
-* **Phenotypes**: here it is possible to specify the markers of interest into *pheno_list* (if not specified the complete list of phenotypes will be considered). This way only these markes will be considered for the analysis.
+* **Phenotypes**: here the user should specify the markers of interest into *pheno_list*. Only the markers specified will be considered for the analysis. ⚠️ Inside *pheno_list* it is possible to select single phenotype ("PANCK+") or multipositivity markers separeted with comma ("PANCK+,BIRC5+").
 
 * **Descriptive**: here is possibile to specify parameters for descriptive section, as *raw* and/or *normalized* count evaluation and, when possible, statistical confrontation.
 
