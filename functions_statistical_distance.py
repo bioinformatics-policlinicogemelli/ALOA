@@ -276,12 +276,18 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adju
         filename=os.path.join(dire,"distances_box_plot_"+pheno_from+"_to_"+pheno_to+".png")
 
     #BOXPLOT for 2 groups (Mann-Whitney annotation)
-        if len(df["GROUP"].unique()) ==2 :
+        if len(df["GROUP"].unique()) ==2 and test!="paired" :
             tap.plot_stats(df,x="GROUP",y="DISTANCE",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
                     }})
-        #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
+    #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
+    if len(df["GROUP"].unique()) ==2 and test=="paired" :
+        tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+                    "DISTANCE": r'$Distance_{z}$',
+                    "GROUP": 'Group'
+                }})
+    #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
         if len(df["GROUP"].unique()) > 2 and kruskal:
             if p_adjust is None:
                 p_adjust="bonferroni"
@@ -371,8 +377,12 @@ def main(data):
 
     #p_adjust
     p_adjust=data["Stats"]["p_adj"]
+    p_adjust=p_adjust.lower()
     if p_adjust=="":
         p_adjust=None
+    
+    #test
+    test=data["Stats"]["sample_type"]
 
     #groups of analysis
     groups=[f for f in os.listdir(root_folder) if not f.startswith('.')]
@@ -417,8 +427,8 @@ def main(data):
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue,kruskal=statistical_test(df_distance, path_output,data["Stats"]["sample_type"], data["Stats"]["p_adj"])
-            box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust)
+            pvalue,kruskal=statistical_test(df_distance, path_output,test, p_adjust)
+            box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
         
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
@@ -461,8 +471,8 @@ def main(data):
         if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-        pvalue.kruskal=statistical_test(df_distance, path_output,data["Stats"]["sample_type"], data["Stats"]["p_adj"])
-        box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust)
+        pvalue.kruskal=statistical_test(df_distance, path_output,test, p_adjust)
+        box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
 
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
