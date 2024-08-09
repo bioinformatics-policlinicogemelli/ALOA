@@ -500,7 +500,7 @@ def create_output_box_plot_dir(path_output):
     
 #*****************************************************************
 
-def create_comparison_box_plot(path_output_result,data_all,p_adjust,type_data):
+def create_comparison_box_plot(path_output_result,data_all,p_adjust,test,type_data):
     #print(data_all)
     '''
     Function to make statistical test and annoteted the relative boxplots, generated with ploylt, to compare  phenotypes betweenness different group
@@ -529,7 +529,7 @@ def create_comparison_box_plot(path_output_result,data_all,p_adjust,type_data):
 
     filename=os.path.join(path_output_result,"Box Plots","box_plot_comparison_"+type_data+".jpeg")
 
-    if len(hue_order)==2:
+    if len(hue_order)==2 and test!="paired":
         logger.info(f"Found {len(hue_order)} groups: Start Mann-Whitney Test")
         try:
             tap.plot_stats(data_all,x,y,order=lables,filename=filename,type_correction=p_adjust,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
@@ -538,7 +538,18 @@ def create_comparison_box_plot(path_output_result,data_all,p_adjust,type_data):
             logger.error("Mann-Whitney Test Error-All numbers are identical")
             return()
         except Exception as e:
-            logger.error("Something went wrong during Mann-Whitneytest")
+            logger.error("Something went wrong during Mann-Whitney test")
+            return()
+    if len(hue_order)==2 and test=="paired":
+        logger.info(f"Found {len(hue_order)} groups: Start Wilcoxon Test")
+        try:
+            tap.plot_stats(data_all,x,y,order=lables,filename=filename,type_test="wilcoxon",type_correction=p_adjust,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
+            logger.info("Wilcoxon Test done successfully!")        
+        except ValueError:
+            logger.error("Wilcoxon Test Error-All numbers are identical")
+            return()
+        except Exception as e:
+            logger.error("Something went wrong during Wilcoxon test")
             return()
         
     elif len(hue_order)>2:
@@ -584,8 +595,11 @@ def main(data):
     create_output_dir(path_output_results,groups)
     
     p_adjust=data["Stats"]["p_adj"]
+    p_adjust=p_adjust.lower()
     if p_adjust=="":
         p_adjust=None
+    
+    test=data["Stats"]["sample_type"]
 
     if data["Descriptive"]["raw"]:
         create_summury_file(path_output_results,dict_raw_count,"Raw")
@@ -593,7 +607,7 @@ def main(data):
         if len(groups)>=2:
             create_output_box_plot_dir(path_output_results)
             df_raw=prepare_data_box_plot(dict_raw_count)
-            create_comparison_box_plot(path_output_results,df_raw,p_adjust,"Raw")
+            create_comparison_box_plot(path_output_results,df_raw,p_adjust,test,"Raw")
         else:
             logger.critical("Found only one group - impossible to continue with groups comparison and box plot figure")
             #return()
@@ -610,7 +624,7 @@ def main(data):
             create_norm_all_file(path_output_results,norm_count_all_groups)
             create_output_box_plot_dir(path_output_results)
             df_norm=prepare_data_box_plot(norm_count_all_groups)
-            create_comparison_box_plot(path_output_results,df_norm,p_adjust,"Normalized")
+            create_comparison_box_plot(path_output_results,df_norm,p_adjust,test,"Normalized")
         else:
             logger.critical("Found only one group-impossible to continue with group comparison")
             #return()
