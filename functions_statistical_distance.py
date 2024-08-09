@@ -248,6 +248,7 @@ def statistical_test(df,path_output_result, test, p_adj):
 
     # Proceed with Dunn's test only if Kruskal-Wallis is significant   
         if p_value <= 0.05:  
+            print(p_value)
             kruskal=True
             print("Running Dunn's test")
             if p_adj==None:
@@ -267,7 +268,7 @@ def statistical_test(df,path_output_result, test, p_adj):
 
 #*****************************************************************
 
-def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adjust):
+def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adjust,test):
    
     if len(df["GROUP"].unique())!=1: 
         dire=os.path.join(path_ouput_results,"box_plot")
@@ -281,13 +282,13 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adju
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
                     }})
-    #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
-    if len(df["GROUP"].unique()) ==2 and test=="paired" :
-        tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
-                    "DISTANCE": r'$Distance_{z}$',
-                    "GROUP": 'Group'
-                }})
-    #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
+        #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
+        if len(df["GROUP"].unique()) ==2 and test=="paired" :
+            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
+                        "DISTANCE": r'$Distance_{z}$',
+                        "GROUP": 'Group'
+                    }})
+        #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
         if len(df["GROUP"].unique()) > 2 and kruskal:
             if p_adjust is None:
                 p_adjust="bonferroni"
