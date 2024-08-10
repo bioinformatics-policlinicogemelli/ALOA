@@ -22,11 +22,13 @@ def main(data=[]):
     pathlib.Path(data["Paths"]["output_folder"]).mkdir(parents=True, exist_ok=True)
     output_folder = os.path.join(data["Paths"]["output_folder"],"Cross_PCF")
     pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
-        
+
     celltype_list=load_df(data["Paths"]["data_input_folder"], "cellType_dict.tsv")
     if celltype_list.isnull().values.any():
         logger.critical("One or more Nan found in df. Check cellType_dict.tsv. This error could be due to the presence of double tabs between occurence inside the tsv file")
         return()
+    
+    celltype_list["Phenotype"]=list(map(lambda x: x.replace(",",""),celltype_list["Phenotype"]))
 
     if not celltype_list.columns.isin(["Phenotype", "Cell_Type"]).all():
         logger.critical("It seems that one or more column names of cellType_dict.tsv is not correct. Check that the columns are named as 'Phenotype' and 'Cell_Type'")
@@ -96,7 +98,7 @@ def main(data=[]):
                     pheno_df=add_celltype(df, celltype_list, data["Cross_pcf"]["pheno_list"])
                     
                     if C_1 not in pheno_df['Celltype'].values or C_2 not in pheno_df['Celltype'].values:
-                        logger.warning(f"{C_1} o {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
+                        logger.warning(f"{C_1} or {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
                         continue
 
                     roi_output=os.path.join(comb_output, "ROI_"+roi_name)

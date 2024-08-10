@@ -55,6 +55,8 @@ def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
     
             #reading the file
             _data=pd.read_csv(_file, sep="\t")
+            _data["Pheno"]=list(map(lambda x: x.replace("+","+,"),_data["Pheno"]))
+            _data["Pheno"]=list(map(lambda x: x[:-1],_data["Pheno"]))
 
             #---->logging
             logger.info(f"Reading File {_file}")
