@@ -10,6 +10,7 @@ from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
 from datetime import datetime
 import glob
+import shutil
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -188,6 +189,9 @@ def main():
     output=data["Paths"]["output_folder"]
     pathlib.Path(output).mkdir(parents=True, exist_ok=True)
     log_path=os.path.join(output,"Log")
+    try:
+        shutil.rmtree(log_path)
+    except: pass
     pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
 
     logger.remove()
