@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import math
-import tap
 from scipy import stats
 import plotly.express as px
 

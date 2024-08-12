@@ -63,7 +63,8 @@ def check_output(output,fun):
 def merge_log(log_list):
 
     os.system("cat " + log_list[1] + " >> " + log_list[0])
-    os.system("rm " + log_list[1])
+    import pdb; pdb.set_trace()
+    os.remove(log_list[1])
     logger.remove()
     logger.add(sys.stderr, format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",colorize=True, catch=True, backtrace=True, diagnose=True)
     logger.add(log_list[0],format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",mode="a", backtrace=True, diagnose=True)        
@@ -87,7 +88,7 @@ def aloa(args, data, logfile):
 
     output=data["Paths"]["output_folder"]
 
-    if not(len(os.listdir(output))==1 and os.listdir(output)[0]=="Log") and not args.force:
+    if not(len([f for f in os.listdir(output) if not f.startswith('.')])==1 and "Log" in [f for f in os.listdir(output) if not f.startswith('.')]) and not args.force:
         logger.critical(f"It seems that {output} folder already exists! Delete the folder or change the output name in the config file!")
         return()
         

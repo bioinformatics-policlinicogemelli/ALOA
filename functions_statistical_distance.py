@@ -4,7 +4,6 @@ import numpy as np
 import polars as pl
 import math
 import pandas as pd
-import tap
 from scipy import stats
 import itertools
 import plotly.figure_factory as ff
