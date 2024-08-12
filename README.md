@@ -1,12 +1,12 @@
 # ALOA (Analysis spatiaL prOfiling imAging)
 ## Index
-1. [Introduction](#introduction)
-2. [Features](#features)
-3. [Installation and usage](#installation-and-usage)
-4. [Recomendation](#recommendation)
-5. [Options](#options)
-6. [Workflow](#workflow)
-7. [Usage](#usage)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation and usage](#installation-and-usage)
+- [Recomendation](#recommendation)
+- [Options](#options)
+- [Workflow](#workflow)
+- [Usage](#usage)
 
 
 ## Introduction
