@@ -63,7 +63,6 @@ def check_output(output,fun):
 def merge_log(log_list):
 
     os.system("cat " + log_list[1] + " >> " + log_list[0])
-    import pdb; pdb.set_trace()
     os.remove(log_list[1])
     logger.remove()
     logger.add(sys.stderr, format="{time:YYYY-MM-DD_HH-mm-ss.SS} | <lvl>{level} </lvl>| {message}",colorize=True, catch=True, backtrace=True, diagnose=True)
