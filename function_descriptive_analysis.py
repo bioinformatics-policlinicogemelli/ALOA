@@ -1,13 +1,11 @@
 from loguru import logger
 import pathlib
 import os
-import json
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import math
-from scipy import stats
-import plotly.express as px
+import tap
 
 def raw_count_cells(PATH_MERGE_FOLDER,list_pheno):
     '''

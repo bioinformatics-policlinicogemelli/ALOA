@@ -8,6 +8,7 @@ from scipy import stats
 import itertools
 import plotly.figure_factory as ff
 import plotly.express as px
+import tap
 
 def standardization_distance_all_image(values,paz):
     '''
