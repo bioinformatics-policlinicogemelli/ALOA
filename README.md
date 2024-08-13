@@ -71,7 +71,7 @@ docker build -t aloa .
 ```
 4. Test installation
 ```
-docker run -it -v ./data_test:/input -v ./output:/output -v ./config.json:/config.json aloa
+docker run -it -v <ALOA_folder_path>/ALOA/data_test:/input -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa
 
 python3 aloa.py -a 
 ```
