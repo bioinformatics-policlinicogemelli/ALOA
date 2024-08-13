@@ -77,7 +77,7 @@ python3 aloa.py -a
 ```
 ⚠️ for Windows users: some problems with git bash (git for windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4): 
 ```
-docker run -v .\output:/output -v .\data_test:/input -it aloa
+docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/input -it aloa
 ```
 ### Local
 
