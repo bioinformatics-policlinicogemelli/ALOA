@@ -7,6 +7,7 @@
 - [Options](#options)
 - [Workflow](#workflow)
 - [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
 
 
 ## Introduction
@@ -56,7 +57,7 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
 ### Docker (recommended)
 
 #### Requirements:
-[Docker ](https://www.docker.com/)
+[Docker ](https://www.docker.com/) with at least 4 CPUs and 6 GB of memory allocated
 #### Procedure:
 
 1. Open a terminal
