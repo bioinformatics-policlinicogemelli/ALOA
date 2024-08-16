@@ -1,7 +1,7 @@
 {
    "Paths":{
-      "data_input_folder":"./data_test",
-      "output_folder":"./output3"
+      "data_input_folder":"./input",
+      "output_folder":"./output"
    },
    "Phenotypes":{
       "pheno_list":[

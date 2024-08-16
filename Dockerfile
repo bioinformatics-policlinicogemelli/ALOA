@@ -23,9 +23,13 @@ RUN mkdir /python && cd /python && \
     rm -rf /python
 
 RUN apt-get update && apt-get install r-base -y
-COPY . /
+COPY requirements.txt /requirements.txt
+COPY installation_rpackages.R /installation_rpackages.R
+COPY req.txt /req.txt
 WORKDIR /
 RUN python3 -m pip install -r requirements.txt 
 RUN Rscript installation_rpackages.R req.txt
+
+COPY . /
 
 CMD [ "bash"]

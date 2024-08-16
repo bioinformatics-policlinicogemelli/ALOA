@@ -62,6 +62,12 @@ def check_output(output,fun):
 
 def merge_log(log_list):
 
+    try:
+        open(log_list[1])
+        pass
+    except FileNotFoundError:
+        return
+
     os.system("cat " + log_list[1] + " >> " + log_list[0])
     os.remove(log_list[1])
     logger.remove()
