@@ -12,14 +12,14 @@
 
 ## Introduction
 
-ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCycler®-Fusion and inFormTM analysis ([Unlock the Power of Spatial Biology with phenoptrReports](https://www.akoyabio.com/wp-content/uploads/2022/01/Spatial-Biology-with-phentoprReports-TechNote.pdf)) into publication-ready results, thus advancing the accessibility and utility of spatial tissue analysis in cancer research.
+ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCycler®-Fusion and inFormTM analysis ([Unlock the Power of Spatial Biology with phenoptrReports](https://www.akoyabio.com/wp-content/uploads/2022/01/Spatial-Biology-with-phentoprReports-TechNote.pdf)) into results suitable for publication, thus advancing the accessibility and utility of spatial tissue analysis in cancer research.
 
 ## Features
 - Spatial **Data** Analysis 📈
 
-    This section provides an overall slide analysis and consists of several steps outlined below.
+    This section provides an overall slide analysis and consists of several steps outlined below:
 
-    The first step is the merge of cell seg data files of each roi. These files are merged into a single file for each patient. Cells that don't have any of the phenotypes of interest (OTHER) are removed. <br>
+    The first step is the merge of cell seg data files of each ROI. These files are merged into a single file for each patient. Cells that don't have any of the phenotypes of interest (OTHER) are removed. <br>
 
     The results are saved into:<br>
     - <em><output_folder>/Merged_clean</em><br>
@@ -27,29 +27,29 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
 
 
     Starting from  *Merged_clean* files it is possible to proceed for 5 different sections:
-    - **Map Plot**: this section produces images to visualize spatial distribution of markers of interest
+    - **Map Plots**: this section produces images to visualize spatial distribution of markers of interest.
 
-    - **Description**: this section produces **bar plots**, through which visualize markers row and normalized count for each patient, and **box plots** through which compare markers count from groups. <br> For the count there is the possibility to calculate: <br>
+    - **Description**: this section produces **bar plots** of raw and normalized counts for each patient, and **boxplots** of normalized counts when group comparison is enabled.
 
-    - **Distance**: this section integrates [find_nearest_distance](https://akoyabio.github.io/phenoptr/articles/computing_distances.html) phenoptr script and calculate the distance between couples of markers.<br> Distances can be compared between groups and visualize through box plot (default) and distribution curve plot (optional)
+    - **Distance**: this section integrates [find_nearest_distance](https://akoyabio.github.io/phenoptr/articles/computing_distances.html) phenoptr script and calculates the distance between two markers.<br> Distances can be compared between groups and visualized through boxplots (default) and distribution curve plots (optional).
 
-    - **Clustering**: this section evaluate different clustering algorithm on data. Markers distribution across clusters can be seen and analyze through boxplot and reports
+    - **Clustering**: this section evaluates different clustering algorithm on data. Markers distribution across clusters can be seen and analyzed through boxplots and reports
 
-    - **CrossPCF**: this section integrates [crossPCF](https://github.com/JABull1066/ExtendedCorrelationFunctions) script from Bull et al, 2024 and calculate the cross-PCF between couples of markers. <br> A statistical analysis can be conducted if two or more groups are specified.
+    - **CrossPCF**: this section integrates [crossPCF](https://github.com/JABull1066/ExtendedCorrelationFunctions) script from Bull et al, 2024 and calculates the cross-PCF between two markers. <br> Statistical analysis can be conducted if two or more groups are specified.
 
 - Spatial **Imaging** Analysis <img src="./Image_readme/images.jpeg" width=20 height=12><br>
 
-    This section provides a data visualization feature that produce static and interactive images from a selected number of ROIs. 
+    This section offers a data visualization feature that generates both static and interactive images from selected ROIs. 
 
-    Firstly ROIs' cell seg data are cleaned from cells that don't have any of the phenotypes of interest (OTHER).
+    Firstly ROIs' cell seg data are cleaned from cells that do not have any of the phenotypes of interest (OTHER).
 
     Subsequently, 3 different options can be selected:
  
     - **Image Match**: This section provides a spatial plot of phenotypes' position on ROI's composite image.
     
-    - **Distance Match**: This section provides a spatial plot of phenotypes' distances on ROI's composite image for all possible combination of couples of the selected phenotypes.
+    - **Distance Match**: This section provides a spatial plot of phenotypes' distances on ROI's composite image for all possible combinations of couple of the selected phenotypes.
     
-    - **Cross-PCF Image Match**: This section provides a termic plot of Cross-PCF on ROI's composite image for all possible combination of couples of the selected phenotypes.
+    - **Cross-PCF Image Match**: This section provides a termic plot of Cross-PCF on ROI's composite image for all possible combinations of couple of the selected phenotypes.
 
 
 ## Installation and usage
