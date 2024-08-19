@@ -71,28 +71,34 @@ git clone https://github.com/bioinformatics-policlinicogemelli/ALOA
 cd <ALOA_folder_path>/ALOA
 docker build -t aloa .
 ```
-4. Test installation
+4. Run ALOA to test the installation
 ```
 docker run -it -v <ALOA_folder_path>/ALOA/data_test:/data_test -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa
 
 python3 aloa.py -a 
 ```
-⚠️ for Windows users: some problems with git bash (git for windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4):
+
+
+
+⚠️ for Windows users: some problems with git bash (git for Windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4):
 ```
-docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/input -it aloa
+docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/data_test -it aloa
 ```
+
+
+
 ### Local
 
 #### Requirements:
 
-| Name | Tested <br>Version | Minimum <br>Version | 
+| Name | Minimum <br>Version | Tested <br>Version | 
 |----------------|----------------| :---:|
-|Python| 3.10.1 |  ≥ 3.10
-|R| 4.4.1 |  ≥ 4.3
+|Python| ≥ 3.10 |  3.10.1
+|R| ≥ 4.3 |  4.4.1
 
 ⚠️ It's highly recommended to install the tested versions. Other versions may give compatibility problems between libraries.
 
-⚠️ for Windows users [Rtools](https://cran.r-project.org/bin/windows/Rtools/) installation is also required
+⚠️ for Windows users, installation [Rtools](https://cran.r-project.org/bin/windows/Rtools/) is also required
 
 #### Procedure:
 
@@ -111,21 +117,24 @@ Rscript installation_rpackages.R req.txt
 ```
 ⚠️ Depending on the operating system it may be necessary to use *pip3* command instead of *pip*
 
-4. Test installation
+4. Run ALOA to test the installation
 ```
 python3 aloa.py -a
 ```
 ⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
 
-## Recommendation
-In the next section all the commands will be explained and an example will be reported for each one. 
-Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder:
+## Quick start
+ 
+For docker version run the command below:
 ```
 docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa
 ```
 where -v docker option is necessary to mount local input and output folders and the user-modified configuration file.
+Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder.
 
-⚠️ input and output mounted folders must have the same name of the ones in config.json. i.e. before launch the command below:
+⚠️ input and output folders must have the same name in config.json.
+
+i.e. before launch the command below:
 
 ```
 docker run -it -v /Users/Desktop/project_data:/input -v /Users/Desktop/project_data_output:/output -v ./config.json:/config.json aloa
@@ -137,7 +146,12 @@ config.json path section must be compiled as follows:
     "output_folder":"./output"
 }
 ```
-⚠️ It's not necessary that the local output folder (i.e. project_data_output) exists before the starts of the analysis. The folder will be automatically created when aloa.py script is launched.
+⚠️ It is not necessary that the local output folder (i.e. project_data_output) exists before the starts of the analysis. The folder will be automatically created when aloa.py script is launched.
+
+Run ALOA
+```
+python3 aloa.py -a
+```
 
 ## Options
 
@@ -146,22 +160,23 @@ These are the options that can be set by user:
 | Options | Input | Type | Required
 |----------------|----------------| :---:| :---:|
 |-m <br> --merge| <p align="justify">merge datasets from ROIs of the same patient| boolean | Yes*
-|-M <br> --maps| <p align="justify">create maps plot| boolean | No
+|-M <br> --maps| <p align="justify">create map plots| boolean | No
 |-d <br> --distance| <p align="justify">distance evaluation between phenotypes| boolean | Yes**
 |-s <br> --stats| <p align="justify">create distance stats| boolean | No
 |-o <br> --overview| <p align="justify">create data overview | boolean | No
 |-c <br> --clustering| <p align="justify">cluster data| boolean | No
-|-p <br> --pcf| <p align="justify">pcf analysis| boolean | No
+|-p <br> --pcf| <p align="justify">pcf analyses| boolean | No
 |-I <br> --imgMatch| <p align="justify">create phenotypes image match| boolean | No
 |-D <br> --dstMatch| <p align="justify">create phenotypes distance match| boolean | No
-|-a <br> --all| <p align="justify">do all the analysis| boolean | No
+|-a <br> --all| <p align="justify">run all the analysis| boolean | No
 |-f <br> --force| <p align="justify">force the start of the analysis| boolean | No
 
 *only for whole slide analysis (**NOT** required for pcf, imgMatch and dstMatch)
 ** -d is mandatory if -s option is set
 
-⚠️ If an already existing output folder is found, ALOA will exit with error
-⚠️ force option allow user to overcome some code restrictions as the one mentioned above or the required options to run specific analysis. This option may give problems if previous steps have failed or are incomplete...**use carefully!**
+⚠️ If an already existing output folder is found, ALOA will exit with error.
+
+⚠️ force option allow user to overcome some code restrictions as the one mentioned above or the required options to run specific analysis. This option may give problems if previous steps have failed or are incomplete...**use it carefully!**
 
 ## Workflow
 
@@ -171,7 +186,7 @@ These are the options that can be set by user:
 
 ## Usage
 
-The first step to start using ALOA is to correctly set the configuration file *config.json*. This file is divided in 10 subsessions:
+Before running ALOA, please set correctly the configuration file *config.json*.
 
 ```
 {
@@ -261,30 +276,28 @@ The first step to start using ALOA is to correctly set the configuration file *c
 }
 ```
 
-* **Paths**: here is possible to specify the location of input data, the name of the output folder that will be created and the path of the sample sheet with *data_input_folder*, *output_folder* and *sample_sheet*  respectively. <br> ⚠️ For Windows users, <u>in case of local installation</u>, path must be write with "\\\\" (i.e. "C:\\\\Users\\\\input_data)
+* **Paths**: specify the location of input and output data. <br> ⚠️ For Windows users, <u>in case of local installation</u>, path must be written with "\\\\" (i.e. "C:\\\\Users\\\\input_data)
 
-* **Phenotypes**: here the user should specify the markers of interest into *pheno_list*. Only the markers specified will be considered for the analysis. <br>⚠️ Inside *pheno_list* it is possible to select single phenotype ("PANCK+", "IBA1+") or multipositivity markers separeted with comma ("PANCK+,BIRC5+", "PANCK+,AURKA+,BIRC5+,MYB-B+"). <br>⚠️ Phenotype must always have "+" at the end (❌ PANCK;  ❌ PANCK+,BIRC5; ❌ PANCK,BIRC5; ✅ PANCK+;  ✅ PANCK+,BIRC5+)!
+* **Phenotypes**: specify the markers of interest into *pheno_list*. Only the markers specified will be considered for the analysis. <br>⚠️ Inside *pheno_list* it is possible to select single phenotype ("PANCK+", "IBA1+") or multipositivity markers separeted with comma ("PANCK+,BIRC5+", "PANCK+,AURKA+,BIRC5+,MYB-B+"). <br>⚠️ Phenotype must always have "+" at the end (❌ PANCK;  ❌ PANCK+,BIRC5; ❌ PANCK,BIRC5; ✅ PANCK+;  ✅ PANCK+,BIRC5+)!
 
-* **Descriptive**: here is possibile to specify parameters for descriptive section, as *raw* and/or *normalized* count evaluation and, when possible, statistical confrontation.
+* **Descriptive**: True/False. Specify if barplots will be generated with *raw* and/or *normalized* counts and, when possible, apply statistical comparison.
 
-* **Map_plot**: here is possible to specify the markers to plot by *pheno_list* (if not specified the complete list of phenotypes will be considered).
+* **Map_plots**: specify the markers to plot by *pheno_list* (if not specified the complete list of phenotypes will be considered).
 
-* **Distance**: here are specified the parameters for distance calculation as *save_csv* if you want to save the distance values,  *pheno_list* (if not specified the complete list of phenotypes will be considered) if you want to calculate distance between specific markers, *pheno_from* and *pheno_to* to set specific couples of markers and distance direction, *plot_distance* to save distance curves and *save_csv_zscores* to save z-scores distance.
+* **Distance**: True/False to save distances on csv and/or images,  specify markers in *pheno_list* (if not specified the complete list of phenotypes will be considered) to calculate distance between specific markers, *pheno_from* and *pheno_to* to set specific couple of markers and distance direction, *plot_distance* to save distance curves and *save_csv_zscores* to save z-score distances.
 
-* **Image_match**: here is possibile to specify a sublist of markers to print on composite images (if not specified the complete list of phenotypes will be considered) via *pheno_list*. It is also possible to create interactive images, in addition to the static ones, by setting *interactive* option as true. Interactive graphs' layout can also be customize with the options *layout_marker_edge_col* and *layout_marker_size* to change respectively the edge color and the size of dots plotted on image and *layout_xsize* *layout_ysize* to customize the size of the image.
+* **Image_match**: specify a sublist of markers to print on composite images (if not specified the complete list of phenotypes will be considered) via *pheno_list*. It is also possible to create interactive images, in addition to the static ones, by setting *interactive* option as true. Interactive graphs' layout can also be customized with the options *layout_marker_edge_col* and *layout_marker_size* to change respectively the edge color and the size of dots plotted on image and *layout_xsize* *layout_ysize* to customize the size of the image.
 
-* **Distance_match**: here is possibile to specify a sublist of markers whose distances are to be printed on composite images via *pheno_list* (if not specified the complete list of phenotypes will be considered).
+* **Distance_match**: specify a sublist of markers whose distances is printed on composite images via *pheno_list* (if not specified the complete list of phenotypes will be considered).
 
-* **statistical_distance**: here is possibile to specify the markers for which you can perform the distance statsical analysis in *pheno_from* and *pheno_to*
+* **statistical_distance**: specify the markers for which you want perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
-* **Cluster**: here is possibile to specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. Two possible algorhytm can be selected inside config.json field *algo_method* for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
-*  To set the maximum number of clusters *k* field must be set (default k=10). Also three clustering algorythm can be applied on data: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by add in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it's not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity). 
+* **Cluster**: specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. In config.json, under  *algo_method* section you can chosse between two algorithms for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
+*  *k* is the maximum number of clusters (default k=10). Users can choose between three clustering algorithms: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by adding in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it is not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity).
 
-*algo_method* to select the method to find optimal k value, *k* if you want to specify the maximum number of clusters, *cluster_method* to choose the clustering method (spectral, kmeans and k-prototype)
+* **Cross_pcf**: specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
 
-* **Cross_pcf**: here is possibile to specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
-
-* **Stats**: here is possible to set parameters for the statistical analysis like *sample_type* to define if the group is paired or unpaired (Default:"unpaired") and *p_adj* to set a p-value correction method between Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg (Default:Bonferroni).
+* **Stats**: here is possible to set parameters for statistical analysis like *sample_type* to define if the group is paired or unpaired (Default:"unpaired") and *p_adj* to set a p-value correction method between Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg (Default:Bonferroni).
 
 ### Input Folder Structure
 
@@ -313,9 +326,9 @@ input
 
 ```
 Where input is the main folder containing:
-* raw_data: this folder contains as many subfolders as the number of subjects analyzed. Each subject folder contains the segmentation data for each one of the ROIs. <br>⚠️ This folder is required when -I and -D options are selected!
-* img_match: this folder contains the ROIs on which plot markers and distances
-* sample_sheet.tsv: this file must be compiled by the user with the subjects IDs and the belonging group. It's structure is shown below:
+* raw_data: this folder contains as many subfolders as the number of subjects analyzed. Each subject folder contains the segmentation data for each ROI. <br>⚠️ This folder is required when -I and -D options are selected!
+* img_match: this folder contains the ROIs on which plot markers and distances are computed
+* sample_sheet.tsv: this file must be compiled by the user with the subjects IDs and the belonging group. Its structure is shown below:
 
     | sbj_ID | Group|
     |----------------|----------------|
@@ -323,7 +336,7 @@ Where input is the main folder containing:
     |sbj002| Group1|
     |...| ...|
     |sbjN| GroupX|
-* cellType.tsv: this file must be compiled by the user with the cell type name corresponding to each one of the markers of interest. <br>⚠️ This file is required when -p option is selected!
+* cellType.tsv: this file must be compiled by the user with cell type name corresponding to each marker of interest. <br>⚠️ This file is required when -p option is selected!
 
     | Phenotype | Cell_Type|
     |----------------|----------------|
@@ -338,7 +351,7 @@ All ALOA results are saved into a folder output whose path is specified in *conf
 output
 ├── Merged
 ├── Merged_clean
-├── Maps_plot
+├── Map_plots
 ├── Descriptive
 ├── Distance
 ├── Distance_Statistical
@@ -350,10 +363,10 @@ output
 ```
 All log files are saved into Log folder. The other output subfolders are named as the corresponding analysis and will be explained below.
 
-### 1. Merge Cell Seg Data
-In this section the cell_seg_data.txt files for each patient are merged into a single file through the integration of phenoptr [merge](https://akoyabio.github.io/phenoptrReports/articles/consolidation.html) function.
+### 1. Merged
+In this output folder, all cell_seg_data.txt files for each patient are merged into a single file through the integration of phenoptr [merge](https://akoyabio.github.io/phenoptrReports/articles/consolidation.html) function.
 
-For the merge, two types of files are genetared:
+Two files are genetared:
 - files where **negative cellulas** for markers of interest haven't been deleted (saved into *Merged* folder)
 - files where **negative cellulas** for  markers of interest have been deleted (saved into *Merged_clean* folder)
 
@@ -378,13 +391,13 @@ Merged_clean
     └── ...
 ```
 
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -m
 ```
 
 ### 2. Map Plots
-In this section a plot of all markers of interest will be generate for each patient of each group as pdf images.
+In this section a plot of all markers of interest will be generated for each patient.
 
 ```
 Maps_plot
@@ -395,21 +408,18 @@ Maps_plot
 └── GroupN
     └── ...
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -m -M
 ```
 
-### 3. Descriptive data + statistical analysis
-This section produces raw and/or normalized markers counts for each patient and for each group. The input files are the merged files generated in the previous section. Counts are saved into csv files (*csv* folder) and visualized through **barplot** figures saved into *Barplot* folder.
+### 3. Descriptive
+This folder output contains barplots of raw and/or normalized markers counts for each patient and for each group. Merged files generated from previous section are the input files of this section. Counts are saved into csv files (*csv* folder) and visualized through **barplot** figures saved into *Barplot* folder.
 
-⚠️ Two different formulas are used for normalized counts in barplots (*Norm_count_patientname.csv*) and in boxplots (*all_norm_count_patientsname*). For more details see [functions ](./functions.md) section.
-
-
-A *Descriptive* folder will be created to save all results of this section.
+⚠️ Two different formulas are used for count normalization in barplots (*Norm_count_patientname.csv*) and in boxplots (*all_norm_count_patientsname*). For more details see [functions ](./functions.md) section.
 
 
-When two or more groups are listed,a statistical comparison on markers count is made to seek for significance difference between groups. Statistics is computed on raw and normalized counts. Results, saved into *Box_Plot* folder, are shown on **box plot** figures and statistical annotation is made through [TAP ](https://github.com/Discovery-Circle/tap)library
+When two or more groups are listed, a statistical comparison on marker counts is made to seek for significance difference between groups. Statistics is computed on raw and normalized counts. Results, saved into *Box_Plot* folder, are shown on **box plot** figures and statistical annotation is made through [TAP ](https://github.com/Discovery-Circle/tap) library.
 
 ```
 Descriptive
@@ -430,14 +440,14 @@ Descriptive
     └── ...
             
 ```
-Example:
+ALOA command to generate this output:
 
 ```
 python3 aloa.py -m -o
 ```
-### 4. Distances Calculation
+### 4. Distance
 
-From merged file distances between markers are evaluated through phenoptr [distance](https://akoyabio.github.io/phenoptr/articles/computing_distances.html) function.
+Distances between markers are evaluated through phenoptr [distance](https://akoyabio.github.io/phenoptr/articles/computing_distances.html) function.
 
 ```
 Distance
@@ -449,21 +459,20 @@ Distance
 └── GroupN
     └── ...
 ```
-Example:
+ALOA command to generate this output:
 
 ```
 python3 aloa.py -m -d
 ```
-A statistical analysis can be also performed if two or more groups are reported.
-A *Distance_Statistical* folder is created to save all the results of this section.
+A statistical analysis can be also performed if two or more groups are reported and *Distance_Statistical* folder is created to save all statistical results.
 
 ⚠️ Distance values are calculated as Z-score. For more details see For more details see [functions](./functions.md)
 
 
 The results are: 
-- **boxplot** figure,with statistical annotation make though [TAP ](https://github.com/Discovery-Circle/tap)library, saved in box_plot folder
-- **csv** file with distance value for all patients for each group for a specific distance
-- **distance_curve** figure (optional), saved into distance_curve folder, where are plotted the distributions of the distances of comparative groups for a specific couple of marker
+- **boxplot** figures, with statistical annotation made with [TAP ](https://github.com/Discovery-Circle/tap) library.
+- **csv** file with distance values for all patients for each group.
+- **distance_curve** figures (optional), saved into distance_curve folder, where are plotted the distributions of the distances of comparative groups for a specific couple of markers.
 
 ```
 Distance_Statistical
@@ -482,21 +491,20 @@ Distance_Statistical
     └── summary_statistical.csv
 
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -m -d -s
 ```
 
 ### 5. Clustering
-From merged file clustering evaluation can be done. 
 
 The output folder will be organized for each group as:
-- **k optimal** folder containing all of the method curves images
-- **cluster algorithm** folder containing *percentage* subfolder with all of the marker percentage in each cluster, *scatter_plot* containing a scatter for each subject and *stacked_barplot* with a stacked plot for each of the subject analyzed.
+- **k optimal** folder containing all curves' images made by the k optimal chosen method
+- **cluster algorithm** folder containing *percentage* subfolder with all markers' percentage in each cluster, *scatter_plot* containing a scatterplot for each subject and *stacked_barplot* for each analyzed subject.
 ```
 Clustering
 ├── Group1
-│   ├── elbow_scores
+│   ├── elbow_scores/silouhette_scores
 │   │   │   ├── sbj001_[14146,53503].tiff
 │   │   │   ├── ...
 │   │   │   └── sbjN_[13394,50883].tiff
@@ -531,14 +539,14 @@ Clustering
 └── GroupN
     └── ...
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -m -c
 ```
 
 ### 6. Cross-PCF
-Cross-PCF is implemented by the integration of J. Bull cross-PCF [scripts](https://github.com/JABull1066/ExtendedCorrelationFunctions). For each group, a subfolder named as the subject ID is created and structured as:
-- **Celltype couple** folder containing for each ROI and for each radius chosen three different images: cross-pcf curve, topographical map and point cloud plot.
+Cross-PCF is implemented by the integration of J. Bull cross-PCF [scripts](https://github.com/JABull1066/ExtendedCorrelationFunctions). For each group, a subfolder named as the subject ID is created and structured as follows:
+- **Celltype couple** folder containing three images: cross-pcf curve, topographical map, and point cloud plot. Those three images are generated for each ROI and radius chosen by the user.  When "on_roi" parameter is set to "True", topographical map is plotted on ROI and an extra image "TCM_on_ROI.tif" is generated.
 - **summary** folder containing the csv files with all the cross-pcf values for each couple of celltypes.
 
 If two or more groups are present, also a statistical analysis between cross-PCFs are evaluated and saved in **stats** folder for each radious.
@@ -552,6 +560,7 @@ Cross_PCF
 │   │   │   │   └── r_50
 │   │   │   │       ├── PCF_function.tif
 │   │   │   │       ├── TCM.tif
+│   │   │   │       ├── TCM_on_ROI.tif
 │   │   │   │       └── point_cloud.tif
 │   │   │   ├── ...
 │   │   │   └── Regulatory_T_cell-Cytotoxic_T_cell
@@ -570,15 +579,15 @@ Cross_PCF
 └── stats
     └── stat_analysis_r_50.tsv
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -p
 ```
 ### 7. Imaging
-The markers' position and their distances can be plot on single chosen ROIs images.
+The markers' position and their distances can be plot on single chosen ROI image.
 In particular, for marker positions the output folder will be structured as:
-- **tif** images with markers plot on ROIs
-- **Interactive_plots** folder containing the same images mentioned above but with the possibility to selecting and showing only specific markers by clicking on the correspondive legends dots.
+- **tif** images with markers plotted on ROIs
+- **Interactive_plots** folder containing the same images mentioned above with the possibility to select and show only specific markers by clicking on the correspondive legend dot.
 ```
 Img_match
 ├── Interactive_plots
@@ -590,7 +599,7 @@ Img_match
 │   ...
 └── sbjN_[13394,50883]_composite_image_match_CD68+CD8+FoxP3+CK+.tif
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -I
 ```
@@ -601,7 +610,14 @@ Distance_match
 ├── ...
 └── sbjN_[13394,50883]_composite_image_dist_match_FoxP3+CK+_Nearest_FoxP3+_to_each_CK+.tif
 ```
-Example:
+ALOA command to generate this output:
 ```
 python3 aloa.py -D
 ```
+## Troubleshooting
+
+This page lists solutions to problems you might encounter using ALOA.
+
+- **JOB KILLED** when running ALOA with Docker. Please increase the Docker memory to at least 6 GB and Docker CPUs to at least 4. To do so: open Docker app, go to Settings (engine icon on the upper-right panel), go to Resources, increase CPUs and Memory. Apply & restart.
+
+
