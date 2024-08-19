@@ -14,21 +14,23 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /python && cd /python && \
-    wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz && \
-    tar -zxvf Python-3.11.1.tgz && \
-    cd Python-3.11.1 && \
+    wget https://www.python.org/ftp/python/3.10.1/Python-3.10.1.tgz && \
+    tar -zxvf Python-3.10.1.tgz && \
+    cd Python-3.10.1 && \
     ls -lhR && \
     ./configure --enable-optimizations && \
     make install && \
     rm -rf /python
 
 RUN apt-get update && apt-get install r-base -y
+COPY req.txt /req.txt
 COPY requirements.txt /requirements.txt
 COPY installation_rpackages.R /installation_rpackages.R
-COPY req.txt /req.txt
 WORKDIR /
 RUN python3 -m pip install -r requirements.txt 
 RUN Rscript installation_rpackages.R req.txt
+
+RUN rm -f spatstat.core_2.4-4.tar.gz
 
 COPY . /
 

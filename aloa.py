@@ -5,6 +5,7 @@ from loguru import logger
 import logging
 import pathlib
 import sys
+import rpy2
 import rpy2.robjects as ro
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
@@ -27,6 +28,24 @@ class MyArgumentParser(argparse.ArgumentParser):
 #### 
 
 @logger.catch()
+
+#*****************************************************************
+
+def logo():    
+    print("""
+   _            ___                   _   
+ _( )_         (   )                _( )_ 
+(_ o _)  .---.  | |  .--.    .---. (_ o _)
+ (_,_)  / .-, \ | | /    \  / .-, \ (_,_) 
+       (__) ; | | ||  .-. ;(__) ; |   
+          .'` | | || |  | |  .'`  | 
+        / .'| | | || |  | | / .'| |
+       | /  | | | || |  | || /  | | 
+   _   ; |  ; | | || '  | |; |  ; |   _   
+ _( )_ ' `-'  | | |'  `-' /' `-'  | _( )_ 
+(_ o _)`.__.'_.(___)`.__.' `.__.'_.(_ o _)
+ (_,_)                              (_,_) 
+""")    
 
 #*****************************************************************
 
@@ -106,12 +125,15 @@ def aloa(args, data, logfile):
     #########################################
     
     if args.merge or args.force:
-        
         if args.merge:
             logger.info("|-> Merge step starting now")
             ro.r['source']('merge.R')
             merge = ro.globalenv['merge']
-            log_name_merge=merge()[0]
+            try:
+                log_name_merge=merge()[0]
+            except rpy2.rinterface_lib.embedded.RRuntimeError:
+                logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json is not recognized as valid path. Check if the input folder is correctly written.")
+                sys.exit()
             merge_log([logfile,log_name_merge])
             
             logger.info("|-> Clean step starting now")
@@ -204,7 +226,9 @@ def main():
     
     logfile=log_settings(log_path)
     
-    logger.info("Welcome to ALOA")
+    logo()
+    
+    logger.info("Welcome to ALOA \N{smiling face with sunglasses}")
          
     parser = MyArgumentParser(add_help=True, usage=None, description='Argument of ALOA script')
     

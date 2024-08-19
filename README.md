@@ -73,11 +73,11 @@ docker build -t aloa .
 ```
 4. Test installation
 ```
-docker run -it -v <ALOA_folder_path>/ALOA/data_test:/input -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa
+docker run -it -v <ALOA_folder_path>/ALOA/data_test:/data_test -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa
 
 python3 aloa.py -a 
 ```
-⚠️ for Windows users: some problems with git bash (git for windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4): 
+⚠️ for Windows users: some problems with git bash (git for windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4):
 ```
 docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/input -it aloa
 ```
@@ -234,7 +234,8 @@ The first step to start using ALOA is to correctly set the configuration file *c
       "pheno_list":[
          "<Phenotype1>",
          "<Phenotype2>",
-         "<Phenotype1,Phenotype3+>"
+         "<Phenotype1,Phenotype3+>",
+         "verbose":"" ["", 1, 2, 3]
       ],
       "algo_method":"e",
       "k":10,
