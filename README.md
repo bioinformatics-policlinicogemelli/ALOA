@@ -391,7 +391,7 @@ Merged_clean
     └── ...
 ```
 
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -m
 ```
@@ -408,7 +408,7 @@ Maps_plot
 └── GroupN
     └── ...
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -m -M
 ```
@@ -440,7 +440,7 @@ Descriptive
     └── ...
             
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 
 ```
 python3 aloa.py -m -o
@@ -459,7 +459,7 @@ Distance
 └── GroupN
     └── ...
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 
 ```
 python3 aloa.py -m -d
@@ -491,7 +491,7 @@ Distance_Statistical
     └── summary_statistical.csv
 
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -m -d -s
 ```
@@ -539,7 +539,7 @@ Clustering
 └── GroupN
     └── ...
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -m -c
 ```
@@ -579,7 +579,7 @@ Cross_PCF
 └── stats
     └── stat_analysis_r_50.tsv
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -p
 ```
@@ -610,7 +610,7 @@ Distance_match
 ├── ...
 └── sbjN_[13394,50883]_composite_image_dist_match_FoxP3+CK+_Nearest_FoxP3+_to_each_CK+.tif
 ```
-ALOA command to generate this output:
+ALOA command to generate this output folder:
 ```
 python3 aloa.py -D
 ```
@@ -620,5 +620,5 @@ This page lists solutions to problems you might encounter using ALOA.
 
 - ALOA returns **KILLED** when using Docker version. Please increase Docker memory to at least 6 GB and Docker CPUs to at least 4.
   To do so: open Docker app, go to Settings (engine icon on the upper-right panel), go to Resources, increase CPUs and Memory. Apply & restart.
-
+- R library "data.table" not found when using Local version. Please try to install data.table R library by yourself. Close and restart R before running ALOA.
 
