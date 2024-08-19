@@ -12,6 +12,8 @@ rpy2_logger.setLevel(logging.ERROR)
 from datetime import datetime
 import glob
 import shutil
+import warnings
+warnings.simplefilter("ignore")
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -103,12 +105,17 @@ def check_log(log, n_warn=0, n_err=0, n_crit=0):
     n_crit+=int(log_txt.count("CRITICAL"))
     return(n_warn,n_err,n_crit)
 
+def check_merged(output):
+    if not os.path.isdir(os.path.join(output, "Merged_clean")):
+        logger.critical("No Merged_clean folder found!")
+        sys.exit()
+
 #*****************************************************************
 #*****************************************************************
 
 def aloa(args, data, logfile):
     
-    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all}]")
+    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all} , force:{args.force}]")
 
     output=data["Paths"]["output_folder"]
 
@@ -147,8 +154,9 @@ def aloa(args, data, logfile):
         #########################################
         #             DESCRIPTIVE               #
         #########################################
-        
+                
         if args.overview:
+            check_merged(output)
             logger.info("|-> Descriptive step starting now\n")
             descriptive(data)
         
@@ -157,6 +165,7 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.maps:
+            check_merged(output)
             logger.info("|-> Maps plot step starting now")
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
@@ -168,6 +177,7 @@ def aloa(args, data, logfile):
         #########################################
         
         if args.distance or args.force:
+            check_merged(output)
             if args.distance:
                 logger.info("|-> Distance evaluation step starting now")
                 ro.r['source']('distance_eval.R')
@@ -184,6 +194,7 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.clustering:
+            check_merged(output)
             logger.info("|-> Clustering step starting now")
             clust(data)
            
