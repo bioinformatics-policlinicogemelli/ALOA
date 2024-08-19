@@ -85,7 +85,10 @@ def plot_silhouette_analysis(df, output_path, idx, k_number):
     
     return df_sample, n_opt_cluster
 
-def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
+def clustering_function (n_opt_cluster, df_sample, clust_alg, df, verb):
+    
+    if verb=="":
+        verb=False
     
     if not len(clust_alg.lower().replace("k","").replace("s","").replace("p",""))==0:
         logger.critical(f"No valid clustering algorithm selected. Clust_alg '{clust_alg}' were selected but only 'kmeans' (k), 'spectral' (s) and 'prototype' (p) are currently supported! Check your cluster section in your config.json file!")
@@ -93,20 +96,20 @@ def clustering_function (n_opt_cluster, df_sample, clust_alg, df):
         
     if "k" in clust_alg.lower():
         logger.info("kmeans algorithm selected!")
-        km = KMeans(n_clusters=n_opt_cluster, verbose=2)
+        km = KMeans(n_clusters=n_opt_cluster, verbose=verb)
         df_sample['kmeans'] = km.fit_predict(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
 
     if "s" in clust_alg.lower():
         logger.info("spectral algorithm selected!")
         scaler= StandardScaler()
         spatial_data_normalizer = scaler.fit_transform(df_sample[["Cell.X.Position", "Cell.Y.Position"]].values)
-        spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42, verbose=2)
+        spectral = SpectralClustering(n_clusters=n_opt_cluster, affinity='nearest_neighbors', random_state=42, verbose=verb)
         df_sample['spectral']= spectral.fit_predict(spatial_data_normalizer)
     
     if "p" in clust_alg.lower():
         logger.info("k-prototype algoritm selected!")
         cat_cols= [2]
-        kproto = KPrototypes(n_clusters=n_opt_cluster, init='Cao', verbose=2)
+        kproto = KPrototypes(n_clusters=n_opt_cluster, init='Cao', verbose=verb)
         df_sample['prototype'] = kproto.fit_predict(df_sample, categorical=cat_cols)
 
     df_sample["Pheno"]= df["Pheno"]
@@ -283,7 +286,7 @@ def main(data):
                     logger.critical(f"ERROR: wrong clustering algoritm for optimal number of cluster. '{number_alg}' were selected but only 'elbow method' (e) or 'silhouette analysis' (s) are currently supported! Check your method section in your config.json file!")
                     exit(1)
 
-            _, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df_filt)
+            _, df_sample= clustering_function (n_cluster_opt, df_sample, clust_alg, df_filt, verb=data["Cluster"]["verbose"])
 
             cluster_type=list(clust_alg)
             

@@ -1,6 +1,6 @@
 {
    "Paths":{
-      "data_input_folder":"./input",
+      "data_input_folder":"./data_test",
       "output_folder":"./output"
    },
    "Phenotypes":{
@@ -48,7 +48,8 @@
       ],
       "algo_method":"e",
       "k":10,
-      "cluster_method":"ksp"
+      "cluster_method":"ksp",
+      "verbose":""
    },
    "Cross_pcf":{
       "pheno_list":[
