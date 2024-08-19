@@ -618,6 +618,6 @@ python3 aloa.py -D
 
 This page lists solutions to problems you might encounter using ALOA.
 
-- **JOB KILLED** when running ALOA with Docker. Please increase the Docker memory to at least 6 GB and Docker CPUs to at least 4. To do so: open Docker app, go to Settings (engine icon on the upper-right panel), go to Resources, increase CPUs and Memory. Apply & restart.
+- JOB **KILLED** when running ALOA with Docker. Please increase the Docker memory to at least 6 GB and Docker CPUs to at least 4. To do so: open Docker app, go to Settings (engine icon on the upper-right panel), go to Resources, increase CPUs and Memory. Apply & restart.
 
 
