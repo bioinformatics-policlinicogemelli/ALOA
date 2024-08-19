@@ -66,6 +66,7 @@ ALOA is a useful bioinformatics tool designed to transform raw data from PhenoCy
 git clone https://github.com/bioinformatics-policlinicogemelli/ALOA
 ```
 3. Build docker file
+<br> ⚠️ This step can take about 30 minutes to 1 hour depending on the resources allocated to docker 
 ```
 cd <ALOA_folder_path>/ALOA
 docker build -t aloa .
@@ -83,8 +84,14 @@ docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\
 ### Local
 
 #### Requirements:
-[Python ](https://www.python.org/)>= 3.10 <br>
-[R ](https://www.r-project.org/)>= 4.3 <br>
+
+| Name | Tested <br>Version | Minimum <br>Version | 
+|----------------|----------------| :---:|
+|Python| 3.10.1 |  ≥ 3.10
+|R| 4.4.1 |  ≥ 4.3
+
+⚠️ It's highly recommended to install the tested versions. Other versions may give compatibility problems between libraries.
+
 ⚠️ for Windows users [Rtools](https://cran.r-project.org/bin/windows/Rtools/) installation is also required
 
 #### Procedure:
