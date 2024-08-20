@@ -21,7 +21,7 @@ def distance_match(data):
 
     img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match")
     if not os.path.exists(img_folder):
-        logger.error(f"No image folder found in {data["Paths"]["data_input_folder"]}!") 
+        logger.error(f"No image folder found in input folder!") 
         return 
     csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
     
