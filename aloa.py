@@ -106,17 +106,16 @@ def check_log(log, n_warn=0, n_err=0, n_crit=0):
     return(n_warn,n_err,n_crit)
 
 def check_merged(output):
-    import pdb; pdb.set_trace()
     #check if folder exists
     if not os.path.isdir(os.path.join(output, "Merged_clean")):
         logger.critical("No Merged_clean folder found!")
         sys.exit()
     #check if folder is empty
-    for _, _, files in os.walk(os.path.join(output, "Merged_clean")):
-        if not files:
-            logger.critical("Merged_clean folder is empty!")
-            sys.exit()
-    
+    _, _, files = os.walk(os.path.join(output, "Merged_clean"))
+    if not files:
+        logger.critical("Merged_clean folder is empty!")
+        sys.exit()
+        
 
 #*****************************************************************
 #*****************************************************************
@@ -224,7 +223,7 @@ def aloa(args, data, logfile):
         pcf(data)
     
     n_warn, n_err, n_crit=check_log(logfile)
-    logger.info(f"ALOA script completed with {n_warn} warnings, {n_err} errors and {n_crit} critical!")
+    logger.info(f"ALOA script completed with {n_warn} warning(s), {n_err} error(s) and {n_crit} critical(s)!")
     
 def main(): 
     

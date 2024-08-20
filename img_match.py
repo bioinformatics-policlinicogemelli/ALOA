@@ -15,7 +15,10 @@ def img_match(data):
      
     output=data["Paths"]["output_folder"]
             
-    img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
+    img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match")
+    if not os.path.exists(img_folder):
+        logger.error(f"No image folder found in {data["Paths"]["data_input_folder"]}!") 
+        return
     csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
     
     if len(data["Distance_match"]["pheno_list"])==0:

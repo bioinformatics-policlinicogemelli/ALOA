@@ -19,7 +19,10 @@ def distance_match(data):
     output_f=os.path.join(output,"Distance_match")
     pathlib.Path(output_f).mkdir(parents=True, exist_ok=True)
 
-    img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match") 
+    img_folder=os.path.join(data["Paths"]["data_input_folder"],"img_match")
+    if not os.path.exists(img_folder):
+        logger.error(f"No image folder found in {data["Paths"]["data_input_folder"]}!") 
+        return 
     csv_folder=os.path.join(data["Paths"]["data_input_folder"],"raw_data") 
     
     if len(data["Distance_match"]["pheno_list"])==0:
