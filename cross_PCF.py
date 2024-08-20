@@ -112,7 +112,11 @@ def main(data=[]):
                     if data["Cross_pcf"]["all_pcf"]:
                         pc = all_cross_pcf(pc, pzt_output, roi_name, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
                     
-                    pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
+                    try:
+                        pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
+                    except RuntimeError:
+                        logger.error("Negative areas calculated! Skip to the next ROI")
+                        continue
                     
                     tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
                     
