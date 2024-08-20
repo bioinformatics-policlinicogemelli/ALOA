@@ -20,5 +20,6 @@ download.file(url = "https://cran.r-project.org/src/contrib/Archive/spatstat.cor
 install.packages(pkgs='spatstat.core_2.4-4.tar.gz', type='source', repos=NULL)
 BiocManager::install("EBImage")
 remotes::install_github('r-lib/textshaping')
+remotes::install_version("rjson", "0.2.20")
 remotes::install_github('akoyabio/phenoptr')
 remotes::install_github('akoyabio/phenoptrReports')
