@@ -34,4 +34,6 @@ RUN rm -f spatstat.core_2.4-4.tar.gz
 
 COPY . /
 
-CMD [ "bash"]
+RUN chmod +x aloa.py
+
+ENTRYPOINT ["python3", "/aloa.py"]

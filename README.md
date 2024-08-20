@@ -3,7 +3,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation and usage](#installation-and-usage)
-- [Recomendation](#recommendation)
+- [Quickstart](#quickstart)
 - [Options](#options)
 - [Workflow](#workflow)
 - [Usage](#usage)
@@ -73,16 +73,14 @@ docker build -t aloa .
 ```
 4. Run ALOA to test the installation
 ```
-docker run -it -v <ALOA_folder_path>/ALOA/data_test:/data_test -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa
-
-python3 aloa.py -a 
+docker run -it -v <ALOA_folder_path>/ALOA/data_test:/data_test -v <ALOA_folder_path>/ALOA/output:/output -v <ALOA_folder_path>/ALOA/config.json:/config.json aloa -a
 ```
 
 
 
 ⚠️ for Windows users: some problems with git bash (git for Windows) has been reported. It is recommended to launch the docker command through [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.4):
 ```
-docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/data_test -it aloa
+docker run -v <ALOA_folder_path>\ALOA\output:/output -v <ALOA_folder_path>\ALOA\data_test:/data_test -it aloa -a
 ```
 
 
@@ -123,11 +121,11 @@ python3 aloa.py -a
 ```
 ⚠️ Depending on the operating system it may be necessary to use *python* command instead of *python3*
 
-## Quick start
+## Quickstart
  
 For docker version run the command below:
 ```
-docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa
+docker run -it -v <absolute_path_to_input_folder>:/input -v <absolute_path_to_output_folder>:/output -v ./config.json:/config.json aloa <options>
 ```
 where -v docker option is necessary to mount local input and output folders and the user-modified configuration file.
 Be aware that if you are using the docker version it is **<u>mandatory</u>** to run this command everytime you are using a new input folder.
@@ -137,7 +135,7 @@ Be aware that if you are using the docker version it is **<u>mandatory</u>** to 
 i.e. before launch the command below:
 
 ```
-docker run -it -v /Users/Desktop/project_data:/input -v /Users/Desktop/project_data_output:/output -v ./config.json:/config.json aloa
+docker run -it -v /Users/Desktop/project_data:/input -v /Users/Desktop/project_data_output:/output -v ./config.json:/config.json aloa <options>
 ```
 config.json path section must be compiled as follows:
 ```
