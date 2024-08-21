@@ -59,7 +59,7 @@
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
-      "on_roi":false
+      "on_roi":true
    },
    "Stats":{
       "sample_type":"",
