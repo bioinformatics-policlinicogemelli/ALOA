@@ -1,6 +1,9 @@
 [![DOI](https://zenodo.org/badge/756301403.svg)](https://zenodo.org/doi/10.5281/zenodo.13353940)
 
 # ALOA (Analysis spatiaL prOfiling imAging)
+
+<p align="center"><img src="Image_readme/logo.png" width=500></p>
+
 ## Index
 - [Introduction](#introduction)
 - [Features](#features)
@@ -10,7 +13,6 @@
 - [Workflow](#workflow)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
-
 
 ## Introduction
 
