@@ -208,7 +208,7 @@ Before running ALOA, please set correctly the configuration file *config.json*.
       "normalized": [true, false]
    },
    "Map_plot":{
-      "multi_plot":[true, false],
+      "multi_plot": [true, false],
       "pheno_list":[
       	 "<Phenotype1>",
          "<Phenotype2>",
@@ -216,8 +216,8 @@ Before running ALOA, please set correctly the configuration file *config.json*.
       ]
    },
    "Distance":{
-      "save_csv":[true, false],
-      "save_img":[true, false],
+      "save_csv": [true, false],
+      "save_img": [true, false],
       "pheno_list":[
       	 "<Phenotype1>",
          "<Phenotype2>",
@@ -252,7 +252,7 @@ Before running ALOA, please set correctly the configuration file *config.json*.
          "<Phenotype1>",
          "<Phenotype2>",
          "<Phenotype1,Phenotype3+>",
-         "verbose":"" ["", 1, 2, 3]
+         "verbose": ["", 1, 2, 3]
       ],
       "algo_method":"e",
       "k":10,
@@ -269,7 +269,8 @@ Before running ALOA, please set correctly the configuration file *config.json*.
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
-      "on_roi":false
+      "save_images": [ture, false],
+      "on_roi": [ture, false]
    },
    "Stats":{
       "sample_type":["", "paired", "unpaired"],
@@ -297,7 +298,7 @@ Before running ALOA, please set correctly the configuration file *config.json*.
 * **Cluster**: specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. In config.json, under  *algo_method* section you can chosse between two algorithms for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
 *  *k* is the maximum number of clusters (default k=10). Users can choose between three clustering algorithms: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by adding in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it is not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity).
 
-* **Cross_pcf**: specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). It is also possible to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
+* **Cross_pcf**: specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). User can decide to save all images for each ROI or to extract only a summary file with the cross-PCF values (⚠️ recommended if a large number of ROI analysis) setting *save_img* true or false. It is also possible to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
 
 * **Stats**: here is possible to set parameters for statistical analysis like *sample_type* to define if the group is paired or unpaired (Default:"unpaired") and *p_adj* to set a p-value correction method between Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg (Default:Bonferroni).
 

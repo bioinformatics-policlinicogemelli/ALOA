@@ -59,6 +59,7 @@
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
+      "save_images":true,
       "on_roi":true
    },
    "Stats":{

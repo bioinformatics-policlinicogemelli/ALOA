@@ -151,7 +151,7 @@ def aloa(args, data, logfile):
     #########################################
     #          DATA REORGANIZATION          #
     #########################################
-    
+
     if args.merge or args.force:
         if args.merge:
             logger.info("|-> Merge step starting now")
@@ -196,8 +196,8 @@ def aloa(args, data, logfile):
         #########################################
         
         if args.distance or args.force:
-            check_merged(output)
             if args.distance:
+                check_merged(output)
                 logger.info("|-> Distance evaluation step starting now")
                 ro.r['source']('distance_eval.R')
                 distance = ro.globalenv['distance']

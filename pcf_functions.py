@@ -97,7 +97,7 @@ def create_output_csv(output_path_csv, C_1, C_2):
 
     return csv_path
 
-def load_point_cloud(df, output_path, C_1, C_2):
+def load_point_cloud(df, output_path, C_1, C_2, save_img=False):
     '''
     Function to generate and plot pointcloud
     Args:
@@ -127,16 +127,17 @@ def load_point_cloud(df, output_path, C_1, C_2):
         except:
             logger.warning(f'label {label} not found!')
             pass
-
-    visualisePointCloud(pc, 'Celltype', cmap='tab20',markerSize=100)
-    plt.title("Point Cloud")
     
-    plt.savefig(os.path.join( output_path, f"point_cloud.tif"), dpi=300, format="tiff", bbox_inches='tight')
-    plt.close()
+    if save_img:
+        visualisePointCloud(pc, 'Celltype', cmap='tab20',markerSize=100)
+        plt.title("Point Cloud")
+        
+        plt.savefig(os.path.join( output_path, f"point_cloud.tif"), dpi=300, format="tiff", bbox_inches='tight')
+        plt.close()
     
     return pc
 
-def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWidth=10):
+def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWidth=10, save_img=False):
     '''
     Function to evaluate and plot all pcf combination
     Args:
@@ -164,26 +165,26 @@ def all_cross_pcf(pc, output_path, roi_name, maxR=150, annulusStep=10, annulusWi
             bvals.append(b)
             pcfs.append(pcf)
     # the pcf threshold = 1 is caused by CSR (complete spatial randomness)
-    sns.set(font_scale=1.0)
-    fig, ax = plt.subplots(nrows=len(pc.labels['Celltype']['categories']), ncols=len(pc.labels['Celltype']['categories']),sharex=True,sharey=True, figsize=(20,20))
-    it = 0
-    for i,a in enumerate(pc.labels['Celltype']['categories']):
-        for j,b in enumerate(pc.labels['Celltype']['categories']):
-            ax[i,j].plot(r,pcfs[it],lw=3)
-            if i == len(pc.labels['Celltype']['categories'])-1:
-                ax[i,j].set_xlabel(b, rotation=45)
-            if j == 0:
-                ax[i,j].set_ylabel(a, rotation=45, labelpad=30)
-                #ax[i, j].yaxis.set_label_coords(-0.2, 0.5)
-            ax[i,j].set_ylim([0,10])
-            ax[i,j].axhline(1,linestyle=':',c='k',lw=3)
-            it = it + 1
-    plt.savefig(os.path.join(outpath, f"ROI_{roi_name}.tif"), dpi=300, format="tiff", bbox_inches='tight')
-    plt.close()
-
+    if save_img:
+        sns.set(font_scale=1.0)
+        fig, ax = plt.subplots(nrows=len(pc.labels['Celltype']['categories']), ncols=len(pc.labels['Celltype']['categories']),sharex=True,sharey=True, figsize=(20,20))
+        it = 0
+        for i,a in enumerate(pc.labels['Celltype']['categories']):
+            for j,b in enumerate(pc.labels['Celltype']['categories']):
+                ax[i,j].plot(r,pcfs[it],lw=3)
+                if i == len(pc.labels['Celltype']['categories'])-1:
+                    ax[i,j].set_xlabel(b, rotation=45)
+                if j == 0:
+                    ax[i,j].set_ylabel(a, rotation=45, labelpad=30)
+                    #ax[i, j].yaxis.set_label_coords(-0.2, 0.5)
+                ax[i,j].set_ylim([0,10])
+                ax[i,j].axhline(1,linestyle=':',c='k',lw=3)
+                it = it + 1
+        plt.savefig(os.path.join(outpath, f"ROI_{roi_name}.tif"), dpi=300, format="tiff", bbox_inches='tight')
+        plt.close()
     return pc
 
-def selected_PCF(C_1, C_2, pc, output_path, radiusOfInterest, maxR=150, annulusStep=10, annulusWidth=10):
+def selected_PCF(C_1, C_2, pc, output_path, radiusOfInterest, maxR=150, annulusStep=10, annulusWidth=10, save_img=False):
     '''
     Function to evaluate and plot a specific pcf combination 
     Args:
@@ -205,15 +206,16 @@ def selected_PCF(C_1, C_2, pc, output_path, radiusOfInterest, maxR=150, annulusS
     
     r, pcf,_ = pairCorrelationFunction(pc, 'Celltype', [C_1,C_2], maxR=maxR,annulusStep=annulusStep,annulusWidth=annulusWidth)
 
-    plt.figure(figsize=(15,15))
-    plt.plot(r, pcf, lw=5)
-    plt.gca().axhline(1,c='k',linestyle=':',lw=3)
-    plt.xlabel('$r$ ($\mu$m)')
-    plt.ylabel('$g_{ThE}(r)$')
-    plt.figtext(0.5, 0.95, f"PCF function: {C_1} - {C_2}", ha='center', fontsize=20, bbox=dict(facecolor='white', alpha=0.5))
+    if save_img:
+        plt.figure(figsize=(15,15))
+        plt.plot(r, pcf, lw=5)
+        plt.gca().axhline(1,c='k',linestyle=':',lw=3)
+        plt.xlabel('$r$ ($\mu$m)')
+        plt.ylabel('$g_{ThE}(r)$')
+        plt.figtext(0.5, 0.95, f"PCF function: {C_1} - {C_2}", ha='center', fontsize=20, bbox=dict(facecolor='white', alpha=0.5))
 
-    plt.savefig(os.path.join(output_path, f"PCF_function.tif"), dpi=300, format="tiff", bbox_inches='tight')
-    plt.close()
+        plt.savefig(os.path.join(output_path, f"PCF_function.tif"), dpi=300, format="tiff", bbox_inches='tight')
+        plt.close()
 
     # extracting PCF value for radiusOfInterest
     pcf_value_at_radius = None

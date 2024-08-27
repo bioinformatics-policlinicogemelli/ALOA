@@ -82,11 +82,13 @@ def main(data=[]):
                 logger.info(f"Analyzing subject: {pzt}")
 
                 pzt_output=os.path.join(g_output, pzt)
-                pathlib.Path(pzt_output).mkdir(parents=True, exist_ok=True)
-                logger.info(f"output subject folder created in '{pzt_output}' path")
-
                 comb_output=os.path.join(pzt_output,C_1.replace(" ","_")+"-"+C_2.replace(" ","_"))
-                pathlib.Path(comb_output).mkdir(parents=True, exist_ok=True)
+                
+                if data["Cross_pcf"]["save_images"]:
+                    pathlib.Path(pzt_output).mkdir(parents=True, exist_ok=True)
+                    logger.info(f"output subject folder created in '{pzt_output}' path")
+                    
+                    pathlib.Path(comb_output).mkdir(parents=True, exist_ok=True)
                 
                 pzt_path=os.path.join(input_folder, pzt)
                 pzt_roi=[f for f in os.listdir(pzt_path) if f.endswith('cell_seg_data.txt') and not f.startswith('Merge')]
@@ -114,30 +116,32 @@ def main(data=[]):
                     if C_1 not in pheno_df['Celltype'].values or C_2 not in pheno_df['Celltype'].values:
                         logger.warning(f"{C_1} or {C_2} cell types not found in 'Celltype' column of {ff}. Skip to next combination.")
                         continue
-
-                    roi_output=os.path.join(comb_output, "ROI_"+roi_name)
-                    pathlib.Path(roi_output).mkdir(parents=True, exist_ok=True)
-
-                    rad_folder=os.path.join(roi_output,"r_"+str(radiusOfInterest))
-                    pathlib.Path(rad_folder).mkdir(parents=True, exist_ok=True)
                     
-                    pc = load_point_cloud(pheno_df, rad_folder, C_1, C_2)
+                    roi_output=os.path.join(comb_output, "ROI_"+roi_name)
+                    rad_folder=os.path.join(roi_output,"r_"+str(radiusOfInterest))
+                    
+                    if data["Cross_pcf"]["save_images"]:
+                        pathlib.Path(roi_output).mkdir(parents=True, exist_ok=True)
+                        pathlib.Path(rad_folder).mkdir(parents=True, exist_ok=True)
+                    
+                    pc = load_point_cloud(pheno_df, rad_folder, C_1, C_2, data["Cross_pcf"]["save_images"])
                     
                     if data["Cross_pcf"]["all_pcf"]:
-                        pc = all_cross_pcf(pc, pzt_output, roi_name, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
+                        pc = all_cross_pcf(pc, pzt_output, roi_name, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"], data["Cross_pcf"]["save_images"])
                     
                     try:
-                        pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"])
+                        pcf_value_at_radius =selected_PCF(C_1, C_2, pc, rad_folder, radiusOfInterest, data["Cross_pcf"]["maxR"], data["Cross_pcf"]["annulusStep"], data["Cross_pcf"]["annulusWidth"],data["Cross_pcf"]["save_images"])
                     except RuntimeError:
                         logger.error("Negative areas calculated! Skip to the next ROI")
                         continue
                     
-                    tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
-                    
-                    if data["Cross_pcf"]["on_roi"]:
-                        input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image"))
+                    if data["Cross_pcf"]["save_images"]:
+                        tcm=TCM(C_1, C_2, radiusOfInterest, pc, rad_folder)
                         
-                        tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder, C_1, C_2)
+                        if data["Cross_pcf"]["on_roi"]:
+                            input_roi = os.path.join(input_folder.replace("raw_data","img_match"), os.path.basename(ff).replace("cell_seg_data.txt","composite_image"))
+                            
+                            tcm_on_roi(input_roi, tcm, radiusOfInterest, rad_folder, C_1, C_2)
 
                     count_C1 = len(pheno_df[pheno_df['Celltype'] == C_1])
                     count_C2 = len(pheno_df[pheno_df['Celltype'] == C_2])
