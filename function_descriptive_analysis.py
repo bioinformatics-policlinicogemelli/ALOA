@@ -353,6 +353,10 @@ def bar_plot(path_output_result,dict_data,type_data):
             target.remove("Total_Cells")
             values=list(sorted_target.values())[:-1]
 
+            if max(values)==0:
+                logger.error("It seems that all Phenotypes' counts are null. No barplot will be created. Check if Pheno_list in config.json is filled correctly!")
+                return()
+
             #define max value for y axes limit
             max_val=max(values)
             if max_val>max_val_y:
