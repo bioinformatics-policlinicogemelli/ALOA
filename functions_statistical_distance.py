@@ -227,12 +227,22 @@ def calculate_median_distribution(dictionary_group,groups):
 
 
 #*****************************************************************
+
+def rearrange_lists(list_item):
+
+    diff= abs(len(list_item[0])-len(list_item[1]))
+    if diff!=0:
+        list_len = [len(i) for i in list_item]
+        i=[index for index, value in enumerate(list_len) if value == min(list_len)]
+        list_item[i[0]].extend(np.full(shape=diff, fill_value=np.nan))
+        
+    return list_item
         
 def statistical_test(df,path_output_result, test, p_adj):
 
     groups=list(df["GROUP"].unique())
 
-    #array containing distance values for each cella and each subject
+    #array containing distance values for each cell and each subject
     values_distance=[]
 
     for g in groups:
@@ -241,10 +251,9 @@ def statistical_test(df,path_output_result, test, p_adj):
 
     p_value=10
     kruskal=False
-
+    
     if len(df["GROUP"].unique())==1:
         logger.warning("Only One Group - not statistical is possible")
-    
     #Case 2 groups---> Mann-Whitney test
     elif len(df["GROUP"].unique())==2 and test != "paired":
         logger.info("Running Mann-Whitney test")
@@ -252,6 +261,8 @@ def statistical_test(df,path_output_result, test, p_adj):
     
     #Case 2 groups---> Wilcoxon test (paired test)
     elif len(df["GROUP"].unique())==2 and test == "paired":
+        #check list dimensions
+        values_distance=rearrange_lists(values_distance)
         logger.info("Running Wilcoxon test")
         _, p_value = stats.wilcoxon(values_distance[0], values_distance[1], nan_policy='omit')
     
@@ -282,6 +293,18 @@ def statistical_test(df,path_output_result, test, p_adj):
 
 #*****************************************************************
 
+def rearrange_df(df):
+
+    diff= abs(len(df[df["GROUP"]==df["GROUP"].unique()[0]])-len(df[df["GROUP"]==df["GROUP"].unique()[1]]))
+    less_freq=df.GROUP.mode()[0]
+    
+    if diff!=0:
+        df_new=pd.DataFrame(index=range(diff), columns=["GROUP", "DISTANCE"])
+        df_new["GROUP"]=df[df["GROUP"]!=less_freq]["GROUP"].unique()[0]
+        df=pd.concat([df, df_new])
+        
+    return df
+
 def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adjust,test):
    
     if len(df["GROUP"].unique())!=1: 
@@ -298,6 +321,7 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adju
                     }})
         #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
         if len(df["GROUP"].unique()) ==2 and test=="paired" :
+            df=rearrange_df(df)            
             tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
