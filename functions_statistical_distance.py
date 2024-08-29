@@ -426,7 +426,7 @@ def main(data):
         p_adjust=None
     
     #test
-    test=data["Stats"]["sample_type"]
+    st_test=data["Stats"]["sample_type"]
 
     #groups of analysis
     groups=[f for f in os.listdir(root_folder) if not f.startswith('.')]
@@ -471,7 +471,7 @@ def main(data):
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue,kruskal,test=statistical_test(df_distance, path_output,test, p_adjust)
+            pvalue,kruskal,test=statistical_test(df_distance, path_output, st_test, p_adjust)
             box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
         
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
