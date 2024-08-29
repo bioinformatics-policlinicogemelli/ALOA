@@ -269,8 +269,9 @@ Before running ALOA, please set correctly the configuration file *config.json*.
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
-      "save_images": [ture, false],
-      "on_roi": [ture, false]
+      "save_images": [true, false],
+      "on_roi": [true, false],
+      "only_stat":[true, false]
    },
    "Stats":{
       "sample_type":["", "paired", "unpaired"],
@@ -295,10 +296,10 @@ Before running ALOA, please set correctly the configuration file *config.json*.
 
 * **statistical_distance**: specify the markers for which you want perform the distance statsical analysis in *pheno_from* and *pheno_to*
 
-* **Cluster**: specify the parameters for clustering analysis as *pheno_list* if you want to specify a restricted list of markers. In config.json, under  *algo_method* section you can chosse between two algorithms for the selection of k optimal: silouhette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
-*  *k* is the maximum number of clusters (default k=10). Users can choose between three clustering algorithms: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by adding in *cluster_method* a string with the cluster algorythms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm it is not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity).
+* **Cluster**: specify the parameters for clustering analysis as *pheno_list* if you want to select a restricted list of markers. In config.json, under  *algo_method* section you can choose between two algorithms for the selection of k optimal: silhouette score *s* or elbow method *e* (i.e. to use elbow method -> "algo_method":"e").
+*  *k* is the maximum number of clusters (default k=10). Users can choose between three clustering algorithms: k-means *k*, spectral *s* and prototype k-means *p*. The setting can be done by adding in *cluster_method* a string with the cluster algorithms of interest (i.e. to use k-means and spectral -> "cluster_method":"ks"). <br> ⚠️ The ideal pairing for silhouette analysis is spectral clustering, for prototype analysis it's elbow method, and k-means is suitable for both. <br> ⚠️ Spectral clustering algorithm is not recommended for large datasets (~ O(n³) time complexity and O(N²) space complexity).
 
-* **Cross_pcf**: specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about this parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). User can decide to save all images for each ROI or to extract only a summary file with the cross-PCF values (⚠️ recommended if a large number of ROI analysis) setting *save_img* true or false. It is also possible to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs settign *on_roi*
+* **Cross_pcf**: specify the parameters for cross-PCF analysis as *radiiusOfInterest*, *anulusStep* and *anulusWidth* (for more info about these parameters check [Cross-PCF](https://www.cambridge.org/core/journals/biological-imaging/article/extended-correlation-functions-for-spatial-analysis-of-multiplex-imaging-data/FB677F0E100658E36725C5B4A3944EB7)). User can decide to save all images for each ROI or to extract only a summary file with the cross-PCF values (⚠️ recommended in case of a large number of ROIs) setting *save_img* true or false. It is also possible to specify a restricted list of markers through *pheno_list*, to plot a single image with all pcfs with *all_pcf* or to plot TCM maps on ROIs setting *on_roi*. Finally, the user can perform only the statistical analysis (skipping all pcf evaluation) by setting *only_stat* to true (⚠️ this option works correctly only if a pcf output is already existing: use with caution!)
 
 * **Stats**: here is possible to set parameters for statistical analysis like *sample_type* to define if the group is paired or unpaired (Default:"unpaired") and *p_adj* to set a p-value correction method between Bonferroni, Sidak, Holm-Sidak, Benjamini-Hochberg (Default:Bonferroni).
 
@@ -417,12 +418,12 @@ python3 aloa.py -m -M
 ```
 
 ### 3. Descriptive
-This folder output contains barplots of raw and/or normalized markers counts for each patient and for each group. Merged files generated from previous section are the input files of this section. Counts are saved into csv files (*csv* folder) and visualized through **barplot** figures saved into *Barplot* folder.
+This folder output contains barplots of raw and/or normalized markers counts for each patient and for each group. Merged files generated from the previous section are the input files of this section. Counts are saved into csv files (*csv* folder) and visualized through **barplot** figures saved into *Barplot* folder.
 
 ⚠️ Two different formulas are used for count normalization in barplots (*Norm_count_patientname.csv*) and in boxplots (*all_norm_count_patientsname*). For more details see [functions ](./functions.md) section.
 
 
-When two or more groups are listed, a statistical comparison on marker counts is made to seek for significance difference between groups. Statistics is computed on raw and normalized counts. Results, saved into *Box_Plot* folder, are shown on **box plot** figures and statistical annotation is made through [TAP ](https://github.com/Discovery-Circle/tap) library.
+When two or more groups are listed, a statistical comparison on marker counts is made to seek for significant differences between groups. Statistics are computed on raw and normalized counts. Results, saved into *Box_Plot* folder, are shown on **box plot** figures and statistical annotation is made through [TAP ](https://github.com/Discovery-Circle/tap) library.
 
 ```
 Descriptive
@@ -469,7 +470,7 @@ python3 aloa.py -m -d
 ```
 A statistical analysis can be also performed if two or more groups are reported and *Distance_Statistical* folder is created to save all statistical results.
 
-⚠️ Distance values are calculated as Z-score. For more details see For more details see [functions](./functions.md)
+⚠️ Distance values are calculated as Z-score. For more details see [functions](./functions.md)
 
 
 The results are: 
@@ -552,7 +553,7 @@ Cross-PCF is implemented by the integration of J. Bull cross-PCF [scripts](https
 - **Celltype couple** folder containing three images: cross-pcf curve, topographical map, and point cloud plot. Those three images are generated for each ROI and radius chosen by the user.  When "on_roi" parameter is set to "True", topographical map is plotted on ROI and an extra image "TCM_on_ROI.tif" is generated.
 - **summary** folder containing the csv files with all the cross-pcf values for each couple of celltypes.
 
-If two or more groups are present, also a statistical analysis between cross-PCFs are evaluated and saved in **stats** folder for each radious.
+If two or more groups are present, also a statistical analysis between cross-PCFs are evaluated and saved in **stats** folder for each radius.
 
 ```
 Cross_PCF
@@ -588,9 +589,9 @@ python3 aloa.py -p
 ```
 ### 7. Imaging
 The markers' position and their distances can be plot on single chosen ROI image.
-In particular, for marker positions the output folder will be structured as:
+In particular, for marker positions, the output folder will be structured as:
 - **tif** images with markers plotted on ROIs
-- **Interactive_plots** folder containing the same images mentioned above with the possibility to select and show only specific markers by clicking on the correspondive legend dot.
+- **Interactive_plots** folder containing the same images mentioned above with the possibility to select and show only specific markers by clicking on the corresponding legend dot.
 ```
 Img_match
 ├── Interactive_plots
@@ -606,7 +607,7 @@ ALOA command to generate this output:
 ```
 python3 aloa.py -I
 ```
-For distances plot a tiff image of the distances on ROI will be create for each couple of markers.
+For distances plot a tiff image of the distances on ROI will be created for each couple of markers.
 ```
 Distance_match
 ├── sbj001_[14146,53503]_composite_image_dist_match_CD68+CD8+_Nearest_CD68+_to_each_CD8+.tif
