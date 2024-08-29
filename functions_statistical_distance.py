@@ -251,9 +251,15 @@ def statistical_test(df,path_output_result, test, p_adj):
 
     p_value=10
     kruskal=False
-    
+
+    diff= abs(len(values_distance[0])-len(values_distance[1]))
+    if len(df["GROUP"].unique())==2 and diff !=0:
+        logger.warning("The paired couple has a different observation number: Mann-Whitney test will be use!")
+        test="unpaired"
+
     if len(df["GROUP"].unique())==1:
         logger.warning("Only One Group - not statistical is possible")
+    
     #Case 2 groups---> Mann-Whitney test
     elif len(df["GROUP"].unique())==2 and test != "paired":
         logger.info("Running Mann-Whitney test")
@@ -262,7 +268,7 @@ def statistical_test(df,path_output_result, test, p_adj):
     #Case 2 groups---> Wilcoxon test (paired test)
     elif len(df["GROUP"].unique())==2 and test == "paired":
         #check list dimensions
-        values_distance=rearrange_lists(values_distance)
+        #values_distance=rearrange_lists(values_distance)
         logger.info("Running Wilcoxon test")
         _, p_value = stats.wilcoxon(values_distance[0], values_distance[1], nan_policy='omit')
     
@@ -289,7 +295,7 @@ def statistical_test(df,path_output_result, test, p_adj):
                 os.makedirs(dire)
             dunn_comparison_df.to_csv(f"{dire}/Dunn_test_results.csv",sep="\t")
         
-    return p_value,kruskal
+    return p_value,kruskal,test
 
 #*****************************************************************
 
@@ -320,8 +326,7 @@ def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adju
                         "GROUP": 'Group'
                     }})
         #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
-        if len(df["GROUP"].unique()) ==2 and test=="paired" :
-            df=rearrange_df(df)            
+        if len(df["GROUP"].unique()) ==2 and test=="paired" :          
             tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
                         "DISTANCE": r'$Distance_{z}$',
                         "GROUP": 'Group'
@@ -466,7 +471,7 @@ def main(data):
             if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-            pvalue,kruskal=statistical_test(df_distance, path_output,test, p_adjust)
+            pvalue,kruskal,test=statistical_test(df_distance, path_output,test, p_adjust)
             box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
         
             dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
@@ -503,14 +508,11 @@ def main(data):
         if len(df_distance)==0:
             logger.critical(f"No Distance for {pheno_from}--{pheno_to}")
             return()
-            
-        #df_distance=pd.read_csv(f"{path_output}/csv/df_statistical_distance_{pheno_from}_to_{pheno_to}.csv",sep="\t")
-        
 
         if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
                 dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
 
-        pvalue.kruskal=statistical_test(df_distance, path_output,test, p_adjust)
+        pvalue.kruskal,_=statistical_test(df_distance, path_output,test, p_adjust)
         box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
 
         dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
