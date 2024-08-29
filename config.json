@@ -55,12 +55,13 @@
       "pheno_list":[
       ],
       "radiusOfInterest":50,
-      "all_pcf":false, 
+      "all_pcf":true, 
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
       "save_images":true,
-      "on_roi":true
+      "on_roi":true,
+      "only_stat":false
    },
    "Stats":{
       "sample_type":"",
