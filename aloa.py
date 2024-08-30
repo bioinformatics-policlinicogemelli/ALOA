@@ -160,7 +160,9 @@ def aloa(args, data, logfile):
             try:
                 log_name_merge=merge()[0]
             except rpy2.rinterface_lib.embedded.RRuntimeError:
-                logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json is not recognized as valid path. Check if the input folder is correctly written.")
+                logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json" + 
+                                " is not recognized as valid path or if sample file was not fill correctly. "+
+                                "Check if the input folder is correctly written and check if patients ids match with raw data subfolders names.")
                 sys.exit()
             merge_log([logfile,log_name_merge])
             
