@@ -243,9 +243,14 @@ def TCM(C_1, C_2, radiusOfInterest, pc, output_path):
     tcm = topographicalCorrelationMap(pc,'Celltype',C_1,'Celltype',C_2,radiusOfInterest,maxCorrelationThreshold=5.0,kernelRadius=150,kernelSigma=50,visualiseStages=False)
 
     #plot of the TCM
+    # import matplotlib.colors as colors
+    # from matplotlib.colors import TwoslopeNorm
     plt.figure(figsize=(24,18))
+    #norm = TwoslopeNorm(vmin=tcm.min(), vcenter=0, vmax=tcm.max())
     l = int(np.ceil(np.max(np.abs([tcm.min(),tcm.max()]))))
-    plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l,origin='lower')
+    #plt.imshow(tcm,cmap='RdBu_r' ,origin='lower')
+    plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l ,origin='lower')
+    #plt.imshow(tcm,cmap='RdBu_r',norm=norm ,origin='lower')
     plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
     ax = plt.gca()
     ax.grid(False)
@@ -297,8 +302,14 @@ def tcm_on_roi(roi, tcm, r, outpath, C_1, C_2):
     plt.figure(figsize=(16,16))
     plt.imshow(background)
     
+    
+    
+    #plt.imshow(tcm,cmap='RdBu_r' ,origin='lower')
+    #plt.imshow(tcm,cmap='RdBu_r',vmin=-l,vmax=l ,origin='lower')
+    
     tcm_res = cv2.resize(tcm, (pix.shape[1], pix.shape[0]))
-    plt.imshow(tcm_res, cmap='RdBu_r',alpha=.5)
+    l = int(np.ceil(np.max(np.abs([tcm_res.min(),tcm_res.max()]))))
+    plt.imshow(tcm_res, cmap='RdBu_r',alpha=.5,vmin=-l,vmax=l)
 
     plt.colorbar(label=f'$\Gamma_{{C_1}}$ $\Gamma_{{C_2}}$')
     plt.title(f"{C_1} - {C_2} (r={r} $\mu$m)")
