@@ -45,7 +45,7 @@ def load_df(input_path, filename):
         df: Dataframe
     '''
     try:
-        df=pd.read_csv(os.path.join(input_path, filename), sep="\t")
+        df=pd.read_csv(os.path.join(input_path, filename), sep="\t", dtype=str)
     except FileNotFoundError:
         logger.critical(f"No {filename} found in {input_path}! Check if file is named properly as {filename} and if is inside input folder.")
         exit(1)
