@@ -23,6 +23,7 @@ import itertools
 import plotly.figure_factory as ff
 import plotly.express as px
 import tap
+import scikit_posthocs as sp
 
 def standardization_distance_all_image(values,paz):
     '''
@@ -229,7 +230,7 @@ def calculate_median_distribution(dictionary_group,groups):
 #*****************************************************************
 
 def rearrange_lists(list_item):
-
+    
     diff= abs(len(list_item[0])-len(list_item[1]))
     if diff!=0:
         list_len = [len(i) for i in list_item]
@@ -251,8 +252,12 @@ def statistical_test(df,path_output_result, test, p_adj):
 
     p_value=10
     kruskal=False
-
-    diff= abs(len(values_distance[0])-len(values_distance[1]))
+    
+    try:
+        diff= abs(len(values_distance[0])-len(values_distance[1]))
+    except Exception:
+        diff= len(values_distance[0])
+    
     if len(df["GROUP"].unique())==2 and diff !=0:
         logger.warning("The paired couple has a different observation number: Mann-Whitney test will be use!")
         test="unpaired"
