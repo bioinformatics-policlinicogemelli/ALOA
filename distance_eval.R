@@ -19,6 +19,8 @@ library(plotly)
 library(ggplot2)
 library(dplyr)
 library(htmlwidgets)
+library(foreach)
+vignette("nested")
 
 source("distance_match_func.R")
 source("maps_plot_functions.R")
@@ -58,6 +60,7 @@ distance=function(){
   
   #plot generation
   for (group in groups){
+    gc()
     cat("\n###################\n")
     log4r_info(paste0("Checking Group: ",group))
     
@@ -65,25 +68,30 @@ distance=function(){
     out_f_gr=file.path(out_f,group)
     dir.create(out_f_gr)
     
-    for (file in list.files(file.path(output_f,group), full.names = T)){
-      
+    list_of_files=list.files(file.path(output_f,group), full.names = T)
+    foreach(i=1:NROW(list_of_files), .combine=c) %do%{
+      file=list_of_files[i]
+    #for(file in list_of_files){  
       log4r_info(paste0("Checking ",file))
-      data<-read.delim(file)
-      
+      #data<-read.delim(file)
+      data <- data.table(fread(file, showProgress = FALSE))
+      data=data[,c("Cell.ID","Cell.X.Position", "Cell.Y.Position", "Pheno")]
+
       id=gsub(".txt","",gsub("Merge_cell_seg_data_clean_","",basename(file)))
       
       sub_data_cl=filt_data_Pheno(data, id, gene_list)
       if (length(sub_data_cl$Pheno)==0){
         next
       }
-
+      #sub_data_cl=sub_data_cl[,c("Cell.ID","Cell.X.Position", "Cell.Y.Position", "Pheno")]
+      #sub_data_cl=sub_data_cl[c("Cell.ID","Cell.X.Position", "Cell.Y.Position", "Pheno")]
       rm(data)
       
       names(sub_data_cl)[names(sub_data_cl) == "Cell.X.Position"] <- "Cell X Position"
       names(sub_data_cl)[names(sub_data_cl) == "Cell.Y.Position"] <- "Cell Y Position"
       sub_data_cl$Pheno=gsub("+","+,",sub_data_cl$Pheno, fixed = T)
       sub_data_cl$Pheno = substr(sub_data_cl$Pheno, 1, nchar(sub_data_cl$Pheno)-1)
-      
+      gc()
       log4r_info("Evaluating distances...")
       csd_with_distance = distance_eval(sub_data_cl)
       
@@ -94,6 +102,8 @@ distance=function(){
         write.table(csd_with_distance, file.path(out_f_gr,name_csv), append = FALSE, sep = "\t", dec = ".",
                     row.names = F, col.names = TRUE, quote = F)
       }
+      rm(csd_with_distance)
+      gc()
       cat("\n")
     }
   }

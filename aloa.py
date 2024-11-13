@@ -28,6 +28,7 @@ import glob
 import shutil
 import warnings
 warnings.simplefilter("ignore")
+import gc
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -152,6 +153,7 @@ def aloa(args, data, logfile):
     #          DATA REORGANIZATION          #
     #########################################
 
+    gc.collect()
     if args.merge or args.force:
         if args.merge:
             logger.info("|-> Merge step starting now")
@@ -175,7 +177,7 @@ def aloa(args, data, logfile):
         #########################################
         #             DESCRIPTIVE               #
         #########################################
-                
+        gc.collect()        
         if args.overview:
             check_merged(output)
             logger.info("|-> Descriptive step starting now\n")
@@ -184,7 +186,7 @@ def aloa(args, data, logfile):
         #########################################
         #             MAPPING PHENO             #
         ######################################### 
-        
+        gc.collect()
         if args.maps:
             check_merged(output)
             logger.info("|-> Maps plot step starting now")
@@ -196,7 +198,7 @@ def aloa(args, data, logfile):
         #########################################
         #               DISTANCE                #
         #########################################
-        
+        gc.collect()
         if args.distance or args.force:
             if args.distance:
                 check_merged(output)
