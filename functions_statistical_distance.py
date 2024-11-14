@@ -252,7 +252,11 @@ def statistical_test(df,path_output_result, test, p_adj):
     p_value=10
     kruskal=False
 
-    diff= abs(len(values_distance[0])-len(values_distance[1]))
+    try:
+        diff= abs(len(values_distance[0])-len(values_distance[1]))
+    except Exception:
+        diff= abs(len(values_distance[0]))
+        
     if len(df["GROUP"].unique())==2 and diff !=0:
         logger.warning("The paired couple has a different observation number: Mann-Whitney test will be use!")
         test="unpaired"
