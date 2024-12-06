@@ -629,4 +629,5 @@ This page lists solutions to problems you might encounter using ALOA.
 
 ## Paper reference
 To cite package ALOA in publications use:
-    Parrillo, C., et al. "ALOA, a pipeline for preliminary analysis of spatial profiling imaging data." Computational and Structural Biotechnology Journal (2024). DOI: [10.1038/s41467-023-37822-0](https://doi.org/10.1016/j.csbj.2024.11.029)
+
+Parrillo, C., et al. "ALOA, a pipeline for preliminary analysis of spatial profiling imaging data." Computational and Structural Biotechnology Journal (2024). DOI: [10.1038/s41467-023-37822-0](https://doi.org/10.1016/j.csbj.2024.11.029)
