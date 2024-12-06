@@ -13,6 +13,7 @@
 - [Workflow](#workflow)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
+- 
 
 ## Introduction
 
@@ -626,3 +627,6 @@ This page lists solutions to problems you might encounter using ALOA.
   To do so: open Docker app, go to Settings (engine icon on the upper-right panel), go to Resources, increase CPUs and Memory. Apply & restart.
 - R library "data.table" not found when using Local version. Please try to install data.table R library by yourself. Close and restart R before running ALOA.
 
+## Paper reference
+To cite package ALOA in publications use:
+    Parrillo, C., et al. "ALOA, a pipeline for preliminary analysis of spatial profiling imaging data." Computational and Structural Biotechnology Journal (2024). DOI: [10.1038/s41467-023-37822-0](https://doi.org/10.1016/j.csbj.2024.11.029)
