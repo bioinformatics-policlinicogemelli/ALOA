@@ -13,7 +13,7 @@
 - [Workflow](#workflow)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
-- 
+- [Paper reference](#paper-reference)
 
 ## Introduction
 
