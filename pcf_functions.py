@@ -366,7 +366,6 @@ def stats_eval(df, groups, test, p_adj):
         _, p_value = kruskal(*[v for v in df.values.T], nan_policy='omit')
     
         #post-hoc test
-        p_value=.04
         if p_value<.05:
             logger.info("Running Dull post-hoc test")
             #data=[v for v in values_distance]
