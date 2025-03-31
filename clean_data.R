@@ -90,27 +90,46 @@ clean=function(){
       if (length(pheno_list)>1){
         #seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
         
-        seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
-        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
-        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("others",each=length(pheno_list)),collapse=","))
-        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
-        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("Other",each=length(pheno_list)),collapse=","))
-        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
+        # Define patterns to remove
+        patterns_to_remove <- c("other", "OTHER", "others", "OTHERS", "Other")
+
+        # Remove exact matches from dataset
+        seg_clean <- subset(seg_data, !seg_data$Pheno %in% sapply(patterns_to_remove, function(x) str_c(rep(x, each = length(pheno_list)), collapse = ",")))
+
+        # Remove occurrences of patterns within the Pheno column
+        for (pattern in patterns_to_remove) {
+          seg_clean$Pheno <- gsub(paste0("[, ]*", pattern, "[, ]*"), "", seg_clean$Pheno, ignore.case = TRUE)
+        }
+
+        # Remove remaining commas and trim whitespace
+        seg_clean$Pheno <- gsub(",", "", seg_clean$Pheno, fixed = TRUE)
+        seg_clean$Pheno <- trimws(seg_clean$Pheno)
+
+        # Filter out empty or NA values
+        to_exclude <- c("", "other")
+        seg_clean <- seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno %in% to_exclude), ]
+
+        # seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
+        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
+        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("others",each=length(pheno_list)),collapse=","))
+        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
+        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("Other",each=length(pheno_list)),collapse=","))
+        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
         
-        seg_clean$Pheno=gsub("OTHERS","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub("others,","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub("OTHER","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub("other,","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub("Other","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub(",OTHERS","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub(",others","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub(",OTHER","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub(",other","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub("Other,","",seg_clean$Pheno)
-        seg_clean$Pheno=gsub(",Other","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("OTHERS","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("others,","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("OTHER","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("other,","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("Other","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub(",OTHERS","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub(",others","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub(",OTHER","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub(",other","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub("Other,","",seg_clean$Pheno)
+        # seg_clean$Pheno=gsub(",Other","",seg_clean$Pheno)
         
-        seg_clean$Pheno=gsub(",","",seg_clean$Pheno, fixed = T)
-        seg_clean=seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno=="" | seg_clean$Pheno=="other"), ]
+        # seg_clean$Pheno=gsub(",","",seg_clean$Pheno, fixed = T)
+        # seg_clean=seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno=="" | seg_clean$Pheno=="other"), ]
         
       }else if ((length(pheno_list)==1) & "Phenotype" %in% pheno_list){
         seg_data$Pheno=seg_data$Phenotype

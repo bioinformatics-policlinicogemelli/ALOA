@@ -126,7 +126,7 @@ def check_merged(output):
         logger.critical("No Merged_clean folder found!")
         sys.exit()
     #check if folder is empty
-    _, _, files = os.walk(os.path.join(output, "Merged_clean"))
+    _, _, *files = os.walk(os.path.join(output, "Merged_clean"))
     if not files:
         logger.critical("Merged_clean folder is empty!")
         sys.exit()
@@ -179,7 +179,7 @@ def aloa(args, data, logfile):
         #########################################
         gc.collect()        
         if args.overview:
-            #check_merged(output)
+            check_merged(output)
             logger.info("|-> Descriptive step starting now\n")
             descriptive(data)
             
@@ -190,7 +190,7 @@ def aloa(args, data, logfile):
         ######################################### 
         gc.collect()
         if args.maps:
-            #check_merged(output)
+            check_merged(output)
             logger.info("|-> Maps plot step starting now")
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
@@ -203,7 +203,7 @@ def aloa(args, data, logfile):
         gc.collect()
         if args.distance or args.force:
             if args.distance:
-                #check_merged(output)
+                check_merged(output)
                 logger.info("|-> Distance evaluation step starting now")
                 ro.r['source']('distance_eval.R')
                 distance = ro.globalenv['distance']
@@ -219,7 +219,7 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.clustering:
-            #check_merged(output)
+            check_merged(output)
             logger.info("|-> Clustering step starting now")
             clust(data)
            
