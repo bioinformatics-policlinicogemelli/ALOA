@@ -94,16 +94,20 @@ clean=function(){
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("others",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
+        seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("Other",each=length(pheno_list)),collapse=","))
         seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
         
         seg_clean$Pheno=gsub("OTHERS","",seg_clean$Pheno)
         seg_clean$Pheno=gsub("others,","",seg_clean$Pheno)
         seg_clean$Pheno=gsub("OTHER","",seg_clean$Pheno)
         seg_clean$Pheno=gsub("other,","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub("Other","",seg_clean$Pheno)
         seg_clean$Pheno=gsub(",OTHERS","",seg_clean$Pheno)
         seg_clean$Pheno=gsub(",others","",seg_clean$Pheno)
         seg_clean$Pheno=gsub(",OTHER","",seg_clean$Pheno)
         seg_clean$Pheno=gsub(",other","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub("Other,","",seg_clean$Pheno)
+        seg_clean$Pheno=gsub(",Other","",seg_clean$Pheno)
         
         seg_clean$Pheno=gsub(",","",seg_clean$Pheno, fixed = T)
         seg_clean=seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno=="" | seg_clean$Pheno=="other"), ]

@@ -164,7 +164,7 @@ def aloa(args, data, logfile):
             except rpy2.rinterface_lib.embedded.RRuntimeError:
                 logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json" + 
                                 " is not recognized as valid path or if sample file was not fill correctly. "+
-                                "Check if the input folder is correctly written and check if patients ids match with raw data subfolders names.")
+                                "Check if the input folder is correctly written and check if patients IDs match with raw data subfolders names.")
                 sys.exit()
             merge_log([logfile,log_name_merge])
             
@@ -179,16 +179,18 @@ def aloa(args, data, logfile):
         #########################################
         gc.collect()        
         if args.overview:
-            check_merged(output)
+            #check_merged(output)
             logger.info("|-> Descriptive step starting now\n")
             descriptive(data)
+            
+            #inserire funzione per violin
         
         #########################################
         #             MAPPING PHENO             #
         ######################################### 
         gc.collect()
         if args.maps:
-            check_merged(output)
+            #check_merged(output)
             logger.info("|-> Maps plot step starting now")
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
@@ -201,7 +203,7 @@ def aloa(args, data, logfile):
         gc.collect()
         if args.distance or args.force:
             if args.distance:
-                check_merged(output)
+                #check_merged(output)
                 logger.info("|-> Distance evaluation step starting now")
                 ro.r['source']('distance_eval.R')
                 distance = ro.globalenv['distance']
@@ -217,7 +219,7 @@ def aloa(args, data, logfile):
         ######################################### 
         
         if args.clustering:
-            check_merged(output)
+            #check_merged(output)
             logger.info("|-> Clustering step starting now")
             clust(data)
            
