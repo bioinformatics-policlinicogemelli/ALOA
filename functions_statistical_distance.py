@@ -23,6 +23,7 @@ import itertools
 import plotly.figure_factory as ff
 import plotly.express as px
 import tap
+import scikit_posthocs as sp
 
 def standardization_distance_all_image(values,paz):
     '''
@@ -297,7 +298,8 @@ def statistical_test(df,path_output_result, test, p_adj):
             dire =os.path.join(path_output_result,"distance_Dunn_Test")
             if not os.path.exists(dire):
                 os.makedirs(dire)
-            dunn_comparison_df.to_csv(f"{dire}/Dunn_test_results.csv",sep="\t")
+            #dunn_comparison_df.to_csv(f"{dire}/Dunn_test_results.csv",sep="\t")
+            dunn_comparison_df.to_csv(os.path.join(dire,"Dunn_test_results.csv"),sep="\t")
         
     return p_value,kruskal,test
 

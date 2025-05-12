@@ -88,24 +88,16 @@ clean=function(){
       pheno_list=colnames(seg_data[ , grepl( "Pheno" , names( seg_data ) ) ])
       pheno_list=pheno_list[pheno_list != "Pheno"]
       if (length(pheno_list)>1){
-        #seg_data$Pheno=apply( seg_data[ ,  pheno_list] , 1 , paste , collapse = "," )
         
-        # Define patterns to remove
         patterns_to_remove <- c("other", "OTHER", "others", "OTHERS", "Other")
-
-        # Remove exact matches from dataset
         seg_clean <- subset(seg_data, !seg_data$Pheno %in% sapply(patterns_to_remove, function(x) str_c(rep(x, each = length(pheno_list)), collapse = ",")))
 
-        # Remove occurrences of patterns within the Pheno column
         for (pattern in patterns_to_remove) {
           seg_clean$Pheno <- gsub(paste0("[, ]*", pattern, "[, ]*"), "", seg_clean$Pheno, ignore.case = TRUE)
         }
 
-        # Remove remaining commas and trim whitespace
         seg_clean$Pheno <- gsub(",", "", seg_clean$Pheno, fixed = TRUE)
         seg_clean$Pheno <- trimws(seg_clean$Pheno)
-
-        # Filter out empty or NA values
         to_exclude <- c("", "other")
         seg_clean <- seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno %in% to_exclude), ]
 

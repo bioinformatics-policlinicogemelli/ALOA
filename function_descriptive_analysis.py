@@ -243,7 +243,7 @@ def create_summury_file(path_output_results,dictionary_count,type_data):
         for patient,phenos in patients.items():
             logger.info(f"Subject: {patient}")
 
-            with open(f'{dire}/{type_data}_count_{patient}.csv',"w") as f:
+            with open(os.path.join(dire, type_data+"_count_"+patient+".csv"),"w") as f:
                 f.write(f"Patient\tPheno\tCount_{type_data}\n")
 
                 #----> aggiunta del log per l'inizio scrittura del file
@@ -352,10 +352,9 @@ def bar_plot(path_output_result,dict_data,type_data):
             #removing Total_Cells as pheno and its value
             target.remove("Total_Cells")
             values=list(sorted_target.values())[:-1]
-
-            if max(values)==0:
-                logger.error("It seems that all Phenotypes' counts are null. No barplot will be created. Check if Pheno_list in config.json is filled correctly!")
-                return()
+            # if max(values)==0:
+            #     logger.error("It seems that all Phenotypes' counts are null. No barplot will be created. Check if Pheno_list in config.json is filled correctly!")
+            #     return()
 
             #define max value for y axes limit
             max_val=max(values)
@@ -372,7 +371,7 @@ def bar_plot(path_output_result,dict_data,type_data):
         fig.update_yaxes(range=[0,(math.log(max_val_y,10)+1.0)])
 
         # saved figure in jpeg format
-        fig.write_image(f'{dire}/Bar_Plot_{type_data}.jpeg',scale=6)
+        fig.write_image(os.path.join(dire,"Bar_Plot_"+type_data+".jpeg"),scale=6)
         
 #******************************************************
 
@@ -545,7 +544,7 @@ def create_comparison_box_plot(path_output_result,data_all,p_adjust,test,type_da
     lables=sorted(list(data_all["pheno"].unique()))
 
     filename=os.path.join(path_output_result,"Box Plots","box_plot_comparison_"+type_data+".jpeg")
-
+   
     if len(hue_order)==2 and test!="paired":
         logger.info(f"Found {len(hue_order)} groups: Start Mann-Whitney Test")
         try:
