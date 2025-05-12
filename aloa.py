@@ -28,6 +28,7 @@ import glob
 import shutil
 import warnings
 warnings.simplefilter("ignore")
+import gc
 
 from function_descriptive_analysis import main as descriptive
 from functions_statistical_distance import main as stat_dist
@@ -125,7 +126,7 @@ def check_merged(output):
         logger.critical("No Merged_clean folder found!")
         sys.exit()
     #check if folder is empty
-    _, _, files = os.walk(os.path.join(output, "Merged_clean"))
+    _, _, *files = os.walk(os.path.join(output, "Merged_clean"))
     if not files:
         logger.critical("Merged_clean folder is empty!")
         sys.exit()
@@ -152,6 +153,7 @@ def aloa(args, data, logfile):
     #          DATA REORGANIZATION          #
     #########################################
 
+    gc.collect()
     if args.merge or args.force:
         if args.merge:
             logger.info("|-> Merge step starting now")
@@ -162,7 +164,7 @@ def aloa(args, data, logfile):
             except rpy2.rinterface_lib.embedded.RRuntimeError:
                 logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json" + 
                                 " is not recognized as valid path or if sample file was not fill correctly. "+
-                                "Check if the input folder is correctly written and check if patients ids match with raw data subfolders names.")
+                                "Check if the input folder is correctly written and check if patients IDs match with raw data subfolders names.")
                 sys.exit()
             merge_log([logfile,log_name_merge])
             
@@ -175,16 +177,18 @@ def aloa(args, data, logfile):
         #########################################
         #             DESCRIPTIVE               #
         #########################################
-                
+        gc.collect()        
         if args.overview:
             check_merged(output)
             logger.info("|-> Descriptive step starting now\n")
             descriptive(data)
+            
+            #inserire funzione per violin
         
         #########################################
         #             MAPPING PHENO             #
         ######################################### 
-        
+        gc.collect()
         if args.maps:
             check_merged(output)
             logger.info("|-> Maps plot step starting now")
@@ -196,7 +200,7 @@ def aloa(args, data, logfile):
         #########################################
         #               DISTANCE                #
         #########################################
-        
+        gc.collect()
         if args.distance or args.force:
             if args.distance:
                 check_merged(output)
