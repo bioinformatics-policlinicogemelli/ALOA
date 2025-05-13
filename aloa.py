@@ -128,8 +128,10 @@ def check_merged(output):
     #check if folder is empty
     _, _, *files = os.walk(os.path.join(output, "Merged_clean"))
     if not files:
-        logger.critical("Merged_clean folder is empty!")
-        sys.exit()
+         _, fold, *files = os.walk(os.path.join(output, "Merged_clean"))
+         if not fold:
+            logger.critical("Merged_clean folder is empty!")
+            sys.exit()
         
 
 #*****************************************************************
