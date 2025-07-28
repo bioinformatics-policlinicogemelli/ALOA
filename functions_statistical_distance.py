@@ -24,6 +24,27 @@ import plotly.figure_factory as ff
 import plotly.express as px
 import tap
 import scikit_posthocs as sp
+import concurrent.futures
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from tqdm import tqdm
+
+def process_pheno_pair(pheno, data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore):
+    pheno_from, pheno_to = pheno
+    logger.info(f"Analysis for distance from {pheno_from} to {pheno_to}")
+    try:
+        dict_distance = prepare_dataframe_distances(root_folder, pheno_from, pheno_to)
+        grade_major, dict_median = calculate_median_distribution(dict_distance, groups)
+        df_distance = create_df_distances(dict_distance, path_output, pheno_from, pheno_to, save_csv_zetascore)
+        if len(df_distance) == 0:
+            return (pheno_from, pheno_to, None, None, None)
+        pvalue, kruskal, test = statistical_test(df_distance, path_output, st_test, p_adjust)
+        box_plots_distances(path_output, df_distance, pheno_from, pheno_to, kruskal, p_adjust, test)
+        if plot_distance:
+            plot_distance_curve(path_output, df_distance, pheno_from, pheno_to, pvalue)
+        return (pheno_from, pheno_to, pvalue, grade_major, dict_median)
+    except Exception as e:
+        logger.error(f"Error in phenotype pair {pheno_from}-{pheno_to}: {e}")
+        return (pheno_from, pheno_to, None, None, None)
 
 def standardization_distance_all_image(values,paz):
     '''
@@ -445,99 +466,57 @@ def main(data):
     if os.path.exists(path_stats_file):
         os.remove(path_stats_file)
 
+    dict_statistical_result = {}
     #condition if there is empty pheno_from and/or a pheno_to of interest and phenolist is empty
     if (pheno_from=="" or pheno_to=="") and len(pheno_interested)==0:
         logger.critical("It seems that pheno_list in Phenotypes config.json section was populated nor pheno_from and pheno_from were filled correctly (check if both are filled!)")
         return()
     #condition if there is a pheno_from and a pheno_to of interest
-    elif pheno_from=="" and pheno_to=="":
+    if pheno_from=="" and pheno_to=="":
         logger.info(f"No specific phenotype was selected. Proceding to evaluate every combination of the phenotypes {pheno_interested}")
         
-        dict_statistical_result={}
-
         #permutation of phenotype
-        for pheno in itertools.permutations(pheno_interested,2):
-            pheno_from=pheno[0]
-            pheno_to=pheno[1]
+        phenos_to_run = list(itertools.permutations(pheno_interested, 2))
 
-            logger.info(f"Analysis for distance from {pheno_from} to {pheno_to}")
-        
-            dict_distance=prepare_dataframe_distances(root_folder,pheno_from,pheno_to)
-
-            grade_major,dict_median=calculate_median_distribution(dict_distance,groups)
-           
-            df_distance=create_df_distances(dict_distance,path_output,pheno_from,pheno_to,save_csv_zetascore)
-
-            if len(df_distance)==0:
-                logger.warning(f"No Distance for {pheno_from}--{pheno_to}")
-                continue
-            
-            
-            
-            if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
-                dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
-
-            pvalue,kruskal,test=statistical_test(df_distance, path_output, st_test, p_adjust)
-            box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
-        
-            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
-            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
-            dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
-
-            if plot_distance:
-                plot_distance_curve(path_output,df_distance,pheno_from,pheno_to,pvalue)
-
-
-        with open(path_stats_file,"w") as f:
-            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Median_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
-            for pheno, stat in dict_statistical_result.items():
-                pheno=pheno.split("to")
-                pheno_from=pheno[0]
-                pheno_to=pheno[1]
-                p_value=stat["p_value"]
-                grade_major=stat['grade_major']
-                f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
-    
-
-    #if there are a pheno_from and a pheno-to of interest
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            futures = [
+                executor.submit(process_pheno_pair, pheno, data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
+                for pheno in phenos_to_run
+            ]
+            for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="Processing pairs"):
+                pheno_from, pheno_to, pvalue, grade_major, dict_median = future.result()
+                if pvalue is None:
+                    continue
+                dict_statistical_result[f"{pheno_from}to{pheno_to}"] = {
+                    "p_value": pvalue,
+                    "grade_major": grade_major,
+                    "median": dict_median,
+                }
     else:
         logger.info(f"pheno from {pheno_from} and pheno to {pheno_to} selected")
-        dict_statistical_result={}
-
         if pheno_from not in pheno_interested or pheno_to not in pheno_interested:
-            logger.critical(f"Name error inserted in pheno from and/or pheno to ({pheno_from}---{pheno_to})")
+            logger.critical("Invalid pheno_from or pheno_to")
             return()
-
-        dict_distance=prepare_dataframe_distances(root_folder,pheno_from,pheno_to)
-        grade_major,dict_median=calculate_median_distribution(dict_distance,groups)
-        df_distance=create_df_distances(dict_distance,path_output,pheno_from,pheno_to,save_csv_zetascore)
-        if len(df_distance)==0:
-            logger.critical(f"No Distance for {pheno_from}--{pheno_to}")
-            return()
-
-        if not f"{pheno_from}to{pheno_to}" in dict_statistical_result.keys():
-                dict_statistical_result[f"{pheno_from}to{pheno_to}"]={}
-
-        pvalue.kruskal,_=statistical_test(df_distance, path_output,test, p_adjust)
-        box_plots_distances(path_output,df_distance,pheno_from,pheno_to,kruskal,p_adjust,test)
-
-        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["p_value"]=pvalue
-        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["grade_major"]=grade_major
-        dict_statistical_result[f"{pheno_from}to{pheno_to}"]["median"]=dict_median
-
-        if plot_distance:
-                plot_distance_curve(path_output,df_distance,pheno_from,pheno_to,pvalue)
         
-        with open(path_stats_file,"w") as f:
-            f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Meadian_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
-            for pheno, stat in dict_statistical_result.items():
-                pheno=pheno.split("to")
-                pheno_from=pheno[0]
-                pheno_to=pheno[1]
-                p_value=stat["p_value"]
-                grade_major=stat['grade_major']
-                f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
-
+        pheno_result = process_pheno_pair((pheno_from, pheno_to), data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
+        pheno_from, pheno_to, pvalue, grade_major, dict_median = pheno_result
+        if pvalue is not None:
+            dict_statistical_result[f"{pheno_from}to{pheno_to}"] = {
+                "p_value": pvalue,
+                "grade_major": grade_major,
+                "median": dict_median,
+            }
+        
+    with open(path_stats_file,"w") as f:
+        f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Median_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+        for pheno, stat in dict_statistical_result.items():
+            pheno=pheno.split("to")
+            pheno_from=pheno[0]
+            pheno_to=pheno[1]
+            p_value=stat["p_value"]
+            grade_major=stat['grade_major']
+            f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
+    
     logger.info("End statistical analysis!")      
     return()
     
