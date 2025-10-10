@@ -63,7 +63,7 @@ clean=function(){
   }
 
   #### Data merge
-  for (g in group){ #for loop on dataframe row (cells)
+  for (g in group){
     
     cat("\n#############################\n")
     log4r_info(paste0("Group: ",g))
@@ -101,36 +101,12 @@ clean=function(){
         to_exclude <- c("", "other")
         seg_clean <- seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno %in% to_exclude), ]
 
-        # seg_clean=subset(seg_data,seg_data$Pheno!=str_c(rep("other",each=length(pheno_list)),collapse=","))
-        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHER",each=length(pheno_list)),collapse=","))
-        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("others",each=length(pheno_list)),collapse=","))
-        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("OTHERS",each=length(pheno_list)),collapse=","))
-        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep("Other",each=length(pheno_list)),collapse=","))
-        # seg_clean=subset(seg_clean,seg_clean$Pheno!=str_c(rep(",",each=length(pheno_list)-1),collapse=""))
-        
-        # seg_clean$Pheno=gsub("OTHERS","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub("others,","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub("OTHER","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub("other,","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub("Other","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub(",OTHERS","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub(",others","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub(",OTHER","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub(",other","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub("Other,","",seg_clean$Pheno)
-        # seg_clean$Pheno=gsub(",Other","",seg_clean$Pheno)
-        
-        # seg_clean$Pheno=gsub(",","",seg_clean$Pheno, fixed = T)
-        # seg_clean=seg_clean[!(is.na(seg_clean$Pheno) | seg_clean$Pheno=="" | seg_clean$Pheno=="other"), ]
-        
       }else if ((length(pheno_list)==1) & "Phenotype" %in% pheno_list){
         seg_data$Pheno=seg_data$Phenotype
         
         seg_clean=subset(seg_data, seg_data$Pheno!="other" & seg_data$Pheno!="OTHER" & seg_data$Pheno!="others" & seg_data$Pheno!="OTHERS")
       }
       
-      
-
       log4r_info(paste0("All empty/only other Row removed: ", nrow(seg_data)-nrow(seg_clean), " of ", nrow(seg_data)))
       
       log4r_info(paste0("Writing ", "Merge_cell_seg_data_clean_",id,".txt file..."))
@@ -138,7 +114,27 @@ clean=function(){
       
     }
   }
-  log4r_info("End cleaning merge step!")
+
+  #### 🔧 Normalizzazione finale di tutti i file in Merged_clean
+  log4r_info("Normalizing column names and data types in Merged_clean...")
+  
+  all_files <- list.files(file.path(output_folder,"Merged_clean"), recursive = TRUE, full.names = TRUE, pattern = "\\.txt$")
+  
+  for (f in all_files){
+    df <- read.csv(f, sep="\t", check.names = FALSE)
+    
+    # Normalizza colonne
+    colnames(df) <- gsub("\\.{2,}", ".", colnames(df))
+    colnames(df) <- trimws(colnames(df))
+    
+    # Converte int → numeric
+    df[] <- lapply(df, function(x) if (is.integer(x)) as.numeric(x) else x)
+    
+    # Sovrascrive il file
+    write.table(df, f, sep="\t", row.names=FALSE, quote=FALSE)
+  }
+
+  log4r_info("End cleaning step!")
   cat("\n")
   
   return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))

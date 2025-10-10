@@ -27,36 +27,111 @@ import scikit_posthocs as sp
 import concurrent.futures
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
 
 def process_pheno_pair(pheno, data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore):
     pheno_from, pheno_to = pheno
     logger.info(f"Analysis for distance from {pheno_from} to {pheno_to}")
+    pvalues_dict = {}  # dizionario per annotazioni barplot
     try:
         dict_distance = prepare_dataframe_distances(root_folder, pheno_from, pheno_to)
         grade_major, dict_median = calculate_median_distribution(dict_distance, groups)
         df_distance = create_df_distances(dict_distance, path_output, pheno_from, pheno_to, save_csv_zetascore)
         if len(df_distance) == 0:
-            return (pheno_from, pheno_to, None, None, None)
+            return (pheno_from, pheno_to, None, grade_major, dict_median, pvalues_dict)
+
+        # Statistica
         pvalue, kruskal, test = statistical_test(df_distance, path_output, st_test, p_adjust)
+
+        # Popola dizionario pvalues per i singoli fenotipi
+        pvalues_dict[pheno_from] = pvalue
+
+        # Boxplot
         box_plots_distances(path_output, df_distance, pheno_from, pheno_to, kruskal, p_adjust, test)
+
+
+
+        # Barplot per confronto specifico
+        df_median_group = df_distance.groupby("GROUP")["DISTANCE"].median().reset_index()
+        fig_bar = px.bar(
+            df_median_group,
+            x="GROUP", y="DISTANCE", color="GROUP",
+            title=f"Median distance barplot: {pheno_from} → {pheno_to}"
+        )
+        bar_dir = os.path.join(path_output, "BarPlots_all_comparisons")
+        os.makedirs(bar_dir, exist_ok=True)
+        fig_bar.write_image(os.path.join(bar_dir, f"barplot_{pheno_from}_to_{pheno_to}.png"))
+
+
+
+        # Curva distanza
         if plot_distance:
             plot_distance_curve(path_output, df_distance, pheno_from, pheno_to, pvalue)
-        return (pheno_from, pheno_to, pvalue, grade_major, dict_median)
+
+        return (pheno_from, pheno_to, pvalue, grade_major, dict_median, pvalues_dict)
+
     except Exception as e:
         logger.error(f"Error in phenotype pair {pheno_from}-{pheno_to}: {e}")
-        return (pheno_from, pheno_to, None, None, None)
+        return (pheno_from, pheno_to, None, None, None, pvalues_dict)
+
+ 
+
+
+def plot_heatmap_and_bar(df_all, barplot_dir, phenotypes, pvalues_dict=None):
+    """
+    Crea heatmap NxN delle mediane delle distanze tra fenotipi,
+    separate per gruppo, così da confrontare le stesse distanze tra gruppi.
+    """
+    # Assicurati che la cartella di output esista
+    os.makedirs(barplot_dir, exist_ok=True)
+
+    groups = df_all["GROUP"].unique()
+    n_groups = len(groups)
+
+    # Determina numero di righe/colonne per i subplot (approssimativamente quadrato)
+    n_cols = min(3, n_groups)  # massimo 3 colonne per figura
+    n_rows = (n_groups + n_cols - 1) // n_cols
+
+    fig = make_subplots(
+        rows=n_rows, cols=n_cols,
+        subplot_titles=[f"Group: {g}" for g in groups]
+    )
+
+    row, col = 1, 1
+    for i, group in enumerate(groups):
+        df_group = df_all[df_all["GROUP"] == group]
+        df_pivot = df_group.pivot_table(
+            index="PHENO", columns="PHENO_TO", values="DISTANCE", aggfunc="median"
+        )
+
+        heatmap = go.Heatmap(
+            z=df_pivot.values,
+            x=df_pivot.columns,
+            y=df_pivot.index,
+            colorscale="RdBu",
+            colorbar=dict(title="Median Distance"),
+        )
+
+        fig.add_trace(heatmap, row=row, col=col)
+
+        col += 1
+        if col > n_cols:
+            col = 1
+            row += 1
+
+    fig.update_layout(
+        height=300 * n_rows, width=400 * n_cols,
+        title_text="Median distance heatmap (NxN phenotypes) per group",
+    )
+
+    fig.write_image(os.path.join(barplot_dir, "heatmap_NxN_by_group.png"))
+
+
+
 
 def standardization_distance_all_image(values,paz):
-    '''
-    function to calculate z-score from distance raw count (distance value-mean(distances)/standard deviation))
-    Parameters
-    ----
-    values : array
-    paz : str
-
-    Return
-    ----
-    '''
     if len(values)<2:
         logger.info(f"only one or less distance for {paz}")
         return [],0,0
@@ -74,16 +149,6 @@ def standardization_distance_all_image(values,paz):
 #*****************************************************************
 
 def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
-    '''
-    function to create a dictionary with zeta score values for each group
-    PARAMETERS
-    ----
-    root_folder:str
-    pheno_from:str
-    pheno_to:str
-    ----
-    '''
-
     DICT_DISTANCES = dict()
 
     for group in [f for f in os.listdir(root_folder) if not f.startswith('.')]:
@@ -98,7 +163,6 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
             paz=file.replace("_Distance.txt","")
             file_path = os.path.join(root_folder, group, file)
 
-        #header evaluation
             df = pl.scan_csv(file_path,separator="\t")
             df_columns = df.columns
 
@@ -114,7 +178,6 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
                 logger.warning(f"{pheno_to} not present as Distance_to for {paz}")
                 continue
 
-            #search fot pheno from value
             real_pheno_from = None
             set_pheno_from=set(pheno_from.split(","))
 
@@ -138,7 +201,6 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
                 logger.warning(f"{pheno_from} not present in 'Phenotype' column for {paz}")
                 continue
 
-            #get data
             df_filtered = pl.scan_csv(
                     file_path,
                     separator="\t",
@@ -148,13 +210,20 @@ def prepare_dataframe_distances(root_folder,pheno_from,pheno_to):
                 .filter(pl.col("Phenotype") == real_pheno_from) \
                 .select([real_pheno_to])
             
-            
-            values = list(map(lambda x: float(x),df_filtered.collect()[real_pheno_to].to_list()))
-            values = [item for item in values if not(math.isnan(item)) == True]
+            raw_values = df_filtered.collect()[real_pheno_to].to_list()
+            values = []
+            for v in raw_values:
+                try:
+                    val = float(v)
+                    if not math.isnan(val):
+                        values.append(val)
+                except (ValueError, TypeError):
+                    logger.warning(f"Valore non numerico '{v}' trovato in {paz}, colonna {real_pheno_to} → scartato")
+                    continue
 
             try:
                 values_standard,_,_= standardization_distance_all_image(values,paz)
-                DICT_DISTANCES[group] += values_standard
+                DICT_DISTANCES[group] += [(paz, val) for val in values_standard]
             except:
                 continue
 
@@ -195,45 +264,55 @@ def create_output_dir(path_output_results):
                 os.rmdir(direct_path)
 
 #*****************************************************************
-                
-def create_df_distances(DICT_DISTANCES,path_output,pheno_from,pheno_to,save_zetascore=False):
-    ##FIXME Metterlo come opzione se si vuole salvare il file csv
-   
+def create_df_distances(DICT_DISTANCES, path_output, pheno_from, pheno_to, save_zetascore=False):
     pre_df = []
-    for k, v in DICT_DISTANCES.items():
-        for e in v:
-            pre_df.append((k, e))
+    for group, values in DICT_DISTANCES.items():
+        for paz, val in values:
+            pre_df.append((group, paz, val))
 
-    df = pd.DataFrame(pre_df, columns=["GROUP", "DISTANCE"])
-    if not os.path.exists(path_output):
-        os.mkdir(path_output)
-        df.to_csv(path_output, sep="\t",index=False)
-    if len (df)!=0 and save_zetascore:
-        direc=os.path.join(path_output,"csv")
-        if not os.path.exists(direc):
-            os.makedirs(direc)
-            df.to_csv(os.path.join(direc, "df_statistical_distance_"+pheno_from+"_to_"+pheno_to+".csv"), sep="\t",index=False)
-        df.to_csv(os.path.join(direc, "df_statistical_distance_"+pheno_from+"_to_"+pheno_to+".csv"), sep="\t",index=False)
+    df = pd.DataFrame(pre_df, columns=["GROUP", "PAZ", "DISTANCE"])
 
+    # 📂 nuova sotto-cartella "Dataframes"
+    df_dir = os.path.join(path_output, "Dataframes")
+    os.makedirs(df_dir, exist_ok=True)
+
+    # 1. salva tutte le cellule
+    full_csv = os.path.join(df_dir, f"df_all_samples_{pheno_from}_to_{pheno_to}.csv")
+    df.to_csv(full_csv, sep="\t", index=False)
+
+    # 2. salva mediana per paziente
+    if len(df) > 0:
+        df_patient = df.groupby(["GROUP", "PAZ"], as_index=False)["DISTANCE"].median()
+        patient_csv = os.path.join(df_dir, f"df_per_patient_{pheno_from}_to_{pheno_to}.csv")
+        df_patient.to_csv(patient_csv, sep="\t", index=False)
+
+    # 3. opzionale: salvataggio storico
+    if len(df) != 0 and save_zetascore:
+        dire = os.path.join(df_dir, "csv")
+        os.makedirs(dire, exist_ok=True)
+        df.to_csv(os.path.join(dire, f"df_statistical_distance_{pheno_from}_to_{pheno_to}.csv"), sep="\t", index=False)
     else:
         logger.warning(f"Dataframe is empty for distance from {pheno_from} to {pheno_to}")
 
     return df
 
+
 #*****************************************************************
 
 def calculate_median_distribution(dictionary_group,groups):
-    ##FIXME non salvare il file da solo con i valori della mediana
-  
     dict_median={}
-    
     for g in groups:
         dict_median[g]="NaN"
     
     for _k,_v in dictionary_group.items():
         if len (_v)==0:
             continue
-        mean=np.median(_v)
+        # supporta sia liste di float che liste di tuple (paz, valore)
+        if isinstance(_v[0], tuple):
+            only_values = [val for paz, val in _v]
+        else:
+            only_values = _v
+        mean=np.median(only_values)
         dict_median[_k]=mean
         
     grade_major=""
@@ -245,6 +324,7 @@ def calculate_median_distribution(dictionary_group,groups):
         valid_value={k:v for k,v in dict_median.items() if str(v) !="NaN"}
         grade_major = max(valid_value, key=valid_value.get)
         return grade_major,dict_median
+
 
 
 
@@ -410,115 +490,116 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
 
 #*****************************************************************
 #*****************************************************************
-        
 def main(data):
-    
     print("\n######################## STATISTICAL ANALYSIS DISTANCE #########################\n")
 
-    logger.info("Start statistical distance analysis process: This step will provide, if more than one group is involved, a full statistical evaluation between all of the inter-phenotypes distances\n")
-    
-    logger.info("Reading configuration file")
-    #path folder with distance
-    root_folder=os.path.join(data["Paths"]["output_folder"],"Distance")
+    logger.info("Start statistical distance analysis process")
 
+    # path folder with distance
+    root_folder = os.path.join(data["Paths"]["output_folder"], "Distance")
     if not os.listdir(root_folder):
         logger.critical(f"{root_folder} is an empty directory")
-        return()
-    
-    #path folder save distance statistical results
-    path_output=os.path.join(data["Paths"]["output_folder"],"Distance_Statistical")
-    logger.info(f"Statistical distancs output will be stored in {path_output}")
+        return
 
-    #create Distance_Statistical folder
+    # path folder to save distance statistical results
+    path_output = os.path.join(data["Paths"]["output_folder"], "Distance_Statistical")
     create_output_dir(path_output)
-   
-    #list of pheno of interested
-    pheno_interested=data["Phenotypes"]["pheno_list"]
+    logger.info(f"Statistical distances output will be stored in {path_output}")
 
-    #pheno from if presents
-    pheno_from=data["Distance"]["pheno_from"]
-    #pheno_to if presents
-    pheno_to=data["Distance"]["pheno_to"]
+    # list of phenotypes
+    pheno_interested = data["Phenotypes"]["pheno_list"]
 
-    #flag plot distance curve
-    plot_distance=data["Distance"]["plot_distance"]
+    # pheno_from / pheno_to
+    pheno_from = data["Distance"]["pheno_from"]
+    pheno_to = data["Distance"]["pheno_to"]
 
-    #flag save csv of zeta score values
-    save_csv_zetascore=data["Distance"]["save_csv_zetascore"]
+    # flags
+    plot_distance = data["Distance"]["plot_distance"]
+    save_csv_zetascore = data["Distance"]["save_csv_zetascore"]
+    p_adjust = data["Stats"]["p_adj"].lower() or None
+    st_test = data["Stats"]["sample_type"]
 
-    #p_adjust
-    p_adjust=data["Stats"]["p_adj"]
-    p_adjust=p_adjust.lower()
-    if p_adjust=="":
-        p_adjust=None
-    
-    #test
-    st_test=data["Stats"]["sample_type"]
-
-    #groups of analysis
-    groups=[f for f in os.listdir(root_folder) if not f.startswith('.')]
+    # groups
+    groups = [f for f in os.listdir(root_folder) if not f.startswith('.')]
     logger.info(f"{len(groups)} group(s) found!")
-    
-    #path for summary statistical file
-    path_stats_file=os.path.join(path_output,"summary_statistical.csv")
 
-    #delete file if present
+    # prepare summary file
+    path_stats_file = os.path.join(path_output, "summary_statistical.csv")
     if os.path.exists(path_stats_file):
         os.remove(path_stats_file)
 
+    df_all = pd.DataFrame(columns=["GROUP", "PHENO", "DISTANCE"])
+    pvalues_dict = {}
     dict_statistical_result = {}
-    #condition if there is empty pheno_from and/or a pheno_to of interest and phenolist is empty
-    if (pheno_from=="" or pheno_to=="") and len(pheno_interested)==0:
-        logger.critical("It seems that pheno_list in Phenotypes config.json section was populated nor pheno_from and pheno_from were filled correctly (check if both are filled!)")
-        return()
-    #condition if there is a pheno_from and a pheno_to of interest
-    if pheno_from=="" and pheno_to=="":
-        logger.info(f"No specific phenotype was selected. Proceding to evaluate every combination of the phenotypes {pheno_interested}")
-        
-        #permutation of phenotype
+
+    # caso: tutti i fenotipi
+    if pheno_from == "" and pheno_to == "":
+        logger.info(f"No specific phenotype selected. Evaluating all combinations: {pheno_interested}")
         phenos_to_run = list(itertools.permutations(pheno_interested, 2))
 
-        with concurrent.futures.ProcessPoolExecutor() as executor:
+        with ProcessPoolExecutor() as executor:
             futures = [
-                executor.submit(process_pheno_pair, pheno, data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
+                executor.submit(process_pheno_pair, pheno, data, root_folder, path_output, groups,
+                                plot_distance, st_test, p_adjust, save_csv_zetascore)
                 for pheno in phenos_to_run
             ]
-            for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="Processing pairs"):
-                pheno_from, pheno_to, pvalue, grade_major, dict_median = future.result()
+            for future in tqdm(as_completed(futures), total=len(futures), desc="Processing pairs"):
+                pheno_from_res, pheno_to_res, pvalue, grade_major, dict_median, pvalues = future.result()
                 if pvalue is None:
                     continue
-                dict_statistical_result[f"{pheno_from}to{pheno_to}"] = {
+
+                dict_statistical_result[f"{pheno_from_res}to{pheno_to_res}"] = {
                     "p_value": pvalue,
                     "grade_major": grade_major,
                     "median": dict_median,
                 }
+                pvalues_dict.update(pvalues)
+
+                df_temp = create_df_distances(
+                    prepare_dataframe_distances(root_folder, pheno_from_res, pheno_to_res),
+                    path_output, pheno_from_res, pheno_to_res, save_csv_zetascore
+                )
+                df_temp["PHENO"] = pheno_from_res
+                df_temp["PHENO_FROM"] = pheno_from_res
+                df_temp["PHENO_TO"] = pheno_to_res
+
+                df_all = pd.concat([df_all, df_temp], ignore_index=True)
+
     else:
-        logger.info(f"pheno from {pheno_from} and pheno to {pheno_to} selected")
+        logger.info(f"pheno_from={pheno_from}, pheno_to={pheno_to} selected")
         if pheno_from not in pheno_interested or pheno_to not in pheno_interested:
             logger.critical("Invalid pheno_from or pheno_to")
-            return()
-        
-        pheno_result = process_pheno_pair((pheno_from, pheno_to), data, root_folder, path_output, groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
-        pheno_from, pheno_to, pvalue, grade_major, dict_median = pheno_result
+            return
+
+        pheno_result = process_pheno_pair((pheno_from, pheno_to), data, root_folder, path_output,
+                                          groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
+        pheno_from_res, pheno_to_res, pvalue, grade_major, dict_median, pvalues = pheno_result
+
         if pvalue is not None:
-            dict_statistical_result[f"{pheno_from}to{pheno_to}"] = {
+            dict_statistical_result[f"{pheno_from_res}to{pheno_to_res}"] = {
                 "p_value": pvalue,
                 "grade_major": grade_major,
                 "median": dict_median,
             }
-        
-    with open(path_stats_file,"w") as f:
-        f.write("Phenotype"+"\t"+"Distance_to"+"\t"+"P_value"+"\t"+"\t".join(f"Median_{gruppo}" for gruppo in groups)+"\tGroup_major"+"\n")
+            pvalues_dict.update(pvalues)
+
+            df_all = create_df_distances(
+                prepare_dataframe_distances(root_folder, pheno_from_res, pheno_to_res),
+                path_output, pheno_from_res, pheno_to_res, save_csv_zetascore
+            )
+            df_all["PHENO"] = pheno_from_res
+
+    # salva file riassuntivo
+    with open(path_stats_file, "w") as f:
+        f.write("Phenotype\tDistance_to\tP_value\t" + "\t".join(f"Median_{g}" for g in groups) + "\tGroup_major\n")
         for pheno, stat in dict_statistical_result.items():
-            pheno=pheno.split("to")
-            pheno_from=pheno[0]
-            pheno_to=pheno[1]
-            p_value=stat["p_value"]
-            grade_major=stat['grade_major']
-            f.write(pheno_from+"\t"+pheno_to+"\t"+str(p_value)+"\t"+"\t".join(str(stat["median"][g]) for g in groups)+"\t"+grade_major+"\n")
-    
-    logger.info("End statistical analysis!")      
-    return()
-    
-if __name__=="__main__":
-    main()
+            ph = pheno.split("to")
+            f.write(f"{ph[0]}\t{ph[1]}\t{stat['p_value']}\t" +
+                    "\t".join(str(stat["median"][g]) for g in groups) +
+                    f"\t{stat['grade_major']}\n")
+
+    # heatmap NxN
+    if not df_all.empty:
+        plot_heatmap_and_bar(df_all, path_output, phenotypes=pheno_interested, pvalues_dict=pvalues_dict)
+
+    logger.info("End statistical analysis!")
