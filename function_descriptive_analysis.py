@@ -515,72 +515,87 @@ def create_output_box_plot_dir(path_output):
         return()
     
 #*****************************************************************
-
-def create_comparison_box_plot(path_output_result,data_all,p_adjust,test,type_data):
-    #print(data_all)
-    '''
-    Function to make statistical test and annoteted the relative boxplots, generated with ploylt, to compare  phenotypes betweenness different group
-
-    Parameters
-    ----
-    path_output : str
-    data_all : DataFrame
-    type_data : str
-    
-
-    Return
-    ---
-    None
-   
-    '''
+def create_comparison_box_plot(path_output_result, data_all, p_adjust, test, type_data):
+    """
+    Crea:
+      - la mega immagine con tutti i fenotipi
+      - le immagini singole per ogni fenotipo
+    in una cartella dedicata (Raw o Normalized).
+    Le annotazioni p-value sono quelle di default di tap.plot_stats (verdi se significative).
+    """
 
     logger.info(f"Box Plot creation on {type_data} count")
 
-    #define paramerts as x, y and separated
-    x="pheno"
-    y="Count"
-    hue="group"
-    hue_order=list(data_all["group"].unique())
-    lables=sorted(list(data_all["pheno"].unique()))
+    x = "pheno"
+    y = "Count"
+    hue = "group"
+    hue_order = list(data_all["group"].unique())
+    labels = sorted(list(data_all["pheno"].unique()))
 
-    filename=os.path.join(path_output_result,"Box Plots","box_plot_comparison_"+type_data+".jpeg")
-   
-    if len(hue_order)==2 and test!="paired":
-        logger.info(f"Found {len(hue_order)} groups: Start Mann-Whitney Test")
-        try:
-            tap.plot_stats(data_all,x,y,order=lables,filename=filename,type_correction=p_adjust,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
-            logger.info("Mann-Whitney Test done successfully!")        
-        except ValueError:
-            logger.error("Mann-Whitney Test Error-All numbers are identical")
-            return()
-        except Exception as e:
-            logger.error("Something went wrong during Mann-Whitney test")
-            return()
-    if len(hue_order)==2 and test=="paired":
-        logger.info(f"Found {len(hue_order)} groups: Start Wilcoxon Test")
-        try:
-            tap.plot_stats(data_all,x,y,order=lables,filename=filename,type_test="wilcoxon",type_correction=p_adjust,export_size=(1400, 950, 3),subcategory=hue,kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {hue_order[0]} and {hue_order[1]}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
-            logger.info("Wilcoxon Test done successfully!")        
-        except ValueError:
-            logger.error("Wilcoxon Test Error-All numbers are identical")
-            return()
-        except Exception as e:
-            logger.error("Something went wrong during Wilcoxon test")
-            return()
-        
-    elif len(hue_order)>2:
-        logger.info(f"Found {len(hue_order)} groups: Start Kruskal-Wallis Test")
-        try:
+    # === CARTELLA BASE (Raw o Normalized) ===
+    base_dir = os.path.join(path_output_result, "Box Plots", type_data)
+    pathlib.Path(base_dir).mkdir(parents=True, exist_ok=True)
+
+    # === MEGA IMMAGINE (tutti i fenotipi) ===
+    filename = os.path.join(base_dir, f"box_plot_comparison_{type_data}.jpeg")
+    _run_stat_test(data_all, labels, hue_order, p_adjust, test, x, y, hue, filename, type_data)
+
+    # === IMMAGINI SINGOLE PER FENOTIPO ===
+    for pheno in labels:
+        logger.info(f"Creating single boxplot for phenotype: {pheno}")
+        df_single = data_all[data_all["pheno"] == pheno].copy()
+        filename_single = os.path.join(base_dir, f"box_plot_{pheno}_{type_data}.jpeg")
+        _run_stat_test(df_single, [pheno], hue_order, p_adjust, test, x, y, hue, filename_single, type_data)
+
+
+def _run_stat_test(data, labels, hue_order, p_adjust, test, x, y, hue, filename, type_data):
+    """
+    Wrapper per chiamare tap.plot_stats con il giusto test.
+    Lascia che sia tap a gestire le annotazioni p-value (verdi).
+    """
+    kwargs_common = {
+        "width": 4000,
+        "height": 1000,
+        "title": f"Comparison {type_data} Count",
+        "log_y": True,
+        "labels": {"pheno": "Phenotypes",
+                   "value": f"log({type_data} Counts)",
+                   "group": "Group"}
+    }
+
+    try:
+        if len(hue_order) == 2 and test != "paired":
+            logger.info(f"Mann-Whitney Test → {filename}")
+            tap.plot_stats(
+                data, x, y, order=labels, filename=filename,
+                type_correction=p_adjust, export_size=(1400, 950, 3),
+                subcategory=hue, kwargs=kwargs_common
+            )
+
+        elif len(hue_order) == 2 and test == "paired":
+            logger.info(f"Wilcoxon Test → {filename}")
+            tap.plot_stats(
+                data, x, y, order=labels, filename=filename,
+                type_test="wilcoxon", type_correction=p_adjust, export_size=(1400, 950, 3),
+                subcategory=hue, kwargs=kwargs_common
+            )
+
+        elif len(hue_order) > 2:
+            logger.info(f"Kruskal-Wallis Test → {filename}")
             if p_adjust is None:
-                p_adjust="bonferroni"
-            tap.plot_stats(data_all,x,y,type_test="dunn",order=lables,subcategory=hue,filename=filename,type_correction=p_adjust,export_size=(1400, 950, 3),kwargs={"width":4000,"height":1000,"title":f"Phenotypes Comparison between {','.join(hue_order)}-{type_data} Count","log_y":True,"labels":{"pheno":"Phenotypes","value":f"log({type_data} Counts)","group":"Group"}})
-            logger.info("Kruskal-Wallis Test done successfully!")
-        except ValueError:
-            logger.error("Kruskal-Wallis Test Error-All numbers are identical")
-            return()
-        except Exception:
-            logger.error("Something went wrong during Kruskal-Wallis test")
-            return()
+                p_adjust = "bonferroni"
+            tap.plot_stats(
+                data, x, y, type_test="dunn", order=labels,
+                subcategory=hue, filename=filename,
+                type_correction=p_adjust, export_size=(1400, 950, 3),
+                kwargs=kwargs_common
+            )
+
+        logger.info(f"✅ Saved: {filename}")
+
+    except Exception as e:
+        logger.error(f"❌ Error in statistical test for {filename}: {e}")
+
 
 #*****************************************************************
 #*****************************************************************
