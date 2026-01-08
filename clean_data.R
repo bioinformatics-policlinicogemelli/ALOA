@@ -115,27 +115,44 @@ clean=function(){
     }
   }
 
-  #### 🔧 Normalizzazione finale di tutti i file in Merged_clean
-  log4r_info("Normalizing column names and data types in Merged_clean...")
-  
-  all_files <- list.files(file.path(output_folder,"Merged_clean"), recursive = TRUE, full.names = TRUE, pattern = "\\.txt$")
-  
-  for (f in all_files){
-    df <- read.csv(f, sep="\t", check.names = FALSE)
-    
-    # Normalizza colonne
-    colnames(df) <- gsub("\\.{2,}", ".", colnames(df))
-    colnames(df) <- trimws(colnames(df))
-    
-    # Converte int → numeric
-    df[] <- lapply(df, function(x) if (is.integer(x)) as.numeric(x) else x)
-    
-    # Sovrascrive il file
-    write.table(df, f, sep="\t", row.names=FALSE, quote=FALSE)
-  }
+#### 🔧 Normalizzazione finale di tutti i file in Merged_clean
+log4r_info("Normalizing column names and data types in Merged_clean...")
 
-  log4r_info("End cleaning step!")
-  cat("\n")
+all_files <- list.files(
+  file.path(output_folder, "Merged_clean"),
+  recursive = TRUE,
+  full.names = TRUE,
+  pattern = "\\.txt$"
+)
+
+for (f in all_files) {
+  df <- read.csv(f, sep = "\t", check.names = FALSE)
   
-  return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
+  # Normalizza colonne
+  colnames(df) <- gsub("\\.{2,}", ".", colnames(df))
+  colnames(df) <- trimws(colnames(df))
+  
+  # Converte tipi in modo più intelligente
+  df[] <- lapply(df, function(x) {
+    if (is.factor(x)) x <- as.character(x)  # evita fattori
+    if (is.character(x) && all(grepl("^-?\\d+(\\.\\d+)?$", x))) {
+      as.numeric(x)  # converte stringhe numeriche in numerico
+    } else if (is.integer(x)) {
+      as.numeric(x)
+    } else {
+      x
+    }
+  })
+  
+  # Sovrascrive il file pulito
+  write.table(df, f, sep = "\t", row.names = FALSE, quote = FALSE)
+  
+  # Log
+  log4r_info(paste("Cleaned:", basename(f)))
+}
+
+log4r_info("End cleaning step!")
+cat("\n")
+
+return(file.path(myData$Paths["output_folder"][[1]], "Log", paste0(log_name, ".log")))
 }
