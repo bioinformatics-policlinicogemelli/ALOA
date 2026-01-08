@@ -48,9 +48,7 @@ def process_pheno_pair(pheno, data, root_folder, path_output, groups, plot_dista
         # Popola dizionario pvalues per i singoli fenotipi
         pvalues_dict[pheno_from] = pvalue
 
-        # Boxplot
-        box_plots_distances(path_output, df_distance, pheno_from, pheno_to, kruskal, p_adjust, test)
-
+        
 
 
         # Barplot per confronto specifico
@@ -64,6 +62,8 @@ def process_pheno_pair(pheno, data, root_folder, path_output, groups, plot_dista
         os.makedirs(bar_dir, exist_ok=True)
         fig_bar.write_image(os.path.join(bar_dir, f"barplot_{pheno_from}_to_{pheno_to}.png"))
 
+        pairwise_pvals = box_plots_distances(path_output, df_distance, pheno_from, pheno_to, kruskal, p_adjust, test)
+        save_pairwise_csv(df_distance, pheno_from, pheno_to, path_output, pairwise_pvals)
 
 
         # Curva distanza
@@ -76,7 +76,35 @@ def process_pheno_pair(pheno, data, root_folder, path_output, groups, plot_dista
         logger.error(f"Error in phenotype pair {pheno_from}-{pheno_to}: {e}")
         return (pheno_from, pheno_to, None, None, None, pvalues_dict)
 
- 
+def save_pairwise_csv(df_distance, pheno_from, pheno_to, path_output, pairwise_pvals):
+    out_dir = os.path.join(path_output, "pairwise_pvalues")
+    os.makedirs(out_dir, exist_ok=True)
+    outfile = os.path.join(out_dir, f"pairwise_pvalues_{pheno_from}_to_{pheno_to}.csv")
+
+    rows = []
+    groups = sorted(df_distance["GROUP"].unique()) if not df_distance.empty else []
+
+    # Salva solo coppie uniche (ordina le coppie)
+    for i, g1 in enumerate(groups):
+        for j, g2 in enumerate(groups):
+            if i >= j:
+                continue  # evita duplicati e diagonale
+            median1 = df_distance[df_distance["GROUP"] == g1]["DISTANCE"].median() if g1 in df_distance["GROUP"].values else np.nan
+            median2 = df_distance[df_distance["GROUP"] == g2]["DISTANCE"].median() if g2 in df_distance["GROUP"].values else np.nan
+            pval = pairwise_pvals.get((g1, g2), np.nan)
+            rows.append({
+                "PHENO_FROM": pheno_from,
+                "PHENO_TO": pheno_to,
+                "GROUP_1": g1,
+                "GROUP_2": g2,
+                "MEDIAN_1": median1,
+                "MEDIAN_2": median2,
+                "P_VALUE": pval
+            })
+
+    df_out = pd.DataFrame(rows, columns=["PHENO_FROM", "PHENO_TO", "GROUP_1", "GROUP_2", "MEDIAN_1", "MEDIAN_2", "P_VALUE"])
+    df_out.to_csv(outfile, index=False)
+
 
 
 def plot_heatmap_and_bar(df_all, barplot_dir, phenotypes, pvalues_dict=None):
@@ -129,6 +157,37 @@ def plot_heatmap_and_bar(df_all, barplot_dir, phenotypes, pvalues_dict=None):
     fig.write_image(os.path.join(barplot_dir, "heatmap_NxN_by_group.png"))
 
 
+def merge_all_pairwise_csv(path_output):
+    """
+    Unisce tutti i file pairwise generati in un unico CSV globale.
+    """
+    import glob
+
+    folder = os.path.join(path_output, "pairwise_pvalues")
+    os.makedirs(folder, exist_ok=True)
+
+    all_files = glob.glob(os.path.join(folder, "pairwise_pvalues_*.csv"))
+
+    if len(all_files) == 0:
+        print("Nessun file pairwise trovato.")
+        return
+
+    dfs = []
+    for f in all_files:
+        df = pd.read_csv(f)
+        dfs.append(df)
+
+    df_final = pd.concat(dfs, ignore_index=True)
+
+    # ordina per PHENO_FROM, PHENO_TO, GROUP_1, GROUP_2
+    df_final = df_final.sort_values(
+        by=["PHENO_FROM", "PHENO_TO", "GROUP_1", "GROUP_2"]
+    )
+
+    outfile = os.path.join(folder, "ALL_PAIRWISE_RESULTS.csv")
+    df_final.to_csv(outfile, index=False)
+
+    print(f"File combinato creato: {outfile}")
 
 
 def standardization_distance_all_image(values,paz):
@@ -417,41 +476,84 @@ def rearrange_df(df):
         df=pd.concat([df, df_new])
         
     return df
+def box_plots_distances(path_output_results, df, pheno_from, pheno_to, kruskal, p_adjust, test):
 
-def box_plots_distances(path_ouput_results,df,pheno_from,pheno_to,kruskal,p_adjust,test):
-   
-    if len(df["GROUP"].unique())!=1: 
-        dire=os.path.join(path_ouput_results,"box_plot")
-        if not os.path.exists(dire):
-            os.makedirs(dire)
-        filename=os.path.join(dire,"distances_box_plot_"+pheno_from+"_to_"+pheno_to+".png")
+    pairwise_pvalues = {}  # <<<<<<<<<<<<<<<<<<<<<< AGGIUNTO
 
-    #BOXPLOT for 2 groups (Mann-Whitney annotation)
-        if len(df["GROUP"].unique()) ==2 and test!="paired" :
-            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
-                        "DISTANCE": r'$Distance_{z}$',
-                        "GROUP": 'Group'
-                    }})
-        #BOXPLOT for 2 groups  and paired test (Wilcoxon annotation)
-        if len(df["GROUP"].unique()) ==2 and test=="paired" :          
-            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="wilcoxon",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
-                        "DISTANCE": r'$Distance_{z}$',
-                        "GROUP": 'Group'
-                    }})
-        #Boxplot for 3 or more groups and Kruskal-Wallis is significant (Test Dunn annotation)
-        if len(df["GROUP"].unique()) > 2 and kruskal:
-            if p_adjust is None:
-                p_adjust="bonferroni"
-            tap.plot_stats(df,x="GROUP",y="DISTANCE",type_test="dunn",type_correction=p_adjust,filename=filename,kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',"labels":{"GROUP": "Group",
-                        "DISTANCE": r'$Distance_{z}$',
-                        "GROUP": 'Group'
-                    }})
-        #Boxplot for 3 or more groups and Kruskal-Wallis not significant (only boxplot visualizzation)
-        if len(df["GROUP"].unique()) > 2 and not kruskal:
-            fig=px.box(df,x="GROUP",y="DISTANCE",color="GROUP",title=f'Distance from {pheno_from} to {pheno_to} (Kruskal-Wallis p_value > 0.05)')
-            fig.update_traces(quartilemethod="linear")
-            fig.write_image(filename)
+    if len(df["GROUP"].unique()) != 1:
+        dire = os.path.join(path_output_results, "box_plot")
+        os.makedirs(dire, exist_ok=True)
+        filename = os.path.join(dire, f"distances_box_plot_{pheno_from}_to_{pheno_to}.png")
 
+        groups = list(df["GROUP"].unique())
+
+        # === 2 GRUPPI: MANN-WHITNEY O WILCOXON ===
+        if len(groups) == 2:
+            g1, g2 = groups
+            x1 = df[df["GROUP"] == g1]["DISTANCE"].dropna().values
+            x2 = df[df["GROUP"] == g2]["DISTANCE"].dropna().values
+
+            if test != "paired":
+                # Mann-Whitney esattamente come fa tap
+                _, pval = stats.mannwhitneyu(x1, x2, nan_policy="omit")
+            else:
+                # Wilcoxon
+                _, pval = stats.wilcoxon(x1, x2, nan_policy="omit")
+
+            pairwise_pvalues[(g1, g2)] = pval
+
+            # Plot originale
+            tap.plot_stats(df,
+                        x="GROUP",
+                        y="DISTANCE",
+                        type_correction=p_adjust,
+                        filename=filename,
+                        kwargs={"title":f'Distance from {pheno_from} to {pheno_to}',
+                                "labels":{"GROUP": "Group",
+                                            "DISTANCE": r'$Distance_{z}$',
+                                            "GROUP": 'Group'}})
+
+
+
+        # === 3+ GRUPPI: DUNN (stessi valori del boxplot) ===
+        elif len(groups) > 2:
+
+            if kruskal:
+                if p_adjust is None:
+                    p_adjust = "bonferroni"
+
+                # Calcolo Dunn IDENTICO a tap
+                value_lists = [df[df["GROUP"] == g]["DISTANCE"].dropna().values for g in groups]
+                dunn_df = sp.posthoc_dunn(value_lists, p_adjust=p_adjust)
+
+                # Rinomina righe/colonne con i nomi corretti dei gruppi
+                dunn_df.index = groups
+                dunn_df.columns = groups
+
+                # Estrai i p-value ESATTI che vengono plottati
+                for g1 in groups:
+                    for g2 in groups:
+                        if g1 != g2:
+                            pairwise_pvalues[(g1, g2)] = dunn_df.loc[g1, g2]
+
+                # Plot originale
+                tap.plot_stats(
+                    df, x="GROUP", y="DISTANCE",
+                    type_test="dunn",
+                    type_correction=p_adjust,
+                    filename=filename,
+                    kwargs={"title": f"Distance from {pheno_from} to {pheno_to}",
+                            "labels": {"GROUP": "Group", "DISTANCE": r"$Distance_z$"}}
+                )
+
+            else:
+                # Non significativo → solo il plot
+                fig = px.box(df, x="GROUP", y="DISTANCE", color="GROUP",
+                             title=f"Distance from {pheno_from} to {pheno_to} (Kruskal-Wallis p>0.05)")
+                fig.update_traces(quartilemethod="linear")
+                fig.write_image(filename)
+
+    return pairwise_pvalues  # <<<<<<<<<<<<<<<<<<<<<< AGGIUNTO
 
 #*****************************************************************
 
@@ -492,7 +594,6 @@ def plot_distance_curve(path_output_result,df,pheno_from,pheno_to,p_value):
 #*****************************************************************
 def main(data):
     print("\n######################## STATISTICAL ANALYSIS DISTANCE #########################\n")
-
     logger.info("Start statistical distance analysis process")
 
     # path folder with distance
@@ -508,22 +609,25 @@ def main(data):
 
     # list of phenotypes
     pheno_interested = data["Phenotypes"]["pheno_list"]
-
-    # pheno_from / pheno_to
     pheno_from = data["Distance"]["pheno_from"]
     pheno_to = data["Distance"]["pheno_to"]
-
-    # flags
     plot_distance = data["Distance"]["plot_distance"]
     save_csv_zetascore = data["Distance"]["save_csv_zetascore"]
-    p_adjust = data["Stats"]["p_adj"].lower() or None
+
+    p_adjust = data["Stats"]["p_adj"]
+    if p_adjust is None or p_adjust.strip() == "":
+        p_adjust = "bonferroni"
+    else:
+        p_adjust = p_adjust.lower()
+
+
+
     st_test = data["Stats"]["sample_type"]
 
     # groups
     groups = [f for f in os.listdir(root_folder) if not f.startswith('.')]
     logger.info(f"{len(groups)} group(s) found!")
 
-    # prepare summary file
     path_stats_file = os.path.join(path_output, "summary_statistical.csv")
     if os.path.exists(path_stats_file):
         os.remove(path_stats_file)
@@ -545,11 +649,10 @@ def main(data):
             ]
             for future in tqdm(as_completed(futures), total=len(futures), desc="Processing pairs"):
                 pheno_from_res, pheno_to_res, pvalue, grade_major, dict_median, pvalues = future.result()
-                if pvalue is None:
-                    continue
-
+                
+                # Mantieni None se pvalue non calcolabile
                 dict_statistical_result[f"{pheno_from_res}to{pheno_to_res}"] = {
-                    "p_value": pvalue,
+                    "p_value": pvalue,  # None se non disponibile
                     "grade_major": grade_major,
                     "median": dict_median,
                 }
@@ -562,7 +665,6 @@ def main(data):
                 df_temp["PHENO"] = pheno_from_res
                 df_temp["PHENO_FROM"] = pheno_from_res
                 df_temp["PHENO_TO"] = pheno_to_res
-
                 df_all = pd.concat([df_all, df_temp], ignore_index=True)
 
     else:
@@ -575,31 +677,43 @@ def main(data):
                                           groups, plot_distance, st_test, p_adjust, save_csv_zetascore)
         pheno_from_res, pheno_to_res, pvalue, grade_major, dict_median, pvalues = pheno_result
 
-        if pvalue is not None:
-            dict_statistical_result[f"{pheno_from_res}to{pheno_to_res}"] = {
-                "p_value": pvalue,
-                "grade_major": grade_major,
-                "median": dict_median,
-            }
-            pvalues_dict.update(pvalues)
+        dict_statistical_result[f"{pheno_from_res}to{pheno_to_res}"] = {
+            "p_value": pvalue,  # None se non calcolabile
+            "grade_major": grade_major,
+            "median": dict_median,
+        }
+        pvalues_dict.update(pvalues)
 
-            df_all = create_df_distances(
-                prepare_dataframe_distances(root_folder, pheno_from_res, pheno_to_res),
-                path_output, pheno_from_res, pheno_to_res, save_csv_zetascore
-            )
-            df_all["PHENO"] = pheno_from_res
+        df_all = create_df_distances(
+            prepare_dataframe_distances(root_folder, pheno_from_res, pheno_to_res),
+            path_output, pheno_from_res, pheno_to_res, save_csv_zetascore
+        )
+        df_all["PHENO"] = pheno_from_res
 
+    # salva file riassuntivo
     # salva file riassuntivo
     with open(path_stats_file, "w") as f:
         f.write("Phenotype\tDistance_to\tP_value\t" + "\t".join(f"Median_{g}" for g in groups) + "\tGroup_major\n")
         for pheno, stat in dict_statistical_result.items():
             ph = pheno.split("to")
-            f.write(f"{ph[0]}\t{ph[1]}\t{stat['p_value']}\t" +
-                    "\t".join(str(stat["median"][g]) for g in groups) +
-                    f"\t{stat['grade_major']}\n")
+            # P-value
+            pval_str = "None" if stat["p_value"] is None else stat["p_value"]
+            # Mediane
+            median_strs = []
+            median_dict = stat.get("median") or {}
+            for g in groups:
+                val = median_dict.get(g)
+                if val is None or (isinstance(val, str) and val.lower() == "nan"):
+                    median_strs.append("None")
+                else:
+                    median_strs.append(val)
+
+            f.write(f"{ph[0]}\t{ph[1]}\t{pval_str}\t" + "\t".join(map(str, median_strs)) + f"\t{stat['grade_major']}\n")
+
 
     # heatmap NxN
     if not df_all.empty:
         plot_heatmap_and_bar(df_all, path_output, phenotypes=pheno_interested, pvalues_dict=pvalues_dict)
 
+    merge_all_pairwise_csv(path_output)
     logger.info("End statistical analysis!")
