@@ -34,7 +34,7 @@ from scikit_posthocs import posthoc_dunn
 from loguru import logger
 from statsmodels.stats.multitest import multipletests
 
-def load_df(input_path, filename):
+def load_df(input_path, filename=""):
     '''
     Function to load tsv file 
     Args:
@@ -45,7 +45,10 @@ def load_df(input_path, filename):
         df: Dataframe
     '''
     try:
-        df=pd.read_csv(os.path.join(input_path, filename), sep="\t", dtype=str)
+        if filename=="":
+            df=pd.read_csv(input_path, sep="\t", dtype=str)
+        else:
+            df=pd.read_csv(os.path.join(input_path, filename), sep="\t", dtype=str)
     except FileNotFoundError:
         logger.critical(f"No {filename} found in {input_path}! Check if file is named properly as {filename} and if is inside input folder.")
         exit(1)

@@ -12,26 +12,22 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-library(logr)
-library(rjson)
+# logger.R - Python-friendly version
+# Copyright 2024 bioinformatics-policlinicogemelli
 
-logger=function(log_name){
-  
-  myData=fromJSON(file="config.json")
-  output_folder=myData$Paths["output_folder"][[1]]
-  
-  log_open(file.path(output_folder,log_name))
-}
+# This logger prints messages to stdout.
+# Python (rpy2) captures stdout and writes it to the log file.
 
 log4r_info <- function(message) {
-  log_print(paste0(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " INFO: ",message),hide_notes = T)
+  cat(sprintf("[%s] INFO: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), message))
 }
 
 log4r_warn <- function(message) {
-  log_print(paste0(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " WARNING: ",message),hide_notes = T)
+  cat(sprintf("[%s] WARNING: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), message))
 }
 
 log4r_error <- function(message) {
-  log_print(paste0(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), " ERROR: ",message),hide_notes = T)
+  cat(sprintf("[%s] ERROR: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), message))
 }
+
 

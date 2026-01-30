@@ -21,12 +21,12 @@ library(fs)
 
 source("logger.R")
 
-clean=function(){
+clean=function(config, samplesheet){
   
   cat("\n################## CLEAN DATA ###################\n")
   
-  log_name=paste0("clean_data_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
-  logger(log_name)
+  # log_name=paste0("clean_data_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
+  # logger(log_name, config)
   cat("\n")
   log4r_info("Start cleaning process: This step will remove cell negative to all phenotype(s)")
   cat("\n")
@@ -36,7 +36,7 @@ clean=function(){
 
   tryCatch(
     {
-      myData=fromJSON(file="config.json")
+      myData=fromJSON(file=config)
     }, error=function(cond){
       log4r_error(paste0("Something went wrong while reading config.json file. Try check the fields of your json file!"))
       log4r_error("Exiting from clean_data.R script")
@@ -45,7 +45,7 @@ clean=function(){
 
   #### Input parsing
   output_folder=myData$Paths["output_folder"][[1]]
-  sample_sheet=myData$Paths["sample_sheet"][[1]]
+  sample_sheet=samplesheet
 
   data_input_folder=file.path(output_folder,"Merged")
 
@@ -59,7 +59,7 @@ clean=function(){
   if (length(group)==0){
     log4r_warn("no group found. Check the output folder!")
     log4r_info("Exit clean_data script!")
-    return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
+    #return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
   }
 
   #### Data merge
@@ -154,5 +154,5 @@ for (f in all_files) {
 log4r_info("End cleaning step!")
 cat("\n")
 
-return(file.path(myData$Paths["output_folder"][[1]], "Log", paste0(log_name, ".log")))
+#return(file.path(myData$Paths["output_folder"][[1]], "Log", paste0(log_name, ".log")))
 }

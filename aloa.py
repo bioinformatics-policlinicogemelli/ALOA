@@ -23,6 +23,7 @@ import rpy2
 import rpy2.robjects as ro
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
 rpy2_logger.setLevel(logging.ERROR)
+from contextlib import redirect_stdout
 from datetime import datetime
 import glob
 import shutil
@@ -78,9 +79,9 @@ def log_settings(logout):
 
 def all_true(args):
     for arg in vars(args):
-        if arg=="all" or arg=="force":
+        if arg in ["all", "force", "config", "samplesheet"]:
             continue
-        setattr(args, arg,True)
+        setattr(args, arg, True)
 
 #*****************************************************************
         
@@ -139,7 +140,7 @@ def check_merged(output):
 
 def aloa(args, data, logfile):
     
-    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all} , force:{args.force}]")
+    logger.info(f"aloa.py args: [config:{args.config}, samplesheet:{args.samplesheet}, merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all} , force:{args.force}]")
 
     output=data["Paths"]["output_folder"]
 
@@ -161,20 +162,22 @@ def aloa(args, data, logfile):
             logger.info("|-> Merge step starting now")
             ro.r['source']('merge.R')
             merge = ro.globalenv['merge']
+            
             try:
-                log_name_merge=merge()[0]
-            except rpy2.rinterface_lib.embedded.RRuntimeError:
-                logger.critical("Sometihng went wrong during merge step: this error can be caused if the input file in config.json" + 
+                merge(args.config, args.samplesheet)#[0]
+            except rpy2.rinterface_lib.embedded.RRuntimeError as e:
+                logger.critical("Something went wrong during merge step: this error can be caused if the input file in config.json" + 
                                 " is not recognized as valid path or if sample file was not fill correctly. "+
                                 "Check if the input folder is correctly written and check if patients IDs match with raw data subfolders names.")
+                logger.critical(str(e))
                 sys.exit()
-            merge_log([logfile,log_name_merge])
+            #merge_log([logfile,log_name_merge])
             
             logger.info("|-> Clean step starting now")
             ro.r['source']('clean_data.R')
             clean = ro.globalenv['clean']
-            log_name_clean=clean()[0]
-            merge_log([logfile,log_name_clean])
+            clean(args.config, args.samplesheet)#[0]
+            #merge_log([logfile,log_name_clean])
                            
         #########################################
         #             DESCRIPTIVE               #
@@ -196,8 +199,8 @@ def aloa(args, data, logfile):
             logger.info("|-> Maps plot step starting now")
             ro.r['source']('maps_plot.R')
             maps = ro.globalenv['maps']
-            log_name=maps()[0]
-            merge_log([logfile,log_name])
+            maps(args.config)#[0]
+            #merge_log([logfile,log_name])
             
         #########################################
         #               DISTANCE                #
@@ -209,8 +212,8 @@ def aloa(args, data, logfile):
                 logger.info("|-> Distance evaluation step starting now")
                 ro.r['source']('distance_eval.R')
                 distance = ro.globalenv['distance']
-                log_name=distance()[0]
-                merge_log([logfile,log_name])
+                distance(args.config)#[0]
+                #merge_log([logfile,log_name])
             
             if args.stats:
                 logger.info("|-> Distance statistical evaluation step starting now")
@@ -242,34 +245,19 @@ def aloa(args, data, logfile):
 
     if args.pcf:
         logger.info("|-> PCF step starting now")
-        pcf(data)
+        pcf(args.samplesheet, data)
     
     n_warn, n_err, n_crit=check_log(logfile)
     logger.info(f"ALOA script completed with {n_warn} warning(s), {n_err} error(s) and {n_crit} critical(s)!")
     
 def main(): 
-    
-    with open("config.json") as f:
-        data=json.load(f)
-        
-    output=data["Paths"]["output_folder"]
-    pathlib.Path(output).mkdir(parents=True, exist_ok=True)
-    log_path=os.path.join(output,"Log")
-    try:
-        shutil.rmtree(log_path)
-    except: pass
-    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
-
-    logger.remove()
-    
-    logfile=log_settings(log_path)
-    
-    logo()
-    
-    logger.info("Welcome to ALOA \N{smiling face with sunglasses}")
-         
+             
     parser = MyArgumentParser(add_help=True, usage=None, description='Argument of ALOA script')
     
+    # take config and samplesheet
+    parser.add_argument('-cf', '--config', required=True , help='configuration file')
+    parser.add_argument('-sh', '--samplesheet', required=True, help='samplesheet')
+
     # MERGE + CLEAN BLOCK
     parser.add_argument('-m', '--merge', required=False, action='store_true', help='merge datasets from ROIs of the same patient')
     
@@ -304,6 +292,37 @@ def main():
     except ValueError as e:
         logger.critical(f"Argument error: {e}!")
         exit(1)
+
+    # -------------------------
+    # LOAD CONFIG FILE
+    # -------------------------
+    if not os.path.isfile(args.config):
+        logger.critical(f"Config file not found: {args.config}")
+        sys.exit(1)
+
+    try:
+        with open(args.config) as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        logger.critical(f"Invalid JSON in config file: {e}")
+        sys.exit(1)
+    
+    output=data["Paths"]["output_folder"]
+    pathlib.Path(output).mkdir(parents=True, exist_ok=True)
+    log_path=os.path.join(output,"Log")
+
+    try:
+        shutil.rmtree(log_path)
+    except: pass
+    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True) 
+
+    logger.remove()
+    
+    logfile=log_settings(log_path)
+    
+    logo()
+    
+    logger.info("Welcome to ALOA \N{smiling face with sunglasses}")
 
     if args.all:
         all_true(args)

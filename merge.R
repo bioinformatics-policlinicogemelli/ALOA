@@ -19,32 +19,33 @@ library(phenoptrReports)
 library(logr)
 source("logger.R")
 
-merge=function(){
+merge=function(config, samplesheet){
   
   cat("\n################## MERGE ###################\n")
-  
-  log_name=paste0("Merge_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
-  logger(log_name)
+  #log_name=paste0("Merge_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
+  #logger(log_name, config)
   cat("\n")
   log4r_info("Start merging process: This step will merge together the cell_seg_data files for each subject")
   cat("\n")
-  
+
   # Load json file
   log4r_info("Loading configuration file...")
   
+  myData=fromJSON(file=config)
+
   tryCatch(
     {
-      myData=fromJSON(file="config.json")
+      myData=fromJSON(file=config)
     }, error=function(cond){
       log4r_error(paste0("Something went wrong while reading config.json file. Try check the fields of your json file!"))
       log4r_error("Exiting from clean_data.R script")
       stop()
     })
-  
+
   #### Input parsing
   data_input_folder=file.path(myData$Paths["data_input_folder"][[1]],"raw_data")
   output_folder=myData$Paths["output_folder"][[1]]
-  sample_sheet=file.path(myData$Paths["data_input_folder"][[1]],"sample_sheet.tsv")
+  sample_sheet=samplesheet
   data_input=read.table(file = sample_sheet, sep = '\t', header = TRUE)
   
   #### Output organization folder
@@ -80,7 +81,7 @@ merge=function(){
     cat("\n")
     
     files_merged=phenoptrReports::merge_cell_seg_files(csv_file)
-    files_merged=list.files(csv_file,patter="Merge")
+    files_merged=list.files(csv_file,pattern="Merge")
     
     if (is.null(files_merged)){
       log4r_warn(paste0("Something went wrong. Check the folder ",csv_file))
@@ -124,6 +125,8 @@ merge=function(){
   cat("\n")
   log4r_info("End merge step!")
   cat("\n")
+
+  #logr::log_close()
   
-  return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
+  #return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
 }

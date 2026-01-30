@@ -23,9 +23,9 @@ library(colorRamp2)
 source("maps_plot_functions.R")
 source("logger.R")
 
-maps=function(){
-  log_name=paste0("maps_plot_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
-  logger(log_name)
+maps=function(config){
+  # log_name=paste0("maps_plot_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
+  # logger(log_name, config)
   cat("\n")
   log4r_info("Start mapping plot: This step will plot all phenotypes positive cells coordinates")
   
@@ -34,7 +34,7 @@ maps=function(){
   
   tryCatch(
     {
-      myData=fromJSON(file="config.json")
+      myData=fromJSON(file=config)
     }, error=function(cond){
       log4r_error(paste0("Something went wrong while reading config.json file. Try check the fields of your json file!"))
       log4r_error("Exiting from clean_data.R script")
@@ -90,5 +90,5 @@ if (length(myData$Map_plot["pheno_list"][[1]])==0){
     }
   }
   log4r_info("End maps plot!")
-  return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
+  #return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
 }

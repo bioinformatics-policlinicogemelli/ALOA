@@ -26,19 +26,19 @@ source("distance_match_func.R")
 source("maps_plot_functions.R")
 source("logger.R")
 
-distance=function(){
+distance=function(config){
   
   cat("\n################## DISTANCE ###################\n")
   
-  log_name=paste0("distance_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
-  logger(log_name)
+  # log_name=paste0("distance_",format(Sys.time(), "%Y-%m-%d_%H-%M-%S"))
+  # logger(log_name, config)
   cat("\n")
   log4r_info("Start distance evaluation: This step will will evaluate distances between couples of phenotypes positive cells")
   cat("\n")
   
   #load info from json
   log4r_info("Loading configuration file...")
-  myData=fromJSON(file="config.json")
+  myData=fromJSON(file=config)
   
   out_f=file.path(myData$Paths["output_folder"],"Distance")
   dir.create(out_f)
@@ -110,6 +110,6 @@ distance=function(){
   log4r_info("End distance evaluation!")
   cat("\n")
 
-  return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
+  #return(file.path(myData$Paths["output_folder"][[1]],"Log",paste0(log_name,".log")))
 }
 

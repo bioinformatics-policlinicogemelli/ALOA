@@ -25,7 +25,7 @@ from pandas.api.types import is_numeric_dtype
 pd.set_option('mode.chained_assignment', None)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-def main(data=[]):
+def main(samplesheet, data=[]):
     
     logger.info("\n################################## CROSS PCF ##################################\n")
     
@@ -48,7 +48,7 @@ def main(data=[]):
         logger.critical("It seems that one or more column names of cellType_dict.tsv is not correct. Check that the columns are named as 'Phenotype' and 'Cell_Type'")
         raise(Exception("Error while reading cellType_dict.tsv"))
     
-    data_list=load_df(data["Paths"]["data_input_folder"], "sample_sheet.tsv")
+    data_list=load_df(samplesheet)
     
     if not data_list.columns.isin(["sbj_ID", "Group"]).all():
         logger.critical("It seems that one or more column names of cellType_dict.tsv is not correct. Check that the columns are named as 'sbj_ID' and 'Group'")
