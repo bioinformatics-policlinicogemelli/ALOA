@@ -41,11 +41,30 @@ merge=function(){
       stop()
     })
   
-  #### Input parsing
-  data_input_folder=file.path(myData$Paths["data_input_folder"][[1]],"raw_data")
-  output_folder=myData$Paths["output_folder"][[1]]
-  sample_sheet=file.path(myData$Paths["data_input_folder"][[1]],"sample_sheet.tsv")
-  data_input=read.table(file = sample_sheet, sep = '\t', header = TRUE)
+ # ================= Input parsing =================
+  data_input_folder <- file.path(myData$Paths["data_input_folder"][[1]], "raw_data")
+  output_folder <- myData$Paths["output_folder"][[1]]
+
+  # cerca automaticamente il sample sheet nella cartella di input
+  sample_sheet_files <- list.files(myData$Paths["data_input_folder"][[1]], pattern = "sample_sheet", full.names = TRUE)
+
+  if(length(sample_sheet_files) == 0) stop("Nessun sample_sheet trovato nella cartella di input!")
+
+  sample_sheet <- sample_sheet_files[1]  # prendi il primo file trovato
+  file_ext <- tools::file_ext(sample_sheet)
+
+  # leggi il file in base all'estensione
+  if(file_ext == "xlsx") {
+    library(readxl)
+    data_input <- read_excel(sample_sheet)
+  } else if(file_ext == "csv") {
+    data_input <- read.csv(sample_sheet, stringsAsFactors = FALSE)
+  } else if(file_ext == "tsv") {
+    data_input <- read.table(sample_sheet, sep = "\t", header = TRUE)
+  } else {
+   stop("Formato file non supportato. Inserire .xlsx, .csv o .tsv")
+  }
+
   
   #### Output organization folder
   dir.create(output_folder)
