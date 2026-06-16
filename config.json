@@ -1,21 +1,14 @@
 {
    "Paths":{
-      "data_input_folder":"/data/data_storage/research/Projects/Lucchetti/Testa_collo/HALO/input",
-      "output_folder":"/data/data_storage/research/Projects/Lucchetti/Testa_collo/HALO/output"
-
+      "data_input_folder":"./data_test",
+      "output_folder":"./output"
    },
    "Phenotypes":{
       "pheno_list":[
-         "MEL-A+",
-         "CD3e+",
-         "CD3e+,CD4+",
-         "CD3e+,CD8+",
-         "CD3e+,CD4+,FOXP3+",
-         "CD20+",
          "CD68+",
-         "CD68+,iNOS+",
-         "CD68+,CD163+",
-         "CD11c+"
+         "CD8+",
+         "FoxP3+",
+         "CK+"
       ]
    },
    "Descriptive":{
@@ -34,10 +27,8 @@
       ],
       "pheno_from":"",
       "pheno_to":"",
-      "plot_distance":false,
-      "save_csv_zetascore":true,
-      "heatmap_annot": true,
-      "heatmap_fixed_scale": true
+      "plot_distance":true,
+      "save_csv_zetascore":true
    },
    "Image_match":{
       "pheno_list":[
@@ -64,7 +55,7 @@
       "pheno_list":[
       ],
       "radiusOfInterest":50,
-      "all_pcf":false, 
+      "all_pcf":true, 
       "maxR":150,
       "annulusStep":10,
       "annulusWidth":10,
@@ -72,12 +63,8 @@
       "on_roi":true,
       "only_stat":false
    },
-   "Stats": {
-      "sample_type": "",
-      "p_adj": "bonferroni",
-      "p_adj_threshold": 0.05,
-      "save_stats_csv": true,
-      "show_pvalues_on_boxplot": true
-   },
-   "type_match": "P"
+   "Stats":{
+      "sample_type":"",
+      "p_adj":""
+   }
 }
