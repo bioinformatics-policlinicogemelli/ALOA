@@ -36,6 +36,7 @@ from clustering import main as clust
 from img_match import img_match
 from distance_match import distance_match
 from cross_PCF import main as pcf
+from heatmaps_nuovo import plot_all_heatmaps
 
 #### 
 class MyArgumentParser(argparse.ArgumentParser):
@@ -139,7 +140,7 @@ def check_merged(output):
 
 def aloa(args, data, logfile):
     
-    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all} , force:{args.force}]")
+    logger.info(f"aloa.py args: [merge:{args.merge}, mapping:{args.maps}, distance:{args.distance}, img_match:{args.imgMatch}, dst_match:{args.dstMatch}, overview:{args.overview}, stats:{args.stats}, heatmaps:{args.heatmaps}, cluster:{args.clustering}, pcf:{args.pcf}, all:{args.all} , force:{args.force}]")
 
     output=data["Paths"]["output_folder"]
 
@@ -215,6 +216,13 @@ def aloa(args, data, logfile):
             if args.stats:
                 logger.info("|-> Distance statistical evaluation step starting now")
                 stat_dist(data)
+
+        #########################################
+        #               HEATMAPS                #
+        #########################################
+            if args.heatmaps:
+                logger.info("|-> Heatmaps creating step starting now")
+                plot_all_heatmaps(data)
                 
         #########################################
         #              CLUSTERING               #
@@ -279,6 +287,7 @@ def main():
     # DISTANCE BLOCK
     parser.add_argument('-d', '--distance', required=False, action='store_true', help='distance evaluation between phenotypes')
     parser.add_argument('-s', '--stats', required=False, action='store_true', help='create distance stats')
+    parser.add_argument('-H', '--heatmaps', required=False, action='store_true', help='create heatmaps')
     
     # STATISTICAL BLOCK
     parser.add_argument('-o', '--overview', required=False, action='store_true', help='create data overview')
@@ -318,9 +327,13 @@ def main():
     if args.stats and not args.distance and not args.force:
         logger.critical(f"It seems that stats (-s) option is provided without the distance (-d) one. That is not possible beacause statistical evaluation requires distance evaluation. Try launch the command again setting -d and -s concurrently. Alternatively to force the options selected -f option must be set")
         exit(1)
+    
+    if args.heatmaps and not args.stats and not args.force:
+        logger.critical("Heatmaps (-H) require distance stats (-s) or existing results."
+        "Use -s together with _h, or use -f to force using existing ALL_PAIRWISE_RESULTS.csv.")
+        exit(1)
             
     aloa(args, data, logfile)
 
 if __name__ == '__main__':
     main()
-    
